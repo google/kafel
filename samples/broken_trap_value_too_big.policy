@@ -1,0 +1,9 @@
+POLICY sample {
+	TRAP(65536) {
+		write(myfd, mybuf, mysize) {
+			(myfd == 1 || myfd == 2) && (mysize < 4 || mybuf == 0)
+		}
+	}
+}
+
+USE sample DEFAULT KILL

@@ -1,0 +1,2 @@
+POLICY sample {}
+USE sample DEFAULT KILL

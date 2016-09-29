@@ -1,0 +1,13 @@
+POLICY sample {
+	ALLOW {
+		write,
+		open,
+		read,
+		lseek
+	},
+	ERRNO(5) {
+		ptrace
+	}
+}
+
+USE sample DEFAULT KILL

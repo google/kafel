@@ -1,0 +1,10 @@
+#define google_custom -1
+
+POLICY sample {
+	ALLOW {
+		google_custom(myarg, myotherarg) {
+			myarg == 1 && myotherarg == 2
+		}
+	}
+}
+USE sample DEFAULT KILL

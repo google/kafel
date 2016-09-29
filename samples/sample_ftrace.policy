@@ -1,0 +1,10 @@
+POLICY sample {
+	ALLOW {
+		write { // use argument names fetched from ftrace
+			fd == 1 || fd == 2 || buf == 0 || count < 10
+		}
+	}
+}
+
+USE sample DEFAULT KILL
+

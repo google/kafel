@@ -1,0 +1,9 @@
+POLICY sample {
+	ALLOW {
+		write(myfd, mybuf, mysize) { // filter write call
+			(myfd == 1 || myfd == 2) && (mysize < 4 || mybuf == 0)
+		}
+	}
+}
+
+USE sample DEFAULT KILL

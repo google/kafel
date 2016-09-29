@@ -1,0 +1,22 @@
+POLICY AllowReadForStdio {
+	ALLOW {
+		read(fd, buf, size) {
+			fd == 0
+		}
+	}
+}
+
+POLICY AllowWriteForStdio {
+	ALLOW {
+		write(fd, buf, size) {
+			fd == 1, fd == 2
+		}
+	}
+}
+
+POLICY Main {
+	USE AllowWriteForStdio,
+	USE AllowReadForStdio
+}
+
+USE Main DEFAULT KILL

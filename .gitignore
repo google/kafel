@@ -1,0 +1,21 @@
+# Qtcreator stuff
+*.config
+*.creator
+*.includes
+*.user
+*.files
+
+# Output files
+/libkafel.so
+/libkafel.a
+*.o
+
+# Generated files
+/lexer.h
+/lexer.c
+/parser.h
+/parser.c
+
+# Backup files
+*.bak
+*~

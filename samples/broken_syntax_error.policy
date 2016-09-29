@@ -1,0 +1,7 @@
+POLICY USE {
+	ALLOW {
+		write
+	}
+}
+
+USE sample DEFAULT KILL

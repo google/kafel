@@ -1,0 +1,10 @@
+POLICY sample {
+	ALLOW {
+		write {
+			(fd & 0xf1) == 0
+		}
+	}
+}
+
+USE sample DEFAULT KILL
+

@@ -1,0 +1,14 @@
+#define NULL   0
+#define STDIN  0
+#define STDOUT 1
+#define STDERR 2
+
+POLICY sample {
+	ALLOW {
+		write(myfd, mybuf, mysize) { // filter write call
+			(myfd == STDOUT || myfd == STDERR) && (mysize < 4 || mybuf == NULL)
+		}
+	}
+}
+
+USE sample DEFAULT KILL

@@ -1,0 +1,10 @@
+POLICY sample {
+	ALLOW {
+		write {
+			fd != count && buf == count
+		}
+	}
+}
+
+USE sample DEFAULT KILL
+
