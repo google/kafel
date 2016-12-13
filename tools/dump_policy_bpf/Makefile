@@ -26,6 +26,8 @@ LIBS:=${PROJECT_ROOT}libkafel.a
 
 ifdef DEBUG
         CFLAGS += -g -ggdb -gdwarf-4
+else
+        CFLAGS += -O2
 endif
 
 .PHONY: all clean depend format
