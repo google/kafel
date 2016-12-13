@@ -143,9 +143,12 @@ struct policy* lookup_policy(struct kafel_ctxt* ctxt, const char* name) {
 
 static int grow_errors_buffer(struct kafel_ctxt* ctxt, size_t min_growth) {
   size_t oldcapacity = ctxt->errors.capacity;
-  size_t mincapacity = oldcapacity + min_growth;
-  if (min_growth > 0 && mincapacity <= oldcapacity) {
+  size_t mincapacity = ctxt->errors.len + min_growth;
+  if (min_growth > 0 && mincapacity <= ctxt->errors.len) {
     return -1;  // overflow
+  }
+  if (mincapacity <= oldcapacity) {
+    return 0;
   }
   size_t newcapacity = oldcapacity * 2;
   if (newcapacity <= oldcapacity || newcapacity < mincapacity) {
@@ -191,10 +194,10 @@ int append_error(struct kafel_ctxt* ctxt, const char* fmt, ...) {
     }
     if (((size_t)n) < space) {
       ctxt->errors.len += n;
-      if (ctxt->errors.len != ctxt->errors.capacity &&
-          grow_errors_buffer(ctxt, 1) == 0) {
+      if (grow_errors_buffer(ctxt, 1) == 0) {
         ctxt->errors.data[ctxt->errors.len++] = '\n';
       }
+      ctxt->errors.data[ctxt->errors.len] = '\0';
       return 0;
     }
     if (grow_errors_buffer(ctxt, n) != 0) {
