@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-dark.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <title>Kafel by google</title>
+  </head>
+
+  <body>
+    <div id="container">
+      <div class="inner">
+
+        <header>
+          <h1>Kafel</h1>
+          <h2>A language and library for specifying syscall filtering policies.</h2>
+        </header>
+
+        <section id="downloads" class="clearfix">
+          <a href="https://github.com/google/kafel/zipball/master" id="download-zip" class="button"><span>Download .zip</span></a>
+          <a href="https://github.com/google/kafel/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
+          <a href="https://github.com/google/kafel" id="view-on-github" class="button"><span>View on GitHub</span></a>
+        </section>
+
+        <hr>
+
+        <section id="main_content">
+          <h1>
+<a id="what-is-it" class="anchor" href="#what-is-it" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>WHAT IS IT?</h1>
+
+<p>Kafel is a language and library for specifying syscall filtering policies.
+The policies are compiled into BPF code that can be used with seccomp-filter.</p>
+
+<p>This is NOT an official Google product.</p>
+
+<h1>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h1>
+
+<h2>
+<a id="with-verbose-error-reporting" class="anchor" href="#with-verbose-error-reporting" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>With verbose error reporting</h2>
+
+<div class="highlight highlight-source-c"><pre><span class="pl-k">struct</span> sock_fprog prog;
+<span class="pl-c1">kafel_ctxt_t</span> ctxt = kafel_ctxt_create();
+<span class="pl-en">kafel_set_input_string</span>(ctxt, seccomp_policy);
+<span class="pl-k">if</span> (kafel_compile(ctxt, &amp;prog)) {
+  <span class="pl-c1">fprintf</span>(stderr, <span class="pl-s"><span class="pl-pds">"</span>policy compilation failed: <span class="pl-c1">%s</span><span class="pl-pds">"</span></span>, <span class="pl-c1">kafel_error_msg</span>(ctxt));
+  <span class="pl-c1">kafel_ctxt_destroy</span>(&amp;ctxt);
+  <span class="pl-c1">exit</span>(-<span class="pl-c1">1</span>);
+}
+<span class="pl-en">kafel_ctxt_destroy</span>(&amp;ctxt);
+<span class="pl-en">prctl</span>(PR_SET_SECCOMP, SECCOMP_MODE_FILTER, &amp;prog, <span class="pl-c1">0</span>, <span class="pl-c1">0</span>);
+<span class="pl-en">free</span>(prog.filter);</pre></div>
+
+<h2>
+<a id="without-verbose-error-reporting" class="anchor" href="#without-verbose-error-reporting" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Without verbose error reporting</h2>
+
+<div class="highlight highlight-source-c"><pre><span class="pl-k">struct</span> sock_fprog prog;
+<span class="pl-k">if</span> (kafel_compile_string(seccomp_policy, &amp;prog)) {
+  <span class="pl-c1">fputs</span>(<span class="pl-s"><span class="pl-pds">"</span>policy compilation failed<span class="pl-pds">"</span></span>, stderr);
+  <span class="pl-c1">exit</span>(-<span class="pl-c1">1</span>);
+}
+<span class="pl-en">prctl</span>(PR_SET_SECCOMP, SECCOMP_MODE_FILTER, &amp;prog, <span class="pl-c1">0</span>, <span class="pl-c1">0</span>);
+<span class="pl-en">free</span>(prog.filter);</pre></div>
+
+<h1>
+<a id="policy-language" class="anchor" href="#policy-language" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Policy language</h1>
+
+<p>A simple language is used to define policies.</p>
+
+<p>A policy file has 3 parts:</p>
+
+<ol>
+<li>Constant definitions (optional)</li>
+<li>Policy definitions</li>
+<li>Top level policy declaration</li>
+</ol>
+
+<h2>
+<a id="numbers" class="anchor" href="#numbers" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Numbers</h2>
+
+<p>Kafel supports following number notations:</p>
+
+<ul>
+<li>Decimal <code>42</code>
+</li>
+<li>Hexadecimal <code>0xfa1</code>
+</li>
+<li>Octal <code>0777</code>
+</li>
+<li>Binary <code>0b10101</code>
+</li>
+</ul>
+
+<h2>
+<a id="constant-definitions" class="anchor" href="#constant-definitions" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Constant definitions</h2>
+
+<p>You may define numeric constants at the beging of policy file to make it more
+readable.
+The defined constants can then be used anywhere where a number is expected.</p>
+
+<pre><code>#define MYCONST 123
+</code></pre>
+
+<h2>
+<a id="policy-definitions" class="anchor" href="#policy-definitions" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Policy definitions</h2>
+
+<p>Policy definition is a list of action blocks and use statements separated by
+commas.</p>
+
+<p><strong>samples/</strong> contains some example policies that demonstrate supported features.</p>
+
+<h3>
+<a id="use-statements" class="anchor" href="#use-statements" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Use statements</h3>
+
+<p>A <code>USE someOtherPolicy</code> behaves as if <code>someOtherPolicy</code> body was pasted in its
+place. You may only use policies defined before the use statement.</p>
+
+<p>With use statements you can create meaningful groups of filtering rules that are
+building blocks of bigger policies.</p>
+
+<h3>
+<a id="action-blocks" class="anchor" href="#action-blocks" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Action blocks</h3>
+
+<p>Action block consist of a target and list of syscall matching rules separated
+with commas.</p>
+
+<p>Target of first rule matched is the policy decision.</p>
+
+<p>Following table list Kafel targets and their corresponding seccomp-filter
+return values.</p>
+
+<table>
+<thead>
+<tr>
+<th>Kafel</th>
+<th>seccomp-filter</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ALLOW</code></td>
+<td><code>SECCOMP_RET_ALLOW</code></td>
+</tr>
+<tr>
+<td>
+<code>KILL</code>, <code>DENY</code>
+</td>
+<td><code>SECCOMP_RET_KILL</code></td>
+</tr>
+<tr>
+<td><code>ERRNO(number)</code></td>
+<td><code>SECCOMP_RET_ERRNO+number</code></td>
+</tr>
+<tr>
+<td><code>TRAP(number)</code></td>
+<td><code>SECCOMP_RET_TRAP+number</code></td>
+</tr>
+<tr>
+<td><code>TRACE(number)</code></td>
+<td><code>SECCOMP_RET_TRACE+number</code></td>
+</tr>
+</tbody>
+</table>
+
+<h3>
+<a id="syscall-matching-rules" class="anchor" href="#syscall-matching-rules" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Syscall matching rules</h3>
+
+<p>A rules consist of syscall name and optional list of boolean expressions.</p>
+
+<p>List of boolean expressions separated by commas.
+A comma is semantically equivalent to <code>||</code> but has the lowest precedence,
+therefore it may be easier to read.</p>
+
+<h4>
+<a id="syscall-naming" class="anchor" href="#syscall-naming" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Syscall naming</h4>
+
+<p>Normally syscalls are specified by their names as defined in Linux kernel.
+However, you may also filter <strong>custom syscalls</strong> that are not in the standard
+syscall list.
+You can either define a constant and use it in place of syscall name or
+utilize <code>SYSCALL</code> keyword.</p>
+
+<pre><code>#define mysyscall -1
+
+POLICY my_const {
+  ALLOW {
+    mysyscall
+  }
+}
+
+POLICY my_literal {
+  ALLOW {
+    SYSCALL[-1]
+  }
+}
+</code></pre>
+
+<h4>
+<a id="argument-filtering" class="anchor" href="#argument-filtering" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Argument filtering</h4>
+
+<p>Boolean expressions are used to filter syscalls based on their arguments.
+A expression resembles C language syntax, except that there are no
+arithmetic operators.</p>
+
+<pre><code>some_syscall(first_arg, my_arg_name) { first_arg == 42 &amp;&amp; my_arg_name != 42 }
+</code></pre>
+
+<p>Bitwise and (<code>&amp;</code>) operator can be used to test for flags.</p>
+
+<pre><code>mmap { (prot &amp; PROT_EXEC) == 0 }
+</code></pre>
+
+<p>You don't have to declare arguments for well-known syscalls but can just use
+their regular names as specified in Linux kernel and <code>man</code> pages.</p>
+
+<pre><code>write { fd == 1 }
+</code></pre>
+
+<h2>
+<a id="top-level-policy-declaration" class="anchor" href="#top-level-policy-declaration" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Top level policy declaration</h2>
+
+<pre><code>USE topLevel DEFAULT the_action
+</code></pre>
+
+<p>Specifies that <code>topLevel</code> policy is compiled and action <code>the_action</code> should be
+taken when no rule matches.</p>
+        </section>
+
+        <footer>
+          Kafel is maintained by <a href="https://github.com/google">google</a><br>
+          This page was generated by <a href="https://pages.github.com">GitHub Pages</a>. Tactile theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.
+        </footer>
+
+        
+      </div>
+    </div>
+  </body>
+</html>
