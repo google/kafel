@@ -248,7 +248,7 @@ static int add_jump_set(struct codegen_ctxt *ctxt, __u32 what, int tloc,
     return floc;
   }
 
-  return add_jump(ctxt, BPF_K | BPF_JSET, what, tloc, floc);
+  return add_jump(ctxt, BPF_K | BPF_JSET, what, floc, tloc);
 }
 
 #define HIGH_WORD 0
