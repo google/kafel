@@ -412,10 +412,10 @@ static int generate_cmp32(struct codegen_ctxt *ctxt, __u32 type,
     if (is_const_value(left, word)) {
       SWAP(left, right);
     }
-    type = BPF_JSET;
     if (type == BPF_JEQ) {
       SWAP(tloc, floc);
     }
+    type = BPF_JSET;
   }
 
   if (is_const_value(right, word)) {
