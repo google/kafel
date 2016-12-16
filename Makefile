@@ -47,6 +47,10 @@ else
   CFLAGS += -O2
 endif
 
+ifdef ASAN
+  CFLAGS += -fsanitize=address
+endif
+
 .PHONY: all clean depend format tools
 
 all: ${TARGET} ${STATIC_TARGET}

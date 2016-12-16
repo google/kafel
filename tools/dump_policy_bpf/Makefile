@@ -30,6 +30,10 @@ else
         CFLAGS += -O2
 endif
 
+ifdef ASAN
+	CFLAGS += -fsanitize=address
+endif
+
 .PHONY: all clean depend format
 
 all: ${TARGET}
@@ -38,7 +42,7 @@ clean:
 	$(RM) Makefile.bak ${OBJECTS} ${TARGET}
 
 ${TARGET}: ${OBJECTS}
-	$(CC) $^ ${LIBS} -o $@
+	$(CC) ${CFLAGS} $^ ${LIBS} -o $@
 
 depend:
 	makedepend -Y. $(SRCS)
