@@ -77,25 +77,40 @@ static void fix_tailq_moving(struct syscall_range_rules *rules) {
   }
 }
 
+static void grow_range_rules(struct syscall_range_rules *rules,
+                             size_t min_growth) {
+  size_t oldcapacity = rules->capacity;
+  size_t reqcapacity = rules->len + min_growth;
+  if (reqcapacity < rules->len) {
+    ASSERT(0);  // overflow
+  }
+  if (reqcapacity <= oldcapacity) {
+    return;
+  }
+  size_t newcapacity = rules->capacity * 2;
+  if (newcapacity < reqcapacity) {
+    newcapacity = reqcapacity;
+  }
+  size_t oldbytes = rules->capacity * sizeof(*rules->data);
+  size_t newbytes = newcapacity * sizeof(*rules->data);
+  if (newcapacity < rules->capacity || newbytes < oldbytes) {
+    ASSERT(0);  // overflow
+  }
+  struct syscall_range_rule *newdata = realloc(rules->data, newbytes);
+  if (newdata == NULL) {
+    ASSERT(0);  // OOM
+  }
+  rules->data = newdata;
+  rules->capacity = newcapacity;
+  fix_tailq_moving(rules);
+}
+
 static void add_range_rule(struct syscall_range_rules *rules,
                            struct syscall_range_rule *rule) {
   ASSERT(rules != NULL);
   ASSERT(rule != NULL);
 
-  if (rules->capacity <= rules->len) {
-    size_t newcapacity = rules->capacity * 2;
-    if (newcapacity == 0) {
-      newcapacity = 1;
-    }
-    size_t oldbytes = rules->capacity * sizeof(*rules->data);
-    size_t newbytes = newcapacity * sizeof(*rules->data);
-    if (newcapacity < rules->capacity || newbytes < oldbytes) {
-      ASSERT(0);  // overflow
-    }
-    rules->data = realloc(rules->data, newbytes);
-    rules->capacity = newcapacity;
-    fix_tailq_moving(rules);
-  }
+  grow_range_rules(rules, 1);
   struct syscall_range_rule *added = &rules->data[rules->len++];
   *added = *rule;
   added->priority = rules->len;
@@ -229,19 +244,8 @@ static size_t normalize_rules_count_missing(struct syscall_range_rules *rules,
 static void add_missing_rules(struct syscall_range_rules *rules, size_t to_add,
                               int default_action) {
   size_t oldlen = rules->len;
-
-  size_t newlen = oldlen + to_add;
-  size_t oldbytes = oldlen * sizeof(*rules->data);
-  size_t newbytes = newlen * sizeof(*rules->data);
-  if (newlen < oldlen || newbytes < oldbytes) {
-    ASSERT(0);  // overflow
-  }
-  if (rules->capacity < newlen) {
-    rules->data = realloc(rules->data, newbytes);
-    rules->capacity = newlen;
-    fix_tailq_moving(rules);
-  }
-  rules->len = newlen;
+  grow_range_rules(rules, to_add);
+  rules->len = oldlen + to_add;
 
   struct syscall_range_rule *last_rule = &rules->data[oldlen - 1];
   if (last_rule->last != MAX_SYSCALL_NR) {
