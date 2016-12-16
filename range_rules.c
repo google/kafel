@@ -220,6 +220,13 @@ static size_t normalize_rules_count_missing(struct syscall_range_rules *rules,
         ++to_add;
       }
     }
+    struct expr_tree *last_expr = NULL;
+    if (!TAILQ_EMPTY(&cur->expr_list)) {
+      last_expr = TAILQ_LAST(&cur->expr_list, expression_to_action_list)->expr;
+    }
+    if (last_expr != NULL) {
+      rule_add_expr(cur, NULL, default_action);
+    }
     if (j != i) {
       struct syscall_range_rule *dst = &rules->data[j];
       *dst = *cur;
@@ -230,9 +237,19 @@ static size_t normalize_rules_count_missing(struct syscall_range_rules *rules,
   }
   rules->len = j;
 
-  if (rules->data[0].first != 0) {
-    if (rules->data[0].action == default_action) {
-      rules->data[0].first = 0;
+  struct syscall_range_rule *first_rule = &rules->data[0];
+  if (first_rule->first != 0) {
+    if (first_rule->action == default_action) {
+      first_rule->first = 0;
+    } else {
+      ++to_add;
+    }
+  }
+
+  struct syscall_range_rule *last_rule = &rules->data[rules->len - 1];
+  if (last_rule->last != MAX_SYSCALL_NR) {
+    if (last_rule->action == default_action) {
+      last_rule->last = MAX_SYSCALL_NR;
     } else {
       ++to_add;
     }
@@ -249,14 +266,13 @@ static void add_missing_rules(struct syscall_range_rules *rules, size_t to_add,
 
   struct syscall_range_rule *last_rule = &rules->data[oldlen - 1];
   if (last_rule->last != MAX_SYSCALL_NR) {
-    if (last_rule->action == default_action) {
-      last_rule->last = MAX_SYSCALL_NR;
-    } else {
-      struct syscall_range_rule rule = {.first = last_rule->last + 1,
-                                        .last = MAX_SYSCALL_NR,
-                                        .action = default_action};
-      add_range_rule(rules, &rule);
-    }
+    ASSERT(last_rule->action != default_action);
+    rules->data[rules->len - 1] =
+        ((struct syscall_range_rule){.first = last_rule->last + 1,
+                                     .last = MAX_SYSCALL_NR,
+                                     .action = default_action});
+    TAILQ_INIT(&rules->data[rules->len - 1].expr_list);
+    --to_add;
   }
 
   struct syscall_range_rule *prev = NULL;
@@ -268,6 +284,7 @@ static void add_missing_rules(struct syscall_range_rules *rules, size_t to_add,
       dst->first = cur->last + 1;
       dst->last = prev->first - 1;
       dst->action = default_action;
+      TAILQ_INIT(&dst->expr_list);
       --to_add;
       --dst;
     }
@@ -276,21 +293,16 @@ static void add_missing_rules(struct syscall_range_rules *rules, size_t to_add,
       TAILQ_INIT(&dst->expr_list);
       TAILQ_CONCAT(&dst->expr_list, &cur->expr_list, list);
     }
-    struct expr_tree *last_expr = NULL;
-    if (!TAILQ_EMPTY(&dst->expr_list)) {
-      last_expr = TAILQ_LAST(&dst->expr_list, expression_to_action_list)->expr;
-    }
-    if (last_expr != NULL) {
-      rule_add_expr(dst, NULL, default_action);
-    }
     prev = cur;
   }
 
-  if (to_add > 0) {
-    struct syscall_range_rule *dst = &rules->data[0];
-    dst->first = 0;
-    dst->last = rules->data[1].first - 1;
-    dst->action = default_action;
+  if (to_add == 1) {
+    ASSERT(rules->data[1].first > 0);
+    rules->data[0] =
+        ((struct syscall_range_rule){.first = 0,
+                                     .last = rules->data[1].first - 1,
+                                     .action = default_action});
+    TAILQ_INIT(&rules->data[0].expr_list);
     --to_add;
   }
 
