@@ -171,6 +171,17 @@ static void sort_range_rules(struct syscall_range_rules *rules) {
   fix_tailq_moving(rules);
 }
 
+static void normalize_expr_list(struct syscall_range_rule *rule,
+                                int default_action) {
+  struct expr_tree *last_expr = NULL;
+  if (!TAILQ_EMPTY(&rule->expr_list)) {
+    last_expr = TAILQ_LAST(&rule->expr_list, expression_to_action_list)->expr;
+  }
+  if (last_expr != NULL) {
+    rule_add_expr(rule, NULL, default_action);
+  }
+}
+
 static size_t normalize_rules_count_missing(struct syscall_range_rules *rules,
                                             int default_action) {
   ASSERT(rules != NULL);
@@ -220,13 +231,7 @@ static size_t normalize_rules_count_missing(struct syscall_range_rules *rules,
         ++to_add;
       }
     }
-    struct expr_tree *last_expr = NULL;
-    if (!TAILQ_EMPTY(&cur->expr_list)) {
-      last_expr = TAILQ_LAST(&cur->expr_list, expression_to_action_list)->expr;
-    }
-    if (last_expr != NULL) {
-      rule_add_expr(cur, NULL, default_action);
-    }
+    normalize_expr_list(cur, default_action);
     if (j != i) {
       struct syscall_range_rule *dst = &rules->data[j];
       *dst = *cur;
@@ -238,6 +243,7 @@ static size_t normalize_rules_count_missing(struct syscall_range_rules *rules,
   rules->len = j;
 
   struct syscall_range_rule *first_rule = &rules->data[0];
+  normalize_expr_list(first_rule, default_action);
   if (first_rule->first != 0) {
     if (first_rule->action == default_action) {
       first_rule->first = 0;
