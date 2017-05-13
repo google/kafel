@@ -15,17 +15,7 @@
 
 SUBDIRS:=dump_policy_bpf
 
-.PHONY: all depend format ${SUBDIRS}
+include ${PROJECT_ROOT}build/Makefile.mk
 
 all: ${SUBDIRS}
-${SUBDIRS}:
-	$(MAKE) -C $@
-
-depend:
-	$(MAKE) -C ${SUBDIRS} depend
-
-format:
-	$(MAKE) -C ${SUBDIRS} format
-
-clean:
-	${MAKE} -C ${SUBDIRS} clean
+# DO NOT DELETE

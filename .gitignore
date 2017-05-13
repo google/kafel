@@ -11,10 +11,10 @@
 *.o
 
 # Generated files
-/lexer.h
-/lexer.c
-/parser.h
-/parser.c
+/src/lexer.h
+/src/lexer.c
+/src/parser.h
+/src/parser.c
 
 # Backup files
 *.bak

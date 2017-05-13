@@ -17,38 +17,16 @@
 #   limitations under the License.
 #
 
-PROJECT_ROOT:=../../
-CFLAGS+=-std=gnu11 -I${PROJECT_ROOT}include -Wall
 SRCS:=main.c disasm.c
-OBJECTS:=$(SRCS:.c=.o)
 TARGET:=dump_policy_bpf
 LIBS:=${PROJECT_ROOT}libkafel.a
 
-ifdef DEBUG
-        CFLAGS += -g -ggdb -gdwarf-4
-else
-        CFLAGS += -O2
-endif
+include ${PROJECT_ROOT}build/Makefile.mk
 
-ifdef ASAN
-	CFLAGS += -fsanitize=address
-endif
-
-.PHONY: all clean depend format
-
-all: ${TARGET}
-
-clean:
-	$(RM) Makefile.bak ${OBJECTS} ${TARGET}
+CFLAGS+=-Wno-error=type-limits
 
 ${TARGET}: ${OBJECTS}
 	$(CC) ${CFLAGS} $^ ${LIBS} -o $@
-
-depend:
-	makedepend -Y. $(SRCS)
-
-format:
-	clang-format -i -style=Google *.c *.h
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.
 
