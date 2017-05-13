@@ -63,7 +63,7 @@ int main(void) {
     test_case->func();
     if (test_case_failed_flag) {
       ++tests_failed;
-      fprintf(stderr, "FAILED %s:\n\%s\n", test_case->name, test_error_msgs);
+      fprintf(stderr, "FAILED %s:\n%s\n", test_case->name, test_error_msgs);
     } else {
       ++tests_passed;
     }
