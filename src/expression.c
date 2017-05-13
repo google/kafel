@@ -132,12 +132,12 @@ static int expr_boolean(bool boolean) {
 
 static int expr_eval(int type, uint32_t left, uint32_t right) {
   switch (type) {
-    EVAL_EXPR(EXPR_EQ, == );
-    EVAL_EXPR(EXPR_NEQ, != );
-    EVAL_EXPR(EXPR_GE, >= );
-    EVAL_EXPR(EXPR_LE, <= );
-    EVAL_EXPR(EXPR_GT, > );
-    EVAL_EXPR(EXPR_LT, < );
+    EVAL_EXPR(EXPR_EQ, ==);
+    EVAL_EXPR(EXPR_NEQ, !=);
+    EVAL_EXPR(EXPR_GE, >=);
+    EVAL_EXPR(EXPR_LE, <=);
+    EVAL_EXPR(EXPR_GT, >);
+    EVAL_EXPR(EXPR_LT, <);
     default:
       ASSERT(0);  // should not happen
   }
