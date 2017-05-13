@@ -17,13 +17,17 @@
 #   limitations under the License.
 #
 
-SUBDIRS:=src tools test
+SRCS:=basic.c
+TARGET:=tests
+LIBS:=runner/librunner.a ${PROJECT_ROOT}libkafel.a
+SUBDIRS:=runner
 
-include build/Makefile.mk
+include ${PROJECT_ROOT}build/Makefile.mk
 
-all: src
+runner/librunner.a: runner
+${TARGET}: ${OBJECTS} ${LIBS}
+	$(CC) ${CFLAGS} ${OBJECTS} ${LIBS} -o $@
 
-test:
-	${MAKE} -C test PROJECT_ROOT=../${PROJECT_ROOT}
-	./test/tests
-# DO NOT DELETE
+# DO NOT DELETE THIS LINE -- make depend depends on it.
+
+basic.o: runner/harness.h runner/runner.h

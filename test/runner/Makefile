@@ -17,13 +17,16 @@
 #   limitations under the License.
 #
 
-SUBDIRS:=src tools test
+SRCS:=harness.c\
+      runner.c
+TARGET:=librunner.a
 
-include build/Makefile.mk
+include ${PROJECT_ROOT}build/Makefile.mk
 
-all: src
+${TARGET}: ${OBJECTS} ${LIBS}
+	$(AR) rcs $@ $^
 
-test:
-	${MAKE} -C test PROJECT_ROOT=../${PROJECT_ROOT}
-	./test/tests
-# DO NOT DELETE
+# DO NOT DELETE THIS LINE -- make depend depends on it.
+
+harness.o: harness.h runner.h
+runner.o: runner.h
