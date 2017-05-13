@@ -542,6 +542,7 @@ int compile_policy(struct kafel_ctxt *kafel_ctxt, struct sock_fprog *prog) {
   ASSERT(prog != NULL);
 
   if (kafel_ctxt->used_policy == NULL) {
+    append_error(kafel_ctxt, "No policy selected to be used");
     return -1;
   }
 
