@@ -156,7 +156,7 @@ USE topLevel DEFAULT the_action
 Specifies that `topLevel` policy is compiled and action `the_action` should be
 taken when no rule matches.
 
-#Example
+# Example
 
 When used with [nsjail](https://github.com/google/nsjail), the following command allows to create a fairly constrained environment for your shell
 
