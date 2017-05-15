@@ -18,6 +18,8 @@
 
 */
 
+%require "3.0"
+
 %output "parser.c"
 %defines "parser.h"
 
