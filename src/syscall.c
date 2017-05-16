@@ -27,6 +27,11 @@
 
 #include "common.h"
 
+// Fix for Linux <3.12
+#ifndef EM_ARM
+#define EM_ARM 40
+#endif
+
 #define SYSCALL_LIST_DECL(arch)                                 \
   extern const struct syscall_descriptor arch##_syscall_list[]; \
   extern const size_t arch##_syscall_list_size;
@@ -38,7 +43,13 @@ SYSCALL_LIST_DECL(arm)
 SYSCALL_LIST_DECL(amd64)
 
 const struct syscall_list syscall_lists[] = {
-    SYSCALL_LIST(AUDIT_ARCH_ARM, arm), SYSCALL_LIST(AUDIT_ARCH_X86_64, amd64)};
+#ifdef AUDIT_ARCH_ARM
+    SYSCALL_LIST(AUDIT_ARCH_ARM, arm),
+#endif
+#ifdef AUDIT_ARCH_X86_64
+    SYSCALL_LIST(AUDIT_ARCH_X86_64, amd64),
+#endif
+};
 
 struct syscall_descriptor* syscall_custom(uint32_t nr) {
   struct syscall_descriptor* rv = calloc(1, sizeof(*rv));
