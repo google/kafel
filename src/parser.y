@@ -405,6 +405,7 @@ const_def
 void yyerror(YYLTYPE * loc, struct kafel_ctxt* ctxt, yyscan_t scanner,
              const char *msg) {
   if (!ctxt->lexical_error) {
+    YYUSE(scanner);
     append_error(ctxt, "%d:%d: %s", loc->first_line, loc->first_column, msg);
   }
 }
