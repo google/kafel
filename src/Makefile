@@ -24,6 +24,7 @@ GENERATED_SRCS:=lexer.c parser.c
 GENERATED:=lexer.h parser.h ${GENERATED_SRCS}
 TEMPORARY:=libkafel_r.o libkafel.o
 SYSCALL_LISTS:=amd64_syscalls.c \
+               aarch64_syscalls.c \
                arm_syscalls.c
 SRCS:=kafel.c \
       context.c \
