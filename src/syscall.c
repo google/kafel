@@ -40,11 +40,15 @@
   { audit_arch, arch##_syscall_list, &arch##_syscall_list_size }
 
 SYSCALL_LIST_DECL(arm)
+SYSCALL_LIST_DECL(aarch64)
 SYSCALL_LIST_DECL(amd64)
 
 const struct syscall_list syscall_lists[] = {
 #ifdef AUDIT_ARCH_ARM
     SYSCALL_LIST(AUDIT_ARCH_ARM, arm),
+#endif
+#ifdef AUDIT_ARCH_AARCH64
+    SYSCALL_LIST(AUDIT_ARCH_AARCH64, aarch64),
 #endif
 #ifdef AUDIT_ARCH_X86_64
     SYSCALL_LIST(AUDIT_ARCH_X86_64, amd64),

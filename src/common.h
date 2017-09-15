@@ -41,6 +41,8 @@
 
 #if defined(__x86_64__)
 #define KAFEL_DEFAULT_TARGET_ARCH AUDIT_ARCH_X86_64
+#elif defined(__aarch64__)
+#define KAFEL_DEFAULT_TARGET_ARCH AUDIT_ARCH_AARCH64
 #elif defined(__arm__)
 #define KAFEL_DEFAULT_TARGET_ARCH AUDIT_ARCH_ARM
 #else
