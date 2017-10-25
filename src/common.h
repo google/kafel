@@ -48,7 +48,7 @@
 #elif defined(__mips64__)
 #define KAFEL_DEFAULT_TARGET_ARCH AUDIT_ARCH_MIPS64
 #elif defined(__mips__)
-#define KAFEL_DEFAULT_TARGET_ARCH AUDIT_ARCH_MIPSO32
+#define KAFEL_DEFAULT_TARGET_ARCH AUDIT_ARCH_MIPS
 #else
 #error "Unsupported architecture"
 #endif
