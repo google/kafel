@@ -25,6 +25,8 @@ GENERATED:=lexer.h parser.h ${GENERATED_SRCS}
 TEMPORARY:=libkafel_r.o libkafel.o
 SYSCALL_LISTS:=amd64_syscalls.c \
                aarch64_syscalls.c \
+               mipso32_syscalls.c \
+               mips64_syscalls.c \
                arm_syscalls.c
 SRCS:=kafel.c \
       context.c \
@@ -76,3 +78,5 @@ lexer.o: parser.h context.h policy.h expression.h syscall.h
 parser.o: parser.h context.h policy.h expression.h syscall.h lexer.h
 syscalls/amd64_syscalls.o: syscall.h
 syscalls/arm_syscalls.o: syscall.h
+syscalls/mipso32_syscalls.o: syscall.h
+syscalls/mips64_syscalls.o: syscall.h
