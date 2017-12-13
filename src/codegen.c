@@ -40,6 +40,14 @@
 #define CODEGEN_INITAL_BUFFER_SIZE 1024
 #endif
 
+/*
+    If headers are too old, take the define from
+    include/uapi/linux/seccomp.h
+*/
+#ifndef SECCOMP_RET_LOG
+#define SECCOMP_RET_LOG 0x7ffc0000U
+#endif
+
 #define CURRENT_LOC (ctxt->buffer.len - 1)
 #define LOC_TO_JUMP(loc) (CURRENT_LOC - (loc))
 
@@ -63,6 +71,8 @@ static __u32 ACTION_TO_BPF(int action) {
       return SECCOMP_RET_KILL;
     case ACTION_ALLOW:
       return SECCOMP_RET_ALLOW;
+    case ACTION_LOG:
+      return SECCOMP_RET_LOG;
   }
   int masked_action = action & 0xfff0000;
   int value = action & 0xffff;

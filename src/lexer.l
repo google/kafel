@@ -115,6 +115,7 @@ IDENTIFIER [A-Za-z][A-Za-z0-9_]*
 
 "SYSCALL"       { return SYSCALL; }
 "ALLOW"         { return ALLOW; }
+"LOG"           { return LOG; }
 "ERRNO"         { return ERRNO; }
 "KILL"          { return KILL; }
 "DENY"          { return DENY; }
