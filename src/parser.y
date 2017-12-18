@@ -97,7 +97,7 @@ YY_DECL;
 %token IDENTIFIER NUMBER
 
 %token POLICY USE DEFAULT SYSCALL DEFINE
-%token ALLOW KILL DENY ERRNO TRAP TRACE
+%token ALLOW LOG KILL DENY ERRNO TRAP TRACE
 
 %token GT LT GE LE EQ NEQ
 
@@ -208,6 +208,7 @@ action_block
 
 action
     : ALLOW { $$ = ACTION_ALLOW; }
+    | LOG  { $$ = ACTION_LOG; }
     | DENY { $$ = ACTION_KILL; }
     | KILL { $$ = ACTION_KILL; }
     | ERRNO '(' NUMBER ')'

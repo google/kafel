@@ -87,6 +87,7 @@ return values.
 Kafel           | seccomp-filter
 --------------- | ---------------------------
 `ALLOW`         | `SECCOMP_RET_ALLOW`
+`LOG`           | `SECCOMP_RET_LOG`
 `KILL`, `DENY`  | `SECCOMP_RET_KILL`
 `ERRNO(number)` | `SECCOMP_RET_ERRNO+number`
 `TRAP(number)`  | `SECCOMP_RET_TRAP+number`
