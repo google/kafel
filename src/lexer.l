@@ -78,6 +78,7 @@ IDENTIFIER [A-Za-z][A-Za-z0-9_]*
 
 
 0x[0-9a-fA-F]+ {
+        errno = 0;
         unsigned long long val = strtoull(yytext, NULL, 16);
         if (errno == ERANGE) {
           emit_error("number `%s' out of range", yytext);
@@ -87,6 +88,7 @@ IDENTIFIER [A-Za-z][A-Za-z0-9_]*
     }
 
 ([0])|(-?[1-9][0-9]*) {
+        errno = 0;
         unsigned long long val = strtoull(yytext, NULL, 10);
         if (errno == ERANGE) {
           emit_error("number `%s' out of range", yytext);
@@ -96,6 +98,7 @@ IDENTIFIER [A-Za-z][A-Za-z0-9_]*
     }
 
 [0][0-9]+ {
+        errno = 0;
         unsigned long long val = strtoull(yytext, NULL, 8);
         if (errno == ERANGE) {
           emit_error("number `%s' out of range", yytext);
@@ -105,6 +108,7 @@ IDENTIFIER [A-Za-z][A-Za-z0-9_]*
     }
 
 [0][b][01]+ {
+        errno = 0;
         unsigned long long val = strtoull(yytext+2, NULL, 2);
         if (errno == ERANGE) {
           emit_error("number `%s' out of range", yytext);
