@@ -37,9 +37,11 @@
 
 #include <stdlib.h>
 #include <string.h>
-
-#include "parser.h"
 %}
+
+%top {
+#include "parser.h"
+}
 
 %option outfile="lexer.c" header-file="lexer.h"
 %option noyywrap nounput noinput reentrant bison-bridge bison-locations yylineno
