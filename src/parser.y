@@ -41,6 +41,24 @@ void yyerror(YYLTYPE * loc, struct kafel_ctxt* ctxt, yyscan_t scanner,
     } while(0)                                             \
 
 #define INVALID_ARG_SIZE -1
+
+#define YYLLOC_DEFAULT(Cur, Rhs, N )                    \
+do {                                                    \
+  if (N) {                                              \
+    (Cur).filename = YYRHSLOC(Rhs, 1).filename;         \
+    (Cur).first_line = YYRHSLOC(Rhs, 1).first_line;     \
+    (Cur).first_column = YYRHSLOC(Rhs, 1).first_column; \
+    (Cur).last_line = YYRHSLOC(Rhs, N).last_line;       \
+    (Cur).last_column = YYRHSLOC(Rhs, N).last_column;   \
+  }                                                     \
+  else {                                                \
+    (Cur).filename = YYRHSLOC(Rhs, 0).filename;         \
+    (Cur).first_line = (Cur).last_line =                \
+      YYRHSLOC(Rhs, 0).last_line;                       \
+    (Cur).first_column = (Cur).last_column =            \
+      YYRHSLOC(Rhs, 0).last_column;                     \
+  }                                                     \
+} while (0)
 %}
 
 %code requires {
@@ -55,6 +73,16 @@ void yyerror(YYLTYPE * loc, struct kafel_ctxt* ctxt, yyscan_t scanner,
 #define YY_TYPEDEF_YY_SCANNER_T
 typedef void* yyscan_t;
 #endif
+
+typedef struct KAFEL_YYLTYPE
+{
+    int first_line;
+    int first_column;
+    int last_line;
+    int last_column;
+    const char *filename;
+} KAFEL_YYLTYPE;
+#define KAFEL_YYLTYPE KAFEL_YYLTYPE
 }
 
 %code provides {
@@ -124,6 +152,11 @@ YY_DECL;
 %destructor { syscall_descriptor_destroy(&$$); } <syscall_desc>
 %destructor { expr_destroy(&$$); } <expr>
 %destructor { free($$); } <id>
+
+%initial-action
+{
+    @$.filename = NULL;
+};
 
 %%
 
@@ -406,6 +439,10 @@ void yyerror(YYLTYPE * loc, struct kafel_ctxt* ctxt, yyscan_t scanner,
              const char *msg) {
   if (!ctxt->lexical_error) {
     YYUSE(scanner);
-    append_error(ctxt, "%d:%d: %s", loc->first_line, loc->first_column, msg);
+    if (loc->filename != NULL) {
+      append_error(ctxt, "%s:%d:%d: %s", loc->filename, loc->first_line, loc->first_column, msg);
+    } else {
+      append_error(ctxt, "%d:%d: %s", loc->first_line, loc->first_column, msg);
+    }
   }
 }
