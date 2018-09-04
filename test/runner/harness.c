@@ -53,14 +53,18 @@ static bool test_policy_compilation_flag;
 
 int test_policy(const char* source) {
   free(test_policy_prog.filter);
+  test_policy_prog.filter = NULL;
   test_policy_prog.len = 0;
   kafel_ctxt_t ctxt = kafel_ctxt_create();
   kafel_set_input_string(ctxt, source);
   int rv = kafel_compile(ctxt, &test_policy_prog);
   if (rv != 0) {
     test_policy_compilation_flag = false;
-    TEST_FAIL("Compilation failure:\n\t%s", kafel_error_msg(ctxt));
+    test_fail_with_message("Compilation failure:\n\t%s", kafel_error_msg(ctxt));
+    kafel_ctxt_destroy(&ctxt);
+    return -1;
   }
+  kafel_ctxt_destroy(&ctxt);
   test_policy_compilation_flag = true;
   TEST_PASSED();
 }
