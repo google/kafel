@@ -36,10 +36,17 @@ free(prog.filter);
 
 A simple language is used to define policies.
 
-A policy file has 3 parts:
- 1. Constant definitions (optional)
- 2. Policy definitions
- 3. Top level policy declaration
+Policy file consists of statements.
+A statement can either be a constant definition or a policy definition.
+Finally, at the end of the file, a top level policy has to be declared.
+
+```
+USE topLevel DEFAULT the_action
+```
+
+Specifies that `topLevel` policy is going to be compiled and action `the_action`
+should be taken when no rule matches.
+
 
 ## Numbers
 
@@ -51,8 +58,9 @@ Kafel supports following number notations:
 
 ## Constant definitions
 
-You may define numeric constants at the beging of policy file to make it more
-readable.
+You may define numeric constants to make your policies more readable.
+Constant definitions may be placed almost anywhere in the policy file.
+A constant definiton cannot be placed inside of a policy defintion.
 The defined constants can then be used anywhere where a number is expected.
 
 ```
@@ -147,15 +155,6 @@ their regular names as specified in Linux kernel and `man` pages.
 ```
 write { fd == 1 }
 ```
-
-## Top level policy declaration
-
-```
-USE topLevel DEFAULT the_action
-```
-
-Specifies that `topLevel` policy is compiled and action `the_action` should be
-taken when no rule matches.
 
 # Example
 

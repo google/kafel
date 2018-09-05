@@ -128,23 +128,25 @@ YY_DECL;
 %%
 
 program
-    : maybe_const_defs policies
-    | maybe_const_defs policies use_policy
+    : program_stmts
+    | program_stmts use_policy
     ;
 
-policies
-    : policy
+program_stmts
+    : program_stmt
+    | program_stmts program_stmt
+    ;
+
+program_stmt
+    : const_def
+    | policy
         {
-          register_policy(ctxt, $1);
-        }
-    | policies policy
-        {
-          if (lookup_policy(ctxt, $2->name) != NULL) {
-              emit_error(@2, "Redefinition of policy `%s'", $2->name);
-              policy_destroy(&$2);
+          if (lookup_policy(ctxt, $1->name) != NULL) {
+              emit_error(@1, "Redefinition of policy `%s'", $1->name);
+              policy_destroy(&$1);
               YYERROR;
           }
-          register_policy(ctxt, $2);
+          register_policy(ctxt, $1);
         }
     ;
 
@@ -378,16 +380,6 @@ operand
           }
           free($1);
         }
-    ;
-
-maybe_const_defs
-    : %empty
-    | const_defs
-    ;
-
-const_defs
-    : const_def
-    | const_defs const_def
     ;
 
 const_def
