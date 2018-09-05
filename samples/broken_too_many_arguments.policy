@@ -1,9 +1,0 @@
-POLICY sample {
-	ALLOW {
-		write(myfd, mybuf, mysize, more, and_more, and_even_more, and_thats_too_much) {
-			(myfd == 1 || myfd == 2) && (mysize < 4 || mybuf == 0)
-		}
-	}
-}
-
-USE sample DEFAULT KILL

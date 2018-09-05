@@ -51,7 +51,7 @@
 static struct sock_fprog test_policy_prog = {0, NULL};
 static bool test_policy_compilation_flag;
 
-int test_policy(const char* source) {
+int test_policy(bool should_fail, const char* source) {
   free(test_policy_prog.filter);
   test_policy_prog.filter = NULL;
   test_policy_prog.len = 0;
@@ -60,13 +60,20 @@ int test_policy(const char* source) {
   int rv = kafel_compile(ctxt, &test_policy_prog);
   if (rv != 0) {
     test_policy_compilation_flag = false;
-    test_fail_with_message("Compilation failure:\n\t%s", kafel_error_msg(ctxt));
+    if (!should_fail) {
+      test_fail_with_message("Compilation failure:\n\t%s",
+                             kafel_error_msg(ctxt));
+    }
     kafel_ctxt_destroy(&ctxt);
-    return -1;
+    return should_fail ? 0 : -1;
   }
   kafel_ctxt_destroy(&ctxt);
   test_policy_compilation_flag = true;
-  TEST_PASSED();
+  if (!should_fail) {
+    TEST_PASSED();
+  } else {
+    TEST_FAIL("Policy compiled succesfuly when compilation error expected");
+  }
 }
 
 static void sys_exit(int rv) { syscall(__NR_exit, rv); }

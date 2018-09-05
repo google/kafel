@@ -1,9 +1,0 @@
-POLICY sample {
-	ALLOW {
-		SYSCALL[0x12345678901234567] {
-		}
-	}
-}
-
-USE sample DEFAULT KILL
-

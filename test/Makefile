@@ -17,7 +17,7 @@
 #   limitations under the License.
 #
 
-SRCS:=basic.c
+SRCS:=basic.c broken.c
 TARGET:=tests
 LIBS:=runner/librunner.a ${PROJECT_ROOT}libkafel.a
 SUBDIRS:=runner

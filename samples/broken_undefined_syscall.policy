@@ -1,7 +1,0 @@
-POLICY sample {
-	ALLOW {
-		this_is_a_syscall_that_does_not_exist
-	}
-}
-
-USE sample DEFAULT KILL
