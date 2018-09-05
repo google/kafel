@@ -37,7 +37,9 @@ free(prog.filter);
 A simple language is used to define policies.
 
 Policy file consists of statements.
+
 A statement can either be a constant definition or a policy definition.
+
 Finally, at the end of the file, a top level policy has to be declared.
 
 ```
