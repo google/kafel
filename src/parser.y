@@ -385,10 +385,17 @@ operand
 const_def
     : '#' DEFINE IDENTIFIER NUMBER
         {
-          if (lookup_const(ctxt, $3, NULL) == 0) {
-            emit_error(@1, "Redefinition of constant `%s'", $3);
+          uint64_t value;
+          if (lookup_const(ctxt, $3, &value) == 0) {
+            if (value != $4) {
+              emit_error(@1, "Redefinition of constant `%s' with different "
+                         "value (was: %"PRIu64" is: %"PRIu64")", $3, value, $4);
+              free($3); $3 = NULL;
+              YYERROR;
+            }
+          } else {
+            register_const(ctxt, $3, $4);
           }
-          register_const(ctxt, $3, $4);
           free($3);
         }
     ;

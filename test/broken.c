@@ -108,3 +108,10 @@ TEST_CASE(broken_undefined_syscall) {
 TEST_CASE(broken_unterminated_comment) {
   TEST_COMPILE_ERROR("POLICY empty {} USE empty DEFAULT KILL /* oops ");
 }
+
+TEST_CASE(broken_const_redefintion) {
+  TEST_COMPILE_ERROR("#define myconst 1\
+                      #define myconst 2\
+                      POLICY empty {}\
+                      USE empty DEFAULT KILL");
+}
