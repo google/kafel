@@ -58,7 +58,7 @@ static int parse(struct kafel_ctxt* ctxt) {
     return -1;
   }
 
-  if (kafel_yyparse(ctxt, scanner)) {
+  if (kafel_yyparse(ctxt, scanner) || ctxt->lexical_error) {
     // parse error
     kafel_yylex_destroy(scanner);
     return -1;
