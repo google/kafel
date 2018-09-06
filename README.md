@@ -38,17 +38,28 @@ A simple language is used to define policies.
 
 Policy file consists of statements.
 
-A statement can either be a constant definition or a policy definition.
+A statement can be:
+ * a constant definition
+ * a policy definition
+ * a policy definition statement
+ * a default action statement
 
-Finally, at the end of the file, a top level policy has to be declared.
+Policy definition statements placed at file scope will be added to the implicit
+top level policy.
+This top level policy is going to be compiled.
+
+## Default action statement
 
 ```
-USE topLevel DEFAULT the_action
+DEFAULT the_action
 ```
 
-Specifies that `topLevel` policy is going to be compiled and action `the_action`
-should be taken when no rule matches.
+Specifies that action `the_action` should be taken when no rule matches.
 
+The default action must be specified just once.
+
+If the policy file specifies no default actions, the default action will
+be KILL
 
 ## Numbers
 

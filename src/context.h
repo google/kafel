@@ -41,7 +41,7 @@ struct kafel_ctxt {
     struct syscall_arg args[SYSCALL_MAX_ARGS];
   } syscall;
   struct policieslist policies;
-  struct policy* used_policy;
+  struct policy* main_policy;
   int default_action;
   uint32_t target_arch;
   const struct syscall_list* syscalls;

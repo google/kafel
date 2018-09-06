@@ -551,14 +551,16 @@ int compile_policy(struct kafel_ctxt *kafel_ctxt, struct sock_fprog *prog) {
   ASSERT(kafel_ctxt != NULL);
   ASSERT(prog != NULL);
 
-  if (kafel_ctxt->used_policy == NULL) {
-    append_error(kafel_ctxt, "No policy selected to be used");
-    return -1;
+  if (kafel_ctxt->main_policy == NULL) {
+    kafel_ctxt->main_policy = policy_create("@main", NULL);
+  }
+  if (kafel_ctxt->default_action == 0) {
+    kafel_ctxt->default_action = ACTION_KILL;
   }
 
   struct codegen_ctxt *ctxt = context_create();
   struct syscall_range_rules *rules = range_rules_create();
-  add_policy_rules(rules, kafel_ctxt->used_policy);
+  add_policy_rules(rules, kafel_ctxt->main_policy);
   normalize_rules(rules, kafel_ctxt->default_action);
   int begin = CURRENT_LOC;
   int next = generate_rules(ctxt, rules->data, rules->len);

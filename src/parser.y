@@ -129,7 +129,6 @@ YY_DECL;
 
 program
     : program_stmts
-    | program_stmts use_policy
     ;
 
 program_stmts
@@ -148,20 +147,21 @@ program_stmt
           }
           register_policy(ctxt, $1);
         }
-    ;
-
-use_policy
-    : USE IDENTIFIER DEFAULT action
+    | policy_statements
         {
-          struct policy* used = lookup_policy(ctxt, $2);
-          if (used == NULL) {
-              emit_error(@2, "Undefined policy `%s'", $2);
-              free($2); $2 = NULL;
-              YYERROR;
+          if (ctxt->main_policy == NULL) {
+            ctxt->main_policy = policy_create("@main", &$1);
+          } else {
+            TAILQ_CONCAT(&ctxt->main_policy->entries, &$1, entries);
           }
-          ctxt->used_policy = used;
-          ctxt->default_action = $4;
-          free($2);
+        }
+    | DEFAULT action
+        {
+          if (ctxt->default_action != 0) {
+            emit_error(@1, "Redefinition of default action");
+            YYERROR;
+          }
+          ctxt->default_action = $2;
         }
     ;
 
