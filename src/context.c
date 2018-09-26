@@ -65,8 +65,9 @@ void kafel_ctxt_clean(kafel_ctxt_t ctxt) {
   ctxt->errors.capacity = 0;
   ctxt->errors.len = 0;
   ctxt->errors.data = NULL;
-  free(ctxt->main_policy);
-  ctxt->main_policy = NULL;
+  if (ctxt->main_policy) {
+    policy_destroy(&ctxt->main_policy);
+  }
   ctxt->default_action = 0;
   ctxt->lexical_error = false;
   ctxt->syscalls = NULL;

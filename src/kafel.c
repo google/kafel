@@ -58,6 +58,7 @@ static int parse(struct kafel_ctxt* ctxt) {
   if (ctxt->syscalls == NULL) {
     append_error(ctxt, "Cannot resolve syscall list for architecture %#x\n",
                  ctxt->target_arch);
+    kafel_yylex_destroy(scanner);
     return -1;
   }
 
