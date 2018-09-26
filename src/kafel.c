@@ -51,6 +51,9 @@ static int parse(struct kafel_ctxt* ctxt) {
       return -1;
   }
 
+  kafel_yyset_column(1, scanner);
+  kafel_yyset_lineno(1, scanner);
+
   ctxt->syscalls = syscalls_lookup(ctxt->target_arch);
   if (ctxt->syscalls == NULL) {
     append_error(ctxt, "Cannot resolve syscall list for architecture %#x\n",
