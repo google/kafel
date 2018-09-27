@@ -47,14 +47,14 @@
 
 #include "common.h"
 
-#define MAX_INCLUDE_DEPTH 16
-
 static bool push_include(yyscan_t yyscanner);
 static bool pop_include(yyscan_t yyscanner);
 %}
 
 %top {
 #include "parser.h"
+
+#define MAX_INCLUDE_DEPTH 16
 }
 
 %option outfile="lexer.c" header-file="lexer.h"

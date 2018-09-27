@@ -65,6 +65,10 @@ static int parse(struct kafel_ctxt* ctxt) {
 
   if (kafel_yyparse(ctxt, scanner) || ctxt->lexical_error) {
     // parse error
+    // workaround for a flex bug
+    for (int i = 0; i < MAX_INCLUDE_DEPTH; ++i) {
+      kafel_yypop_buffer_state(scanner);
+    }
     kafel_yylex_destroy(scanner);
     return -1;
   }
