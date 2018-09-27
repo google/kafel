@@ -1,8 +1,1 @@
-title: Kafel
-description: A language and library for specifying syscall filtering policies.
-google_analytics: 
-show_downloads: true
-theme: jekyll-theme-tactile
-
-gems:
-  - jekyll-mentions
+theme: jekyll-theme-slate

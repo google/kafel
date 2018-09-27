@@ -1,12 +1,16 @@
-# WHAT IS IT?
+---
+title: Kafel
+---
+
+## WHAT IS IT?
 Kafel is a language and library for specifying syscall filtering policies.
 The policies are compiled into BPF code that can be used with seccomp-filter.
 
 This is NOT an official Google product.
 
-# Usage
+## Usage
 
-## With verbose error reporting
+### With verbose error reporting
 ```c
 struct sock_fprog prog;
 kafel_ctxt_t ctxt = kafel_ctxt_create();
@@ -21,7 +25,7 @@ prctl(PR_SET_SECCOMP, SECCOMP_MODE_FILTER, &prog, 0, 0);
 free(prog.filter);
 ```
 
-## Without verbose error reporting
+### Without verbose error reporting
 ```c
 struct sock_fprog prog;
 if (kafel_compile_string(seccomp_policy, &prog)) {
@@ -32,7 +36,7 @@ prctl(PR_SET_SECCOMP, SECCOMP_MODE_FILTER, &prog, 0, 0);
 free(prog.filter);
 ```
 
-# Policy language
+## Policy language
 
 A simple language is used to define policies.
 
@@ -41,7 +45,7 @@ A policy file has 3 parts:
  2. Policy definitions
  3. Top level policy declaration
 
-## Numbers
+### Numbers
 
 Kafel supports following number notations:
  * Decimal `42`
@@ -49,7 +53,7 @@ Kafel supports following number notations:
  * Octal `0777`
  * Binary `0b10101`
 
-## Constant definitions
+### Constant definitions
 
 You may define numeric constants at the beging of policy file to make it more
 readable.
@@ -59,14 +63,14 @@ The defined constants can then be used anywhere where a number is expected.
 #define MYCONST 123
 ```
 
-## Policy definitions
+### Policy definitions
 
 Policy definition is a list of action blocks and use statements separated by
 commas.
 
 __samples/__ contains some example policies that demonstrate supported features.
 
-### Use statements
+#### Use statements
 
 A `USE someOtherPolicy` behaves as if `someOtherPolicy` body was pasted in its
 place. You may only use policies defined before the use statement.
@@ -74,7 +78,7 @@ place. You may only use policies defined before the use statement.
 With use statements you can create meaningful groups of filtering rules that are
 building blocks of bigger policies.
 
-### Action blocks
+#### Action blocks
 
 Action block consist of a target and list of syscall matching rules separated
 with commas.
@@ -92,7 +96,7 @@ Kafel           | seccomp-filter
 `TRAP(number)`  | `SECCOMP_RET_TRAP+number`
 `TRACE(number)` | `SECCOMP_RET_TRACE+number`
 
-### Syscall matching rules
+#### Syscall matching rules
 
 A rules consist of syscall name and optional list of boolean expressions.
 
@@ -100,7 +104,7 @@ List of boolean expressions separated by commas.
 A comma is semantically equivalent to `||` but has the lowest precedence,
 therefore it may be easier to read.
 
-#### Syscall naming
+##### Syscall naming
 
 Normally syscalls are specified by their names as defined in Linux kernel.
 However, you may also filter __custom syscalls__ that are not in the standard
@@ -124,7 +128,7 @@ POLICY my_literal {
 }
 ```
 
-#### Argument filtering
+##### Argument filtering
 
 Boolean expressions are used to filter syscalls based on their arguments.
 A expression resembles C language syntax, except that there are no
@@ -147,7 +151,7 @@ their regular names as specified in Linux kernel and `man` pages.
 write { fd == 1 }
 ```
 
-## Top level policy declaration
+### Top level policy declaration
 
 ```
 USE topLevel DEFAULT the_action
