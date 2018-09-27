@@ -40,10 +40,30 @@ free(prog.filter);
 
 A simple language is used to define policies.
 
-A policy file has 3 parts:
- 1. Constant definitions (optional)
- 2. Policy definitions
- 3. Top level policy declaration
+Policy file consists of statements.
+
+A statement can be:
+ * a constant definition
+ * a policy definition
+ * a policy definition statement
+ * a default action statement
+
+Policy definition statements placed at file scope will be added to the implicit
+top level policy.
+This top level policy is going to be compiled.
+
+### Default action statement
+
+```
+DEFAULT the_action
+```
+
+Specifies that action `the_action` should be taken when no rule matches.
+
+The default action must be specified just once.
+
+If the policy file specifies no default actions, the default action will
+be KILL
 
 ### Numbers
 
@@ -55,8 +75,9 @@ Kafel supports following number notations:
 
 ### Constant definitions
 
-You may define numeric constants at the beging of policy file to make it more
-readable.
+You may define numeric constants to make your policies more readable.
+Constant definitions may be placed almost anywhere in the policy file.
+A constant definiton cannot be placed inside of a policy defintion.
 The defined constants can then be used anywhere where a number is expected.
 
 ```
@@ -91,6 +112,7 @@ return values.
 Kafel           | seccomp-filter
 --------------- | ---------------------------
 `ALLOW`         | `SECCOMP_RET_ALLOW`
+`LOG`           | `SECCOMP_RET_LOG`
 `KILL`, `DENY`  | `SECCOMP_RET_KILL`
 `ERRNO(number)` | `SECCOMP_RET_ERRNO+number`
 `TRAP(number)`  | `SECCOMP_RET_TRAP+number`
@@ -151,11 +173,32 @@ their regular names as specified in Linux kernel and `man` pages.
 write { fd == 1 }
 ```
 
-### Top level policy declaration
+## Example
+
+When used with [nsjail](https://github.com/google/nsjail), the following command allows to create a fairly constrained environment for your shell
 
 ```
-USE topLevel DEFAULT the_action
+$ ./nsjail --chroot / --seccomp_string 'POLICY a { ALLOW { write, execve, brk, access, mmap, open, newfstat, close, read, mprotect, arch_prctl, munmap, getuid, getgid, getpid, rt_sigaction, geteuid, getppid, getcwd, getegid, ioctl, fcntl, newstat, clone, wait4, rt_sigreturn, exit_group } } USE a DEFAULT KILL' -- /bin/sh -i
 ```
-
-Specifies that `topLevel` policy is compiled and action `the_action` should be
-taken when no rule matches.
+```
+[2017-01-15T21:53:08+0100] Mode: STANDALONE_ONCE
+[2017-01-15T21:53:08+0100] Jail parameters: hostname:'NSJAIL', chroot:'/', process:'/bin/sh', bind:[::]:0, max_conns_per_ip:0, uid:(ns:1000, global:1000), gid:(ns:1000, global:1000), time_limit:0, personality:0, daemonize:false, clone_newnet:true, clone_newuser:true, clone_newns:true, clone_newpid:true, clone_newipc:true, clonew_newuts:true, clone_newcgroup:false, keep_caps:false, tmpfs_size:4194304, disable_no_new_privs:false, pivot_root_only:false
+[2017-01-15T21:53:08+0100] Mount point: src:'/' dst:'/' type:'' flags:0x5001 options:''
+[2017-01-15T21:53:08+0100] Mount point: src:'(null)' dst:'/proc' type:'proc' flags:0x0 options:''
+[2017-01-15T21:53:08+0100] PID: 18873 about to execute '/bin/sh' for [STANDALONE_MODE]
+/bin/sh: 0: can't access tty; job control turned off
+$ set
+IFS='
+'
+OPTIND='1'
+PATH='/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
+PPID='0'
+PS1='$ '
+PS2='> '
+PS4='+ '
+PWD='/'
+$ id
+Bad system call
+$ exit
+[2017-01-15T21:53:17+0100] PID: 18873 exited with status: 159, (PIDs left: 0)
+```
