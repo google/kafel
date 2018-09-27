@@ -46,16 +46,15 @@ void test_failed(int line, const char* file) {
   test_case_failed_flag = true;
 }
 
+#define MAX_TESTS 4096
+
+test_case_def_t runner_tests[MAX_TESTS];
+int runner_tests_count;
+
 int main(void) {
-  int tests_failed = 0, tests_passed = 0, tests_left = 0;
-  extern test_case_def_t __start_test_cases_list;
-  extern test_case_def_t __stop_test_cases_list;
-  for (test_case_def_t* test_case = &__start_test_cases_list;
-       test_case != &__stop_test_cases_list; ++test_case) {
-    ++tests_left;
-  }
-  for (test_case_def_t* test_case = &__start_test_cases_list;
-       test_case != &__stop_test_cases_list; ++test_case) {
+  int tests_failed = 0, tests_passed = 0, tests_left = runner_tests_count;
+  for (int i = 0; i < runner_tests_count; ++i) {
+    test_case_def_t* test_case = &runner_tests[i];
     fprintf(stderr, "[+%4d|-%4d| %4d]\r", tests_passed, tests_failed,
             tests_left);
     test_case_failed_flag = false;
