@@ -31,3 +31,4 @@ ${TARGET}: ${OBJECTS} ${LIBS}
 # DO NOT DELETE THIS LINE -- make depend depends on it.
 
 basic.o: runner/harness.h runner/runner.h
+broken.o: runner/harness.h runner/runner.h

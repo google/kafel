@@ -75,10 +75,11 @@ expression.o: expression.h common.h
 policy.o: policy.h expression.h common.h
 range_rules.o: range_rules.h policy.h expression.h common.h syscall.h
 syscall.o: syscall.h common.h
-lexer.o: parser.h context.h policy.h expression.h syscall.h
+lexer.o: parser.h context.h policy.h expression.h syscall.h common.h
 parser.o: parser.h context.h policy.h expression.h syscall.h lexer.h
 syscalls/amd64_syscalls.o: syscall.h
 syscalls/i386_syscalls.o: syscall.h
-syscalls/arm_syscalls.o: syscall.h
+syscalls/aarch64_syscalls.o: syscall.h
 syscalls/mipso32_syscalls.o: syscall.h
 syscalls/mips64_syscalls.o: syscall.h
+syscalls/arm_syscalls.o: syscall.h
