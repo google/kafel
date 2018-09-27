@@ -1,0 +1,11 @@
+#include "basic.policy"
+#include "chain_2.policy"
+#include "chain_3.policy"
+
+POLICY chain {
+  ALLOW {
+    write,
+    read,
+    open
+  }
+}

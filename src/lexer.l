@@ -19,24 +19,38 @@
 */
 
 %{
-#define YY_USER_ACTION yylloc->first_line = yylloc->last_line = yylineno; \
+#define YY_USER_ACTION yylloc->first_line = yylloc->last_line = yylineno;     \
     yylloc->first_column = yycolumn; yylloc->last_column = yycolumn + yyleng; \
     yycolumn += yyleng;
-#define YY_USER_INIT                 \
-    ctxt->lexical_error = false;     \
-    if (yycolumn == 0) yycolumn = 1; \
+#define YY_USER_INIT             \
+    ctxt->lexical_error = false; \
+    if (yycolumn == 0) yycolumn = 1;
 
-#define emit_error(fmt, ...)                                  \
-    do {                                                      \
-        append_error(ctxt, "%d:%d: lexical error, "fmt,       \
-                    yylloc->first_line, yylloc->first_column, \
-                    ##__VA_ARGS__);                           \
-        ctxt->lexical_error = true;                           \
-        yyterminate();                                        \
-    } while(0)                                                \
+#define set_error(loc, fmt, ...)                            \
+    do {                                                    \
+        append_error(ctxt, "%d:%d: "fmt, (loc)->first_line, \
+                     (loc)->first_column, ##__VA_ARGS__);   \
+        ctxt->lexical_error = true;                         \
+    } while(0)
+
+#define set_error_r(scanner, fmt, ...)                       \
+    set_error(kafel_yyget_lloc(scanner), fmt, ##__VA_ARGS__)
+
+#define emit_error(fmt, ...)                   \
+    do {                                       \
+        set_error(yylloc, fmt, ##__VA_ARGS__); \
+        yyterminate();                         \
+    } while(0)
 
 #include <stdlib.h>
 #include <string.h>
+
+#include "common.h"
+
+#define MAX_INCLUDE_DEPTH 16
+
+static bool push_include(yyscan_t yyscanner);
+static bool pop_include(yyscan_t yyscanner);
 %}
 
 %top {
@@ -48,27 +62,15 @@
 %option prefix="kafel_yy"
 
 %s comment
+%s include
 
 IDENTIFIER [A-Za-z][A-Za-z0-9_]*
 
 %%
 
-<comment>{
-[^\n*]+   {}
-
-"*"[^/]   {}
-
-[\n]+  { yycolumn = 1; }
-
-"*/" {
-        BEGIN(INITIAL);
-    }
-
-<<EOF>> {
-  emit_error("unterminated comment");
-}
-
-}
+%{
+bool whitespace = false;
+%}
 
 <INITIAL>{
 
@@ -137,6 +139,10 @@ IDENTIFIER [A-Za-z][A-Za-z0-9_]*
         return IDENTIFIER;
     }
 
+"#include" { /* include statement */
+        BEGIN(include);
+    }
+
 [ \t]+        {}
 [\n]+         { yycolumn = 1; }
 
@@ -151,6 +157,8 @@ IDENTIFIER [A-Za-z][A-Za-z0-9_]*
 "&&"            { return LOGIC_AND; }
 "|"             { return BIT_OR; }
 "&"             { return BIT_AND; }
+"["             { return '['; }
+"]"             { return ']'; }
 "("             { return '('; }
 ")"             { return ')'; }
 "{"             { return '{'; }
@@ -158,8 +166,112 @@ IDENTIFIER [A-Za-z][A-Za-z0-9_]*
 ","             { return ','; }
 "!"             { return '!'; }
 "#"             { return '#'; }
-.               { return yytext[0]; }
 
 }
 
+<comment>{
+[^\n*]+   {}
+
+"*"[^/]   {}
+
+[\n]+     { yycolumn = 1; }
+
+"*/"      { /* end of comment */
+        BEGIN(INITIAL);
+    }
+
+<<EOF>>   {
+        if (pop_include(yyscanner)) {
+            BEGIN(include);
+        } else {
+            emit_error("unterminated comment");
+        }
+    }
+}
+
+<INITIAL>{
+    <<EOF>> {
+      if (pop_include(yyscanner)) {
+          BEGIN(include);
+      } else {
+          yyterminate();
+      }
+    }
+}
+
+<include>{
+[ \t]+        {
+                whitespace = true;
+    }
+["][^"]+["]   {
+        if (!whitespace) {
+            emit_error("unexpected filename");
+        }
+        whitespace = false;
+        if (push_include(yyscanner)) {
+            BEGIN(INITIAL);
+        } else {
+            yyterminate();
+        }
+    }
+[\n;]         { /* end of include */
+        BEGIN(INITIAL);
+    }
+<<EOF>>       { /* unterminated include */
+        emit_error("unterminated include statement");
+    }
+}
+
+<*>. { emit_error("unexpected char `%c'", yytext[0]); }
+
 %%
+
+static bool push_include(yyscan_t yyscanner) {
+  const char* filename_in_quotes = yyget_text(yyscanner);
+  struct kafel_ctxt* ctxt = (struct kafel_ctxt*)yyget_extra(yyscanner);
+  ASSERT(ctxt != NULL);
+  struct includes_ctxt* ictxt = &ctxt->includes_ctxt;
+  if (includes_depth(ictxt) >= MAX_INCLUDE_DEPTH) {
+      set_error_r(yyscanner, "maximum include depth (%d) exceeded",
+                  MAX_INCLUDE_DEPTH);
+      return false;
+  }
+  size_t len = strlen(filename_in_quotes);
+  ASSERT(len > 2);
+  char* fname = malloc(len-1);
+  ASSERT(fname != NULL);
+  memcpy(fname, filename_in_quotes+1, len-2);
+  fname[len-2] = '\0';
+  struct included_file* file = includes_resolve(ictxt, fname);
+  if (file == NULL) {
+      set_error_r(yyscanner, "could not include file `%s'", fname);
+      free(fname);
+      fname = NULL;
+      return false;
+  }
+  free(fname);
+  fname = NULL;
+  includes_stack_push(ictxt, file);
+  YY_BUFFER_STATE buf_state = kafel_yy_create_buffer(file->fp, YY_BUF_SIZE,
+                                                     yyscanner);
+  kafel_yypush_buffer_state(buf_state, yyscanner);
+  yyget_lloc(yyscanner)->filename = file->path;
+  return true;
+}
+
+static bool pop_include(yyscan_t yyscanner) {
+    struct kafel_ctxt* ctxt = (struct kafel_ctxt*)yyget_extra(yyscanner);
+    ASSERT(ctxt != NULL);
+    struct includes_ctxt* ictxt = &ctxt->includes_ctxt;
+    if (!includes_stack_is_empty(ictxt)) {
+        includes_stack_pop(ictxt);
+        kafel_yypop_buffer_state(yyscanner);
+        const char* fname = NULL;
+        if (!includes_stack_is_empty(ictxt)) {
+          fname = includes_stack_top(ictxt)->path;
+        }
+        yyget_lloc(yyscanner)->filename = fname;
+        return true;
+    }
+    return false;
+}

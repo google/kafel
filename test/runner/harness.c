@@ -57,6 +57,7 @@ int test_policy(bool should_fail, const char* source) {
   test_policy_prog.len = 0;
   kafel_ctxt_t ctxt = kafel_ctxt_create();
   kafel_set_input_string(ctxt, source);
+  kafel_add_include_search_path(ctxt, "testdata");
   int rv = kafel_compile(ctxt, &test_policy_prog);
   if (rv != 0) {
     test_policy_compilation_flag = false;

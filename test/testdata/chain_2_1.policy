@@ -1,0 +1,6 @@
+POLICY allow_stdio {
+  ALLOW {
+    write { fd == STDOUT || fd == STDERR },
+    read { fd == STDIN }
+  }
+}

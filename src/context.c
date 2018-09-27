@@ -32,6 +32,7 @@
 
 KAFEL_API kafel_ctxt_t kafel_ctxt_create(void) {
   struct kafel_ctxt* ctxt = calloc(1, sizeof(*ctxt));
+  includes_ctxt_init(&ctxt->includes_ctxt);
   TAILQ_INIT(&ctxt->policies);
   TAILQ_INIT(&ctxt->constants);
   ctxt->target_arch = KAFEL_DEFAULT_TARGET_ARCH;
@@ -55,7 +56,7 @@ static void clean_constants(kafel_ctxt_t ctxt) {
   }
 }
 
-void kafel_ctxt_clean(kafel_ctxt_t ctxt) {
+void kafel_ctxt_reset(kafel_ctxt_t ctxt) {
   ASSERT(ctxt != NULL);
 
   clean_args(ctxt);
@@ -71,6 +72,13 @@ void kafel_ctxt_clean(kafel_ctxt_t ctxt) {
   ctxt->default_action = 0;
   ctxt->lexical_error = false;
   ctxt->syscalls = NULL;
+}
+
+void kafel_ctxt_clean(kafel_ctxt_t ctxt) {
+  ASSERT(ctxt != NULL);
+
+  kafel_ctxt_reset(ctxt);
+  includes_ctxt_clean(&ctxt->includes_ctxt);
 }
 
 KAFEL_API void kafel_ctxt_destroy(kafel_ctxt_t* ctxt) {

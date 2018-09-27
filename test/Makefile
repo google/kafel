@@ -17,7 +17,7 @@
 #   limitations under the License.
 #
 
-SRCS:=basic.c broken.c
+SRCS:=basic.c broken.c includes.c
 TARGET:=tests
 LIBS:=runner/librunner.a ${PROJECT_ROOT}libkafel.a
 SUBDIRS:=runner
@@ -32,3 +32,4 @@ ${TARGET}: ${OBJECTS} ${LIBS}
 
 basic.o: runner/harness.h runner/runner.h
 broken.o: runner/harness.h runner/runner.h
+includes.o: runner/harness.h runner/runner.h

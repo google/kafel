@@ -1,0 +1,3 @@
+POLICY allow_exit {
+  ALLOW { exit }
+}

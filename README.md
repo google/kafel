@@ -169,6 +169,32 @@ their regular names as specified in Linux kernel and `man` pages.
 write { fd == 1 }
 ```
 
+## Include directive
+
+In order to simplify reuse and composition of policies, kafel provides include
+support.
+
+```
+#include "some_other_file.policy"
+```
+
+Kafel looks for included files only under directories explicitly added to the
+search paths.
+
+```c
+kafel_include_add_search_path(ctxt, "includes/path");
+```
+
+Adds `includes/path` to search paths - the example include directive will refer
+then to `includes/path/some_other_file.policy`.
+
+Include directive is terminated by a newline or a semicolon.
+Multiple files, separated by whitespace, can be specified in one directive.
+
+```
+#include "first.policy" "second.policy"; #include "third.policy"
+```
+
 # Example
 
 When used with [nsjail](https://github.com/google/nsjail), the following command allows to create a fairly constrained environment for your shell

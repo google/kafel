@@ -59,6 +59,11 @@ void kafel_set_input_string(kafel_ctxt_t ctxt, const char* string);
 void kafel_set_target_arch(kafel_ctxt_t ctxt, uint32_t target_arch);
 
 /*
+ * Adds path to list of include search paths for ctxt
+ */
+void kafel_add_include_search_path(kafel_ctxt_t ctxt, const char* path);
+
+/*
  * Compiles policy using ctxt as context.
  * Stores resulting code in prog.
  * Allocates memory for BPF code, caller is responsible freeing prog->filter

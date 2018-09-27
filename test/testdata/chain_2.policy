@@ -1,0 +1,11 @@
+#define STDIN 0
+#define STDOUT 1
+#define STDERR 2
+
+#include "chain_2_1.policy"
+
+POLICY chain_2 {
+  KILL {
+    ptrace
+  }
+}

@@ -26,6 +26,7 @@
 #include <stdint.h>
 #include <stdio.h>
 
+#include "includes.h"
 #include "policy.h"
 #include "syscall.h"
 
@@ -40,6 +41,7 @@ struct kafel_ctxt {
     int args_num;
     struct syscall_arg args[SYSCALL_MAX_ARGS];
   } syscall;
+  struct includes_ctxt includes_ctxt;
   struct policieslist policies;
   struct policy* main_policy;
   int default_action;
@@ -66,6 +68,7 @@ struct kafel_ctxt {
 };
 
 void kafel_ctxt_clean(struct kafel_ctxt* ctxt);
+void kafel_ctxt_reset(struct kafel_ctxt* ctxt);
 
 void register_policy(struct kafel_ctxt* ctxt, struct policy* policy);
 void clean_args(struct kafel_ctxt* ctxt);

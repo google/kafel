@@ -25,13 +25,14 @@
 #include "codegen.h"
 #include "common.h"
 #include "context.h"
+#include "includes.h"
 #include "lexer.h"
 #include "syscall.h"
 
 static int parse(struct kafel_ctxt* ctxt) {
   yyscan_t scanner;
 
-  if (kafel_yylex_init(&scanner)) {
+  if (kafel_yylex_init_extra(ctxt, &scanner)) {
     // couldn't initialize
     return -1;
   }
@@ -94,13 +95,20 @@ KAFEL_API void kafel_set_target_arch(kafel_ctxt_t ctxt, uint32_t target_arch) {
   ctxt->target_arch = target_arch;
 }
 
+KAFEL_API void kafel_add_include_search_path(kafel_ctxt_t ctxt,
+                                             const char* path) {
+  ASSERT(ctxt != NULL);
+  ASSERT(path != NULL);
+  includes_add_search_path(&ctxt->includes_ctxt, path);
+}
+
 KAFEL_API int kafel_compile(kafel_ctxt_t ctxt, struct sock_fprog* prog) {
   if (prog == NULL) {
     errno = EINVAL;
     return -EINVAL;
   }
 
-  kafel_ctxt_clean(ctxt);
+  kafel_ctxt_reset(ctxt);
 
   int rv = parse(ctxt);
   if (rv) {
