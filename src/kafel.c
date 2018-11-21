@@ -29,6 +29,9 @@
 #include "lexer.h"
 #include "syscall.h"
 
+// flex <2.5.36 does not declare yyset_column
+void kafel_yyset_column(int, yyscan_t);
+
 static int parse(struct kafel_ctxt* ctxt) {
   yyscan_t scanner;
 
