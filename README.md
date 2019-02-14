@@ -158,10 +158,11 @@ arithmetic operators.
 some_syscall(first_arg, my_arg_name) { first_arg == 42 && my_arg_name != 42 }
 ```
 
-Bitwise and (`&`) operator can be used to test for flags.
+Bitwise and (`&`) and or ('|') operators can be used to test for flags.
 
 ```
-mmap { (prot & PROT_EXEC) == 0 }
+mmap { (prot & PROT_EXEC) == 0 },
+open { flags == O_RDONLY|O_CLOEXEC }
 ```
 
 You don't have to declare arguments for well-known syscalls but can just use

@@ -43,9 +43,15 @@ enum {
   EXPR_LE,
   EXPR_EQ,
   EXPR_NEQ,
+  EXPR_BIT_OR,
   EXPR_BIT_AND,
   EXPR_BINARY_MAX = EXPR_BIT_AND,
   EXPR_MAX = EXPR_BINARY_MAX,
+};
+
+struct cached_value {
+  bool is_const;
+  uint32_t value;
 };
 
 struct expr_tree {
@@ -62,6 +68,8 @@ struct expr_tree {
       struct expr_tree *right;
     };
   };
+  struct cached_value low;
+  struct cached_value high;
 };
 
 struct expr_tree *expr_create_number(uint64_t value);

@@ -141,7 +141,7 @@ YY_DECL;
 %type <syscall_desc> syscall_id
 %type <syscall_nr> syscall
 
-%type <expr> bool_expr or_bool_expr and_bool_expr primary_bool_expr masked_op
+%type <expr> bool_expr or_bool_expr and_bool_expr primary_bool_expr bit_or_expr bit_and_expr
 %type <expr> operand
 
 %destructor { policy_destroy(&$$); } <policy>
@@ -383,22 +383,27 @@ and_bool_expr
 primary_bool_expr
     : '(' bool_expr ')' { $$ = $2; }
     | '!' primary_bool_expr { $$ = expr_create_unary(EXPR_NOT, $2); }
-    | masked_op GT masked_op { $$ = expr_create_binary(EXPR_GT, $1, $3); }
-    | masked_op LT masked_op { $$ = expr_create_binary(EXPR_LT, $1, $3); }
-    | masked_op GE masked_op { $$ = expr_create_binary(EXPR_GE, $1, $3); }
-    | masked_op LE masked_op { $$ = expr_create_binary(EXPR_LE, $1, $3); }
-    | masked_op EQ masked_op { $$ = expr_create_binary(EXPR_EQ, $1, $3); }
-    | masked_op NEQ masked_op { $$ = expr_create_binary(EXPR_NEQ, $1, $3); }
+    | bit_or_expr GT bit_or_expr { $$ = expr_create_binary(EXPR_GT, $1, $3); }
+    | bit_or_expr LT bit_or_expr { $$ = expr_create_binary(EXPR_LT, $1, $3); }
+    | bit_or_expr GE bit_or_expr { $$ = expr_create_binary(EXPR_GE, $1, $3); }
+    | bit_or_expr LE bit_or_expr { $$ = expr_create_binary(EXPR_LE, $1, $3); }
+    | bit_or_expr EQ bit_or_expr { $$ = expr_create_binary(EXPR_EQ, $1, $3); }
+    | bit_or_expr NEQ bit_or_expr { $$ = expr_create_binary(EXPR_NEQ, $1, $3); }
     ;
 
-masked_op
-    : operand BIT_AND operand { $$ = expr_create_binary(EXPR_BIT_AND, $1, $3); }
+bit_or_expr
+    : bit_or_expr BIT_OR bit_and_expr { $$ = expr_create_binary(EXPR_BIT_OR, $1, $3); }
+    | bit_and_expr { $$ = $1; }
+    ;
+
+bit_and_expr
+    : bit_and_expr BIT_AND operand { $$ = expr_create_binary(EXPR_BIT_AND, $1, $3); }
     | operand { $$ = $1; }
-    | '(' masked_op ')' { $$ = $2; }
     ;
 
 operand
     : NUMBER { $$ = expr_create_number($1); }
+    | '(' bit_or_expr ')' { $$ = $2; }
     | IDENTIFIER
         {
           uint64_t value = 0;
