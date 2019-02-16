@@ -19,6 +19,7 @@
 */
 
 #include <linux/unistd.h>
+#include <fcntl.h>
 #include <unistd.h>
 
 #include "runner/harness.h"
@@ -101,4 +102,47 @@ TEST_CASE(rules_order) {
   TEST_POLICY_ALLOWS_SYSCALL(SYSCALL_SPEC3(__NR_read, 5, 0, 0),
                              SYSCALL_ERRNO_SPEC(1));
   TEST_POLICY_BLOCKS_SYSCALL(SYSCALL_SPEC3(__NR_read, 5, 0, 1));
+}
+
+TEST_CASE(bitwise_operations) {
+  TEST_POLICY(
+      "POLICY a { \n"
+      "  ALLOW { exit, read { count | 8 | fd == 8 } }\n"
+      "} USE a DEFAULT KILL");
+  TEST_POLICY_ALLOWS_SYSCALL(SYSCALL_SPEC3(__NR_read, 0, 0, 0),
+                             SYSCALL_RESULT_SPEC(0));
+  TEST_POLICY_BLOCKS_SYSCALL(SYSCALL_SPEC3(__NR_read, 5, 0, 0));
+
+  // Test literals
+  TEST_POLICY(
+      "POLICY a { \n"
+      "  ALLOW { exit },\n"
+      "  ERRNO(1) { read { count == 1|2|4 } }\n"
+      "} USE a DEFAULT KILL");
+  TEST_POLICY_ALLOWS_SYSCALL(SYSCALL_SPEC3(__NR_read, 5, 0, 7),
+                             SYSCALL_ERRNO_SPEC(1));
+  TEST_POLICY_BLOCKS_SYSCALL(SYSCALL_SPEC3(__NR_read, 5, 0, 0));
+
+  // Order of operations
+  char dummy = 'a';
+  TEST_POLICY(
+      "POLICY a {\n"
+      "  ALLOW { exit, read { buf | buf & count == buf } }\n"
+      "} USE a DEFAULT KILL");
+  TEST_POLICY_ALLOWS_SYSCALL(SYSCALL_SPEC3(__NR_read, STDIN_FILENO, (long) &dummy, 0),
+                             SYSCALL_RESULT_SPEC(0));
+
+  // Test stack
+  TEST_POLICY(
+      "POLICY a {\n"
+      "  ALLOW {\n"
+      "    exit,\n"
+      "    read {\n"
+      "      (count | 2) & (fd | 3) == 2\n"
+      "    }\n"
+      "  }\n"
+      "} USE a DEFAULT KILL");
+  TEST_POLICY_ALLOWS_SYSCALL(SYSCALL_SPEC3(__NR_read, 0, 0, 0),
+                             SYSCALL_RESULT_SPEC(0));
+  TEST_POLICY_BLOCKS_SYSCALL(SYSCALL_SPEC3(__NR_read, 0, 0, 1));
 }
