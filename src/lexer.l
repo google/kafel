@@ -124,7 +124,10 @@ bool whitespace = false;
 "SYSCALL"       { return SYSCALL; }
 "ALLOW"         { return ALLOW; }
 "LOG"           { return LOG; }
+"USER_NOTIF"    { return USER_NOTIF; }
 "ERRNO"         { return ERRNO; }
+"KILL_PROCESS"  { return KILL_PROCESS; }
+"KILL_THREAD"   { return KILL; }
 "KILL"          { return KILL; }
 "DENY"          { return DENY; }
 "TRAP"          { return TRAP; }

@@ -125,7 +125,7 @@ YY_DECL;
 %token IDENTIFIER NUMBER
 
 %token POLICY USE DEFAULT SYSCALL DEFINE
-%token ALLOW LOG KILL DENY ERRNO TRAP TRACE
+%token ALLOW LOG KILL KILL_PROCESS DENY ERRNO TRAP TRACE USER_NOTIF
 
 %token GT LT GE LE EQ NEQ
 
@@ -246,6 +246,8 @@ action
     | LOG  { $$ = ACTION_LOG; }
     | DENY { $$ = ACTION_KILL; }
     | KILL { $$ = ACTION_KILL; }
+    | KILL_PROCESS { $$ = ACTION_KILL_PROCESS; }
+    | USER_NOTIF { $$ = ACTION_USER_NOTIF; }
     | ERRNO '(' NUMBER ')'
         {
           if ($3 > 0xffff) {

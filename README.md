@@ -105,14 +105,16 @@ Target of first rule matched is the policy decision.
 Following table list Kafel targets and their corresponding seccomp-filter
 return values.
 
-Kafel           | seccomp-filter
---------------- | ---------------------------
-`ALLOW`         | `SECCOMP_RET_ALLOW`
-`LOG`           | `SECCOMP_RET_LOG`
-`KILL`, `DENY`  | `SECCOMP_RET_KILL`
-`ERRNO(number)` | `SECCOMP_RET_ERRNO+number`
-`TRAP(number)`  | `SECCOMP_RET_TRAP+number`
-`TRACE(number)` | `SECCOMP_RET_TRACE+number`
+Kafel                          | seccomp-filter
+------------------------------ | ---------------------------
+`ALLOW`                        | `SECCOMP_RET_ALLOW`
+`LOG`                          | `SECCOMP_RET_LOG`
+`KILL`, `KILL_THREAD`, `DENY`  | `SECCOMP_RET_KILL`
+`KILL_PROCESS`                 | `SECCOMP_RET_KILL_PROCESS`
+`USER_NOTIF`                   | `SECCOMP_RET_USER_NOTIF`
+`ERRNO(number)`                | `SECCOMP_RET_ERRNO+number`
+`TRAP(number)`                 | `SECCOMP_RET_TRAP+number`
+`TRACE(number)`                | `SECCOMP_RET_TRACE+number`
 
 ### Syscall matching rules
 

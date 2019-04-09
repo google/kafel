@@ -103,7 +103,26 @@ void disasm_inst(const struct sock_filter* inst, const int pc) {
       break;
     case BPF_RET | BPF_K: {
       __u32 data = inst->k & SECCOMP_RET_DATA;
+#ifdef SECCOMP_RET_ACTION_FULL
+      switch (inst->k & SECCOMP_RET_ACTION_FULL) {
+#ifdef SECCOMP_RET_KILL_PROCESS
+        case SECCOMP_RET_KILL_PROCESS:
+          printf("KILL_PROCESS");
+          break;
+#endif
+#else
       switch (inst->k & SECCOMP_RET_ACTION) {
+#endif
+#ifdef SECCOMP_RET_LOG
+        case SECCOMP_RET_LOG:
+          printf("LOG");
+          break;
+#endif
+#ifdef SECCOMP_RET_USER_NOTIF
+        case SECCOMP_RET_USER_NOTIF:
+          printf("USER_NOTIFY");
+          break;
+#endif
         case SECCOMP_RET_KILL:
           printf("KILL");
           break;
