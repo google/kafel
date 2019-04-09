@@ -20,15 +20,33 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 #include <kafel.h>
 
 #include "disasm.h"
+#include "print.h"
 
 int main(int argc, char** argv) {
+  enum mode { HUMAN_READABLE, C_SOURCE_FILE } mode = HUMAN_READABLE;
+  int opt;
+  while ((opt = getopt(argc, argv, "hc")) != -1) {
+    switch (opt) {
+      case 'n':
+        mode = HUMAN_READABLE;
+        break;
+      case 'c':
+        mode = C_SOURCE_FILE;
+        break;
+      default: /* '?' */
+        fprintf(stderr, "Usage: %s [-hc] INPUT\n", argv[0]);
+        return -1;
+    }
+  }
+
   FILE* in = stdin;
-  if (argc > 1) {
-    in = fopen(argv[1], "r");
+  if (argc > optind) {
+    in = fopen(argv[optind], "r");
     if (in == NULL) {
       fprintf(stderr, "Error: could not open file `%s'\n", argv[1]);
       return -1;
@@ -50,8 +68,15 @@ int main(int argc, char** argv) {
     return -1;
   }
   kafel_ctxt_destroy(&ctxt);
-  printf("BPF program with %d instructions\n", prog.len);
-  disasm(prog);
+  switch (mode) {
+    case HUMAN_READABLE:
+      printf("BPF program with %d instructions\n", prog.len);
+      disasm(prog);
+      break;
+    case C_SOURCE_FILE:
+      pretty_print(prog);
+      break;
+  }
   free(prog.filter);
   return 0;
 }

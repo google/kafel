@@ -17,7 +17,7 @@
 #   limitations under the License.
 #
 
-SRCS:=main.c disasm.c
+SRCS:=main.c disasm.c print.c
 TARGET:=dump_policy_bpf
 LIBS:=${PROJECT_ROOT}libkafel.a
 
@@ -30,5 +30,6 @@ ${TARGET}: ${OBJECTS}
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.
 
-main.o: disasm.h
+main.o: disasm.h print.h
 disasm.o: disasm.h
+print.o: print.h

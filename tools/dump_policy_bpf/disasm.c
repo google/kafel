@@ -34,15 +34,14 @@
 
 void disasm_inst(const struct sock_filter* inst, const int pc) {
   const int op = BPF_OP(inst->code);
-  static const char* ops[] = {[BPF_ADD] = "+", [BPF_SUB] = "-",
-                              [BPF_MUL] = "*", [BPF_DIV] = "/",
-                              [BPF_XOR] = "^", [BPF_AND] = "&",
-                              [BPF_OR] = "|",  [BPF_RSH] = ">>",
-                              [BPF_LSH] = "<<"};
-  static const char* cmps[] = {[BPF_JGE] = ">=", [BPF_JGT] = ">",
-                               [BPF_JEQ] = "==", [BPF_JSET] = "&"};
-  static const char* cmps_neg[] = {[BPF_JGE] = "<", [BPF_JGT] = "<=",
-                                   [BPF_JEQ] = "!="};
+  static const char* ops[] = {
+      [BPF_ADD] = "+", [BPF_SUB] = "-",  [BPF_MUL] = "*",
+      [BPF_DIV] = "/", [BPF_XOR] = "^",  [BPF_AND] = "&",
+      [BPF_OR] = "|",  [BPF_RSH] = ">>", [BPF_LSH] = "<<"};
+  static const char* cmps[] = {
+      [BPF_JGE] = ">=", [BPF_JGT] = ">", [BPF_JEQ] = "==", [BPF_JSET] = "&"};
+  static const char* cmps_neg[] = {
+      [BPF_JGE] = "<", [BPF_JGT] = "<=", [BPF_JEQ] = "!="};
   printf("%3d: ", pc);
   switch (inst->code) {
     case BPF_LD | BPF_W | BPF_ABS:
