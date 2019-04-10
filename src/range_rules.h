@@ -24,7 +24,6 @@
 #include <limits.h>
 #include <stddef.h>
 #include <stdint.h>
-
 #include <sys/queue.h>
 
 #include "policy.h"

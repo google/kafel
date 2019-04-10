@@ -21,12 +21,11 @@
 #include "codegen.h"
 
 #include <limits.h>
+#include <linux/audit.h>
+#include <linux/seccomp.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdlib.h>
-
-#include <linux/audit.h>
-#include <linux/seccomp.h>
 #include <sys/queue.h>
 
 #include "common.h"
@@ -51,7 +50,7 @@
 #define SECCOMP_RET_KILL_PROCESS 0x80000000U
 #endif
 #ifndef SECCOMP_RET_USER_NOTIF
-#define SECCOMP_RET_USER_NOTIF	 0x7fc00000U
+#define SECCOMP_RET_USER_NOTIF 0x7fc00000U
 #endif
 
 #define CURRENT_LOC (ctxt->buffer.len - 1)

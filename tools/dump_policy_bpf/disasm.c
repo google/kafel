@@ -21,10 +21,9 @@
 #include "disasm.h"
 
 #include <inttypes.h>
+#include <linux/seccomp.h>
 #include <stddef.h>
 #include <stdio.h>
-
-#include <linux/seccomp.h>
 
 #define OFFSET(field) offsetof(struct seccomp_data, field)
 #define SIZE_OF(field) sizeof(((struct seccomp_data*)0)->field)

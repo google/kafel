@@ -77,7 +77,6 @@ bool includes_stack_is_empty(struct includes_ctxt* ctxt) {
 }
 
 void includes_stack_pop(struct includes_ctxt* ctxt) {
-
   ASSERT(!SLIST_EMPTY(&ctxt->stack));
   struct included_file* file = SLIST_FIRST(&ctxt->stack);
   fclose(file->fp);
@@ -93,18 +92,16 @@ static char* path_join(const char* first, const char* second) {
   if (len <= flen || len <= slen) {
     return NULL;
   }
-  char* rv = malloc(len+1);
+  char* rv = malloc(len + 1);
   ASSERT(rv != NULL);
   memcpy(rv, first, flen);
   rv[flen] = '/';
-  memcpy(rv+flen+1, second, slen);
+  memcpy(rv + flen + 1, second, slen);
   rv[len] = '\0';
   return rv;
 }
 
-int includes_depth(struct includes_ctxt* ctxt) {
-  return ctxt->depth;
-}
+int includes_depth(struct includes_ctxt* ctxt) { return ctxt->depth; }
 
 struct included_file* includes_resolve(struct includes_ctxt* ctxt,
                                        const char* filename) {

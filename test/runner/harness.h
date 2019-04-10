@@ -21,9 +21,8 @@
 #ifndef KAFEL_TEST_RUNNER_HARNESS_H_
 #define KAFEL_TEST_RUNNER_HARNESS_H_
 
-#include <stdbool.h>
-
 #include <linux/filter.h>
+#include <stdbool.h>
 
 typedef int (*test_func_t)(void*);
 

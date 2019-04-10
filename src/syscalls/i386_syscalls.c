@@ -18,9 +18,9 @@
 
 */
 
-#include "../syscall.h"
-
 #include <stddef.h>
+
+#include "../syscall.h"
 
 #define ARG_0 0
 #define ARG_1 1
@@ -31,7 +31,7 @@
 
 #define NORMAL false
 
-const struct syscall_descriptor i386_syscall_list [] = {
+const struct syscall_descriptor i386_syscall_list[] = {
     {"accept4",
      364,
      NORMAL,
@@ -2588,4 +2588,4 @@ const struct syscall_descriptor i386_syscall_list [] = {
 };
 
 const size_t i386_syscall_list_size =
-    sizeof(i386_syscall_list) / sizeof(i386_syscall_list [0]);
+    sizeof(i386_syscall_list) / sizeof(i386_syscall_list[0]);

@@ -135,7 +135,8 @@ void add_policy_rules(struct syscall_range_rules *rules,
         TAILQ_FOREACH(filter, &entry->filters, filters) {
           uint32_t syscall_nr = filter->syscall_nr;
           struct syscall_range_rule rule = {
-              .first = syscall_nr, .last = syscall_nr,
+              .first = syscall_nr,
+              .last = syscall_nr,
           };
           TAILQ_INIT(&rule.expr_list);
           if (filter->expr != NULL && filter->expr->type != EXPR_TRUE) {

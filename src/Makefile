@@ -67,8 +67,8 @@ parser.h parser.c: parser.y
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.
 
-kafel.o: parser.h context.h includes.h policy.h expression.h syscall.h
-kafel.o: codegen.h common.h lexer.h
+kafel.o: codegen.h context.h includes.h policy.h expression.h syscall.h
+kafel.o: common.h lexer.h parser.h
 context.o: context.h includes.h policy.h expression.h syscall.h common.h
 codegen.o: codegen.h context.h includes.h policy.h expression.h syscall.h
 codegen.o: common.h range_rules.h

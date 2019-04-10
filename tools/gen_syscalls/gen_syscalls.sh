@@ -54,9 +54,9 @@ cat > "$outname" <<HEADER
 
 */
 
-#include "../syscall.h"
-
 #include <stddef.h>
+
+#include "../syscall.h"
 
 #define ARG_0 0
 #define ARG_1 1

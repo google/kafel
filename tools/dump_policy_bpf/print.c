@@ -21,10 +21,9 @@
 #include "print.h"
 
 #include <inttypes.h>
+#include <linux/seccomp.h>
 #include <stddef.h>
 #include <stdio.h>
-
-#include <linux/seccomp.h>
 
 /*
     If headers are too old, take the define from

@@ -22,7 +22,6 @@
 #define KAFEL_POLICY_H
 
 #include <stdint.h>
-
 #include <sys/queue.h>
 
 #include "expression.h"

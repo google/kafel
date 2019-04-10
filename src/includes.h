@@ -21,8 +21,8 @@
 #ifndef KAFEL_INCLUDES_H
 #define KAFEL_INCLUDES_H
 
-#include <stdio.h>
 #include <stdbool.h>
+#include <stdio.h>
 #include <sys/queue.h>
 
 struct included_file {

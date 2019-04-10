@@ -20,10 +20,9 @@
 
 #include "syscall.h"
 
+#include <linux/audit.h>
 #include <stdlib.h>
 #include <string.h>
-
-#include <linux/audit.h>
 
 #include "common.h"
 

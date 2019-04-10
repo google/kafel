@@ -20,6 +20,7 @@
 
 #include "context.h"
 
+#include <linux/audit.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -27,8 +28,6 @@
 
 #include "common.h"
 #include "kafel.h"
-
-#include <linux/audit.h>
 
 KAFEL_API kafel_ctxt_t kafel_ctxt_create(void) {
   struct kafel_ctxt* ctxt = calloc(1, sizeof(*ctxt));

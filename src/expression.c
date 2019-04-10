@@ -73,11 +73,11 @@ void expr_eliminate_negation(struct expr_tree **expr, bool neg) {
   ASSERT(expr != NULL);
   ASSERT((*expr) != NULL);
 
-  int negations[EXPR_MAX + 1] =
-      {[EXPR_AND] = EXPR_OR,    [EXPR_OR] = EXPR_AND, [EXPR_GE] = EXPR_LT,
-       [EXPR_GT] = EXPR_LE,     [EXPR_LE] = EXPR_GT,  [EXPR_LT] = EXPR_GE,
-       [EXPR_EQ] = EXPR_NEQ,    [EXPR_NEQ] = EXPR_EQ, [EXPR_TRUE] = EXPR_FALSE,
-       [EXPR_FALSE] = EXPR_TRUE};
+  int negations[EXPR_MAX + 1] = {
+      [EXPR_AND] = EXPR_OR,    [EXPR_OR] = EXPR_AND, [EXPR_GE] = EXPR_LT,
+      [EXPR_GT] = EXPR_LE,     [EXPR_LE] = EXPR_GT,  [EXPR_LT] = EXPR_GE,
+      [EXPR_EQ] = EXPR_NEQ,    [EXPR_NEQ] = EXPR_EQ, [EXPR_TRUE] = EXPR_FALSE,
+      [EXPR_FALSE] = EXPR_TRUE};
   switch ((*expr)->type) {
     case EXPR_NOT: {
       struct expr_tree *tmp = *expr;
@@ -107,13 +107,11 @@ static void expr_sort_operands(struct expr_tree *expr) {
 
     if (expr->type != EXPR_AND && expr->type != EXPR_OR &&
         expr->left->type < expr->right->type) {
-      int swapped[EXPR_MAX + 1] = {[EXPR_GE] = EXPR_LE,
-                                   [EXPR_GT] = EXPR_LT,
-                                   [EXPR_LE] = EXPR_GE,
-                                   [EXPR_LT] = EXPR_GT,
-                                   [EXPR_EQ] = EXPR_EQ,
-                                   [EXPR_NEQ] = EXPR_NEQ,
-                                   [EXPR_BIT_AND] = EXPR_BIT_AND};
+      int swapped[EXPR_MAX + 1] = {
+          [EXPR_GE] = EXPR_LE,          [EXPR_GT] = EXPR_LT,
+          [EXPR_LE] = EXPR_GE,          [EXPR_LT] = EXPR_GT,
+          [EXPR_EQ] = EXPR_EQ,          [EXPR_NEQ] = EXPR_NEQ,
+          [EXPR_BIT_AND] = EXPR_BIT_AND};
       expr->type = swapped[expr->type];
       SWAP(expr->left, expr->right);
     }

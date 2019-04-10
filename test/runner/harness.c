@@ -21,6 +21,7 @@
 #include "harness.h"
 
 #include <errno.h>
+#include <kafel.h>
 #include <linux/seccomp.h>
 #include <linux/unistd.h>
 #include <signal.h>
@@ -31,8 +32,6 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
-
-#include <kafel.h>
 
 #include "runner.h"
 

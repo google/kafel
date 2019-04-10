@@ -33,15 +33,15 @@ typedef struct {
 extern test_case_def_t runner_tests[];
 extern int runner_tests_count;
 
-#define TEST_CASE(test_case_name)                                   \
-  static void test_##test_case_name(void);                          \
-  __attribute((constructor)) static void                            \
-  register_test_##test_case_name(void) {                            \
-    test_case_def_t* test_case = &runner_tests[runner_tests_count]; \
-    test_case->name = #test_case_name;                              \
-    test_case->func = test_##test_case_name;                        \
-    runner_tests_count++;                                           \
-  }                                                                 \
+#define TEST_CASE(test_case_name)                                        \
+  static void test_##test_case_name(void);                               \
+  __attribute((constructor)) static void register_test_##test_case_name( \
+      void) {                                                            \
+    test_case_def_t* test_case = &runner_tests[runner_tests_count];      \
+    test_case->name = #test_case_name;                                   \
+    test_case->func = test_##test_case_name;                             \
+    runner_tests_count++;                                                \
+  }                                                                      \
   static void test_##test_case_name(void)
 
 #endif /* KAFEL_TEST_RUNNER_RUNNER_H_ */

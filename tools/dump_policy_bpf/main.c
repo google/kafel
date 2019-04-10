@@ -18,11 +18,10 @@
 
 */
 
+#include <kafel.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-
-#include <kafel.h>
 
 #include "disasm.h"
 #include "print.h"
