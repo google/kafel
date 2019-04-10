@@ -26,7 +26,6 @@
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdlib.h>
 #include <sys/prctl.h>
 #include <sys/signalfd.h>
 #include <sys/types.h>
@@ -152,26 +151,34 @@ int test_policy_enforcment(test_func_t test_func, void* data,
     kill_and_wait(pid);
     TEST_FAIL("waitid failed %d %d %d %d", rv, errno, si.si_pid, pid);
   }
-  if (si.si_code == CLD_EXITED && si.si_status != 0) {
-    if (should_kill) {
-      TEST_FAIL("should be killed by seccomp; non-zero (%d) exit code instead",
-                si.si_status);
-    } else {
+  bool signaled = si.si_code == CLD_KILLED || si.si_code == CLD_DUMPED;
+  if (si.si_code == CLD_EXITED) {
+    if (si.si_status != 0) {
+      if (should_kill) {
+        TEST_FAIL(
+            "should be killed by seccomp; non-zero (%d) exit code instead",
+            si.si_status);
+      }
       TEST_FAIL("non-zero (%d) exit code", si.si_status);
     }
-  }
-  if (should_kill && (si.si_code != CLD_KILLED || si.si_status != SIGSYS)) {
-    TEST_FAIL("should be killed by seccomp");
-  }
-  if (si.si_code == CLD_KILLED) {
-    if (si.si_status == SIGSYS) {
-      if (!should_kill) {
-        TEST_FAIL("should not be killed by seccomp");
+    if (should_kill) {
+      TEST_FAIL("should be killed by seccomp; exited normally instead");
+    }
+  } else if (signaled) {
+    if (si.si_status != SIGSYS) {
+      if (should_kill) {
+        TEST_FAIL("should be killed by seccomp; killed by signal %d instead",
+                  si.si_status);
       }
-    } else {
       TEST_FAIL("killed by signal %d", si.si_status);
     }
-  } else if (si.si_code != CLD_EXITED) {
+    if (!should_kill) {
+      TEST_FAIL("should not be killed by seccomp");
+    }
+  } else {
+    if (should_kill) {
+      TEST_FAIL("should be killed by seccomp; not exited normally instead");
+    }
     TEST_FAIL("not exited normally");
   }
   TEST_PASSED();
