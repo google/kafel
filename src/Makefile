@@ -17,18 +17,14 @@
 #   limitations under the License.
 #
 
+SUBDIRS:=syscalls
+
 OBJCOPY?=objcopy
 
 CFLAGS+=-fPIC -fvisibility=hidden
-GENERATED_SRCS:=lexer.c parser.c
+GENERATED_SRCS:=lexer.c parser.c syscalldb.c
 GENERATED:=lexer.h parser.h ${GENERATED_SRCS}
-TEMPORARY:=libkafel_r.o libkafel.o
-SYSCALL_LISTS:=amd64_syscalls.c \
-               i386_syscalls.c \
-               aarch64_syscalls.c \
-               mipso32_syscalls.c \
-               mips64_syscalls.c \
-               arm_syscalls.c
+TEMPORARY:=libkafel_r.o libkafel.o syscalldb.gperf
 SRCS:=kafel.c \
       context.c \
       codegen.c \
@@ -37,8 +33,7 @@ SRCS:=kafel.c \
       policy.c \
       range_rules.c \
       syscall.c \
-      ${GENERATED_SRCS} \
-      $(SYSCALL_LISTS:%.c=syscalls/%.c)
+      ${GENERATED_SRCS}
 DYNAMIC_TARGET:=${PROJECT_ROOT}libkafel.so
 STATIC_TARGET:=${PROJECT_ROOT}libkafel.a
 TARGET=${DYNAMIC_TARGET} ${STATIC_TARGET}
@@ -65,6 +60,13 @@ lexer.h lexer.c: lexer.l
 parser.h parser.c: parser.y
 	bison $<
 
+syscalldb.c: syscalls/syscalldb_generator
+	./syscalls/syscalldb_generator > ./syscalldb.gperf
+	gperf -m10 --output-file=./syscalldb.c ./syscalldb.gperf
+
+syscalls/syscalldb_generator: syscalls
+	true
+
 # DO NOT DELETE THIS LINE -- make depend depends on it.
 
 kafel.o: codegen.h context.h includes.h policy.h expression.h syscall.h
@@ -76,14 +78,9 @@ expression.o: expression.h common.h
 includes.o: includes.h common.h
 policy.o: policy.h expression.h common.h
 range_rules.o: range_rules.h policy.h expression.h common.h syscall.h
-syscall.o: syscall.h common.h
+syscall.o: syscall.h syscalldb.h common.h
+syscalldb.o: syscall.h syscalldb.h syscalldb.inl
 lexer.o: parser.h context.h includes.h policy.h expression.h syscall.h
 lexer.o: common.h
 parser.o: parser.h context.h includes.h policy.h expression.h syscall.h
 parser.o: lexer.h
-syscalls/amd64_syscalls.o: syscall.h
-syscalls/i386_syscalls.o: syscall.h
-syscalls/aarch64_syscalls.o: syscall.h
-syscalls/mipso32_syscalls.o: syscall.h
-syscalls/mips64_syscalls.o: syscall.h
-syscalls/arm_syscalls.o: syscall.h

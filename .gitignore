@@ -15,6 +15,9 @@
 /src/lexer.c
 /src/parser.h
 /src/parser.c
+/src/syscalldb.gperf
+/src/syscalldb.c
+/src/syscalls/syscalldb_generator
 
 # Backup files
 *.bak

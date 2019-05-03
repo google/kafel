@@ -70,7 +70,6 @@ void kafel_ctxt_reset(kafel_ctxt_t ctxt) {
   }
   ctxt->default_action = 0;
   ctxt->lexical_error = false;
-  ctxt->syscalls = NULL;
 }
 
 void kafel_ctxt_clean(kafel_ctxt_t ctxt) {

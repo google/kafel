@@ -46,7 +46,7 @@ struct kafel_ctxt {
   struct policy* main_policy;
   int default_action;
   uint32_t target_arch;
-  const struct syscall_list* syscalls;
+  uint32_t target_arch_mask;
   struct {
     enum {
       INPUT_NONE,
