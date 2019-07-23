@@ -81,9 +81,9 @@ lexer.o: parser.h context.h includes.h policy.h expression.h syscall.h
 lexer.o: common.h
 parser.o: parser.h context.h includes.h policy.h expression.h syscall.h
 parser.o: lexer.h
-syscalls/amd64_syscalls.o: syscall.h
-syscalls/i386_syscalls.o: syscall.h
-syscalls/aarch64_syscalls.o: syscall.h
-syscalls/mipso32_syscalls.o: syscall.h
-syscalls/mips64_syscalls.o: syscall.h
-syscalls/arm_syscalls.o: syscall.h
+syscalls/amd64_syscalls.o: syscall.h syscalls/amd64_syscalls.c 
+syscalls/i386_syscalls.o: syscall.h syscalls/i386_syscalls.c
+syscalls/aarch64_syscalls.o: syscall.h syscalls/aarch64_syscalls.c
+syscalls/mipso32_syscalls.o: syscall.h syscalls/mipso32_syscalls.c
+syscalls/mips64_syscalls.o: syscall.h syscalls/mips64_syscalls.c
+syscalls/arm_syscalls.o: syscall.h syscalls/arm_syscalls.c
