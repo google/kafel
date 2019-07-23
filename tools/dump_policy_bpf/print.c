@@ -57,6 +57,40 @@ const char* action_to_string(int action) {
   return NULL;
 }
 
+static void print_offset(uint32_t offset, int mode) {
+#define MAP(x) [x] = #x
+  static const char* offsets[sizeof(struct seccomp_data) + 1] = {
+      MAP(offsetof(struct seccomp_data, nr)),
+      MAP(offsetof(struct seccomp_data, arch)),
+      MAP(offsetof(struct seccomp_data, instruction_pointer)),
+      MAP(offsetof(struct seccomp_data, args[0])),
+      MAP(offsetof(struct seccomp_data, args[1])),
+      MAP(offsetof(struct seccomp_data, args[2])),
+      MAP(offsetof(struct seccomp_data, args[3])),
+      MAP(offsetof(struct seccomp_data, args[4])),
+      MAP(offsetof(struct seccomp_data, args[5])),
+  };
+#undef MAP
+  if (mode == BPF_ABS && offset <= sizeof(struct seccomp_data)) {
+    if (offsets[offset]) {
+      printf("%s", offsets[offset]);
+      return;
+    }
+    for (int i = offset; i >= 0; --i) {
+      if (offsets[i]) {
+        printf("%s + ", offsets[i]);
+        if (offset - i == sizeof(__u32)) {
+          printf("%s", "sizeof(__u32)");
+        } else {
+          printf("%" PRId32 "", offset - i);
+        }
+        return;
+      }
+    }
+  }
+  printf("%#" PRIx32 "u", offset);
+}
+
 void pretty_print_inst(const struct sock_filter* inst) {
 #define MAP(x) [x] = #x
   static const char* classes[] = {
@@ -93,17 +127,6 @@ void pretty_print_inst(const struct sock_filter* inst) {
       MAP(BPF_A),
       MAP(BPF_X),
   };
-  static const char* offsets[] = {
-      MAP(offsetof(struct seccomp_data, nr)),
-      MAP(offsetof(struct seccomp_data, arch)),
-      MAP(offsetof(struct seccomp_data, instruction_pointer)),
-      MAP(offsetof(struct seccomp_data, args[0])),
-      MAP(offsetof(struct seccomp_data, args[1])),
-      MAP(offsetof(struct seccomp_data, args[2])),
-      MAP(offsetof(struct seccomp_data, args[3])),
-      MAP(offsetof(struct seccomp_data, args[4])),
-      MAP(offsetof(struct seccomp_data, args[5])),
-  };
 #undef MAP
   const int code = inst->code;
   const int inst_class = BPF_CLASS(code);
@@ -120,20 +143,8 @@ void pretty_print_inst(const struct sock_filter* inst) {
         printf("%s, %" PRId32 ")", modes[BPF_MODE(code)], inst->k);
       } else {
         printf("%s | %s, ", sizes[BPF_SIZE(code)], modes[BPF_MODE(code)]);
-        if (mode == BPF_ABS && inst->k <= sizeof(offsets)) {
-          if (offsets[inst->k]) {
-            printf("%s)", offsets[inst->k]);
-          } else {
-            for (int i = inst->k; i >= 0; --i) {
-              if (offsets[i]) {
-                printf("%s + %" PRId32 ")", offsets[i], inst->k - i);
-                break;
-              }
-            }
-          }
-        } else {
-          printf("%#" PRIx32 "u)", inst->k);
-        }
+        print_offset(inst->k, mode);
+        printf(")");
       }
       break;
     case BPF_MISC:
