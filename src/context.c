@@ -22,6 +22,7 @@
 
 #include <linux/audit.h>
 #include <stdarg.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -152,20 +153,20 @@ struct policy* lookup_policy(struct kafel_ctxt* ctxt, const char* name) {
 
 static int grow_errors_buffer(struct kafel_ctxt* ctxt, size_t min_growth) {
   size_t oldcapacity = ctxt->errors.capacity;
-  size_t mincapacity = ctxt->errors.len + min_growth;
-  if (min_growth > 0 && mincapacity <= ctxt->errors.len) {
+  if (min_growth > 0 && ctxt->errors.len <= SIZE_MAX - min_growth) {
     return -1;  // overflow
   }
+  size_t mincapacity = ctxt->errors.len + min_growth;
   if (mincapacity <= oldcapacity) {
     return 0;
   }
-  size_t newcapacity = oldcapacity * 2;
-  if (newcapacity <= oldcapacity || newcapacity < mincapacity) {
-    newcapacity = mincapacity;
+  size_t newcapacity = mincapacity;
+  if (oldcapacity <= SIZE_MAX / 2 && oldcapacity * 2 > mincapacity) {
+    newcapacity = oldcapacity * 2;
   }
   char* newbuf = realloc(ctxt->errors.data, newcapacity);
   if (newbuf == NULL) {
-    return -1;
+    return -1;  // OOM
   }
   ctxt->errors.data = newbuf;
   ctxt->errors.capacity = newcapacity;
@@ -185,7 +186,7 @@ int append_error(struct kafel_ctxt* ctxt, const char* fmt, ...) {
     size_t newcapacity = 128;
     ctxt->errors.data = malloc(newcapacity);
     if (ctxt->errors.data == NULL) {
-      return -1;
+      return -1;  // OOM
     }
     ctxt->errors.capacity = newcapacity;
   }

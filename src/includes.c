@@ -20,6 +20,7 @@
 
 #include "includes.h"
 
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -88,12 +89,11 @@ void includes_stack_pop(struct includes_ctxt* ctxt) {
 static char* path_join(const char* first, const char* second) {
   size_t flen = strlen(first);
   size_t slen = strlen(second);
+  ASSERT(flen <= SIZE_MAX - 2);         // overflow
+  ASSERT(flen + 2 <= SIZE_MAX - slen);  // overflow
   size_t len = flen + slen + 1;
-  if (len <= flen || len <= slen) {
-    return NULL;
-  }
   char* rv = malloc(len + 1);
-  ASSERT(rv != NULL);
+  ASSERT(rv != NULL);  // OOM
   memcpy(rv, first, flen);
   rv[flen] = '/';
   memcpy(rv + flen + 1, second, slen);
@@ -110,19 +110,17 @@ struct included_file* includes_resolve(struct includes_ctxt* ctxt,
   struct path_list* search_path;
   TAILQ_FOREACH(search_path, &ctxt->search_paths, list) {
     char* path = path_join(search_path->path, filename);
-    if (path != NULL) {
-      FILE* fp = fopen(path, "r");
-      if (fp != NULL) {
-        struct path_list* used_path = calloc(1, sizeof(*used_path));
-        used_path->path = path;
-        TAILQ_INSERT_TAIL(&ctxt->used_paths, used_path, list);
-        struct included_file* file = calloc(1, sizeof(*file));
-        file->fp = fp;
-        file->path = used_path->path;
-        return file;
-      }
-      free(path);
+    FILE* fp = fopen(path, "r");
+    if (fp != NULL) {
+      struct path_list* used_path = calloc(1, sizeof(*used_path));
+      used_path->path = path;
+      TAILQ_INSERT_TAIL(&ctxt->used_paths, used_path, list);
+      struct included_file* file = calloc(1, sizeof(*file));
+      file->fp = fp;
+      file->path = used_path->path;
+      return file;
     }
+    free(path);
   }
   return NULL;
 }

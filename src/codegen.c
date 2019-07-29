@@ -135,15 +135,13 @@ static int add_instruction(struct codegen_ctxt *ctxt, struct sock_filter inst) {
   ASSERT(ctxt != NULL);
 
   if (ctxt->buffer.capacity <= ctxt->buffer.len) {
+    ASSERT(ctxt->buffer.capacity <= SIZE_MAX / 2);  // overflow
     size_t newcapacity = ctxt->buffer.capacity * 2;
     if (newcapacity == 0) {
       newcapacity = 1;
     }
-    size_t oldbytes = ctxt->buffer.capacity * sizeof(*ctxt->buffer.data);
+    ASSERT(newcapacity <= SIZE_MAX / sizeof(*ctxt->buffer.data));  // overflow
     size_t newbytes = newcapacity * sizeof(*ctxt->buffer.data);
-    if (newcapacity < ctxt->buffer.capacity || newbytes < oldbytes) {
-      ASSERT(0);  // overflow
-    }
     ctxt->buffer.data = realloc(ctxt->buffer.data, newbytes);
     ctxt->buffer.capacity = newcapacity;
   }

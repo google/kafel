@@ -20,6 +20,7 @@
 
 #include "range_rules.h"
 
+#include <stdint.h>
 #include <stdlib.h>
 
 #include "common.h"
@@ -79,27 +80,21 @@ static void fix_tailq_moving(struct syscall_range_rules *rules) {
 
 static void grow_range_rules(struct syscall_range_rules *rules,
                              size_t min_growth) {
+  ASSERT(rules->len <= SIZE_MAX - min_growth);  // overflow
   size_t oldcapacity = rules->capacity;
   size_t reqcapacity = rules->len + min_growth;
-  if (reqcapacity < rules->len) {
-    ASSERT(0);  // overflow
-  }
   if (reqcapacity <= oldcapacity) {
     return;
   }
+  ASSERT(rules->capacity <= SIZE_MAX / 2);  // overflow
   size_t newcapacity = rules->capacity * 2;
   if (newcapacity < reqcapacity) {
     newcapacity = reqcapacity;
   }
-  size_t oldbytes = rules->capacity * sizeof(*rules->data);
+  ASSERT(newcapacity <= SIZE_MAX / sizeof(*rules->data));  // overflow
   size_t newbytes = newcapacity * sizeof(*rules->data);
-  if (newcapacity < rules->capacity || newbytes < oldbytes) {
-    ASSERT(0);  // overflow
-  }
   struct syscall_range_rule *newdata = realloc(rules->data, newbytes);
-  if (newdata == NULL) {
-    ASSERT(0);  // OOM
-  }
+  ASSERT(newdata != NULL);  // OOM
   rules->data = newdata;
   rules->capacity = newcapacity;
   fix_tailq_moving(rules);
