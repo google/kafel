@@ -360,17 +360,21 @@ static int generate_load(struct codegen_ctxt *ctxt, struct expr_tree *expr,
   }
 
   int op = BPF_OR;
+  uint32_t identity_element = 0;
 
   switch (expr->type) {
     case EXPR_VAR:
       return ADD_INSTR(BPF_LOAD_ARG_WORD(expr->var, word));
     case EXPR_BIT_AND:
       op = BPF_AND;
+      identity_element = UINT32_MAX;
       // fall-through
     case EXPR_BIT_OR:
       if (is_const_value(expr->right, word)) {
-        ADD_INSTR(
-            BPF_STMT(BPF_ALU | op | BPF_K, value_of(expr->right, word)));
+        if (value_of(expr->right, word) != identity_element) {
+          ADD_INSTR(
+              BPF_STMT(BPF_ALU | op | BPF_K, value_of(expr->right, word)));
+        }
         return generate_load(ctxt, expr->left, word, stack_ptr);
       }
       bool use_stack = should_use_stack(expr->left);
