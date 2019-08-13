@@ -110,12 +110,14 @@ struct codegen_ctxt {
     } cache[MAX_JUMP];
     size_t cache_size;
   } locations;
+  size_t max_stack_ptr;
 };
 
 static struct codegen_ctxt *context_create(void) {
   struct codegen_ctxt *ctxt = calloc(1, sizeof(*ctxt));
   ctxt->buffer.capacity = CODEGEN_INITAL_BUFFER_SIZE;
   ctxt->buffer.data = calloc(ctxt->buffer.capacity, sizeof(*ctxt->buffer.data));
+  ctxt->max_stack_ptr = 0;
   for (int i = 0; i <= ACTION_BASIC_MAX; ++i) {
     ctxt->locations.basic_actions[i] = INVALID_LOCATION;
   }
@@ -280,7 +282,6 @@ static int add_jump_set(struct codegen_ctxt *ctxt, __u32 what, int tloc,
 
 #define ARG_WORD(arg, word) ((word == HIGH_WORD) ? ARG_HIGH(arg) : ARG_LOW(arg))
 #define NUM_WORD(num, word) ((word == HIGH_WORD) ? NUM_HIGH(num) : NUM_LOW(num))
-
 #define BPF_LOAD_ARCH \
   BPF_STMT(BPF_LD + BPF_W + BPF_ABS, offsetof(struct seccomp_data, arch))
 #define BPF_LOAD_SYSCALL \
@@ -288,69 +289,105 @@ static int add_jump_set(struct codegen_ctxt *ctxt, __u32 what, int tloc,
 #define BPF_LOAD_ARG_WORD(arg, high) \
   BPF_STMT(BPF_LD + BPF_W + BPF_ABS, ARG_WORD(arg, high))
 
-static uint32_t value_of(struct expr_tree *expr, int word);
-
 static bool is_const_value(struct expr_tree *expr, int word) {
-  switch (expr->type) {
-    case EXPR_NUMBER:
-      return true;
-    case EXPR_VAR:
-      return false;
-    case EXPR_BIT_AND:
-      if (is_const_value(expr->right, word) &&
-          value_of(expr->right, word) == 0) {
-        return true;
-      }
-      if (is_const_value(expr->left, word) && value_of(expr->left, word) == 0) {
-        return true;
-      }
-      return false;
-    default:
-      ASSERT(0);  // should not happen
-  }
+  return word == HIGH_WORD ? expr->high.is_const : expr->low.is_const;
 }
 
 static uint32_t value_of(struct expr_tree *expr, int word) {
+  return word == HIGH_WORD ? expr->high.value : expr->low.value;
+}
+
+static void cache_constants_by_word(struct expr_tree *expr, int word) {
+  struct cached_value *cached = (word == HIGH_WORD) ? &expr->high : &expr->low;
+  uint32_t clobber_value = 0;
   switch (expr->type) {
     case EXPR_NUMBER:
-      return NUM_WORD(expr->number, word);
+      cached->is_const = true;
+      cached->value = NUM_WORD(expr->number, word);
+      return;
+    case EXPR_VAR:
+      cached->is_const = false;
+      return;
+    case EXPR_BIT_OR:
+      clobber_value = UINT32_MAX;
+      /* fall-through */
     case EXPR_BIT_AND:
+      cache_constants_by_word(expr->right, word);
+      cache_constants_by_word(expr->left, word);
       if (is_const_value(expr->right, word) &&
-          value_of(expr->right, word) == 0) {
-        return 0;
+          value_of(expr->right, word) == clobber_value) {
+        cached->is_const = true;
+        cached->value = clobber_value;
+      } else if (is_const_value(expr->left, word) &&
+          value_of(expr->left, word) == clobber_value) {
+        cached->is_const = true;
+        cached->value = clobber_value;
+      } else {
+        cached->is_const = false;
       }
-      if (is_const_value(expr->left, word) && value_of(expr->left, word) == 0) {
-        return 0;
-      }
-    // fall-through
+      return;
     default:
-      ASSERT(0);  // should not happen
+      ASSERT(expr->type >= EXPR_BINARY_MIN && expr->type <= EXPR_BINARY_MAX);
+      cache_constants_by_word(expr->right, word);
+      cache_constants_by_word(expr->left, word);
+      return;
   }
 }
 
+static void cache_constants(struct expr_tree *expr) {
+  cache_constants_by_word(expr, HIGH_WORD);
+  cache_constants_by_word(expr, LOW_WORD);
+}
+
+// Returns 1 if we need to push the result of executing the right sub-tree onto
+// the stack (as opposed to the index register) before evaluating the left
+// sub-tree.
+static bool should_use_stack(struct expr_tree *left) {
+  return left->type != EXPR_VAR;
+}
+
 static int generate_load(struct codegen_ctxt *ctxt, struct expr_tree *expr,
-                         int word) {
+                         int word, size_t stack_ptr) {
   ASSERT(ctxt != NULL);
   ASSERT(expr != NULL);
 
+  if (stack_ptr > ctxt->max_stack_ptr) {
+    ctxt->max_stack_ptr = stack_ptr;
+  }
   if (is_const_value(expr, word)) {
     ASSERT(0); /* valid but should not happen */
     return ADD_INSTR(BPF_STMT(BPF_LD | BPF_IMM, value_of(expr, word)));
   }
 
+  int op = BPF_OR;
+  uint32_t identity_element = 0;
+
   switch (expr->type) {
     case EXPR_VAR:
       return ADD_INSTR(BPF_LOAD_ARG_WORD(expr->var, word));
     case EXPR_BIT_AND:
+      op = BPF_AND;
+      identity_element = UINT32_MAX;
+      // fall-through
+    case EXPR_BIT_OR:
       if (is_const_value(expr->right, word)) {
-        ADD_INSTR(
-            BPF_STMT(BPF_ALU | BPF_AND | BPF_K, value_of(expr->right, word)));
-        return generate_load(ctxt, expr->left, word);
+        if (value_of(expr->right, word) != identity_element) {
+          ADD_INSTR(
+              BPF_STMT(BPF_ALU | op | BPF_K, value_of(expr->right, word)));
+        }
+        return generate_load(ctxt, expr->left, word, stack_ptr);
       }
-      ADD_INSTR(BPF_STMT(BPF_ALU | BPF_AND | BPF_X, 0));
-      generate_load(ctxt, expr->left, word);
-      ADD_INSTR(BPF_STMT(BPF_MISC | BPF_TAX, 0));
-      return generate_load(ctxt, expr->right, word);
+      bool use_stack = should_use_stack(expr->left);
+      ADD_INSTR(BPF_STMT(BPF_ALU | op | BPF_X, 0));
+      if (use_stack) {
+        ADD_INSTR(BPF_STMT(BPF_LDX | BPF_MEM, stack_ptr));
+        generate_load(ctxt, expr->left, word, stack_ptr + 1);
+        ADD_INSTR(BPF_STMT(BPF_ST, stack_ptr));
+      } else {
+        generate_load(ctxt, expr->left, word, stack_ptr);
+        ADD_INSTR(BPF_STMT(BPF_MISC | BPF_TAX, 0));
+      }
+      return generate_load(ctxt, expr->right, word, stack_ptr);
     default:
       ASSERT(0);  // should not happen
   }
@@ -399,7 +436,6 @@ static int generate_cmp32(struct codegen_ctxt *ctxt, __u32 type,
   ASSERT(expr != NULL);
 
   int next, begin = CURRENT_LOC;
-
   struct expr_tree *left = expr->left;
   struct expr_tree *right = expr->right;
 
@@ -438,14 +474,21 @@ static int generate_cmp32(struct codegen_ctxt *ctxt, __u32 type,
   if (is_const_value(right, word)) {
     next = ADD_JUMP_K(type, value_of(right, word), tloc, floc);
     if (load == ALWAYS || (load != NEVER && next > begin)) {
-      begin = next = generate_load(ctxt, left, word);
+      begin = next = generate_load(ctxt, left, word, 0);
     }
   } else {
     next = ADD_JUMP_X(type, tloc, floc);
     if (load == ALWAYS || (load != NEVER && next > begin)) {
-      generate_load(ctxt, left, word);
-      ADD_INSTR(BPF_STMT(BPF_MISC | BPF_TAX, 0));
-      begin = next = generate_load(ctxt, right, word);
+      bool use_stack = should_use_stack(left);
+      if (use_stack) {
+        ADD_INSTR(BPF_STMT(BPF_LDX | BPF_MEM, 0));
+        generate_load(ctxt, left, word, 1);
+        ADD_INSTR(BPF_STMT(BPF_ST, 0));
+      } else {
+        generate_load(ctxt, left, word, 0);
+        ADD_INSTR(BPF_STMT(BPF_MISC | BPF_TAX, 0));
+      }
+      begin = next = generate_load(ctxt, right, word, 0);
     }
   }
 
@@ -523,6 +566,7 @@ static int generate_action(struct codegen_ctxt *ctxt,
       ASSERT(mapping->expr == NULL || mapping->expr->type == EXPR_TRUE);
       last_loc = -mapping->action;
     } else {
+      cache_constants(mapping->expr);
       last_loc = generate_expr(ctxt, mapping->expr, -mapping->action, last_loc);
     }
   }
@@ -557,7 +601,7 @@ static void reverse_instruction_buffer(struct codegen_ctxt *ctxt) {
 int compile_policy(struct kafel_ctxt *kafel_ctxt, struct sock_fprog *prog) {
   ASSERT(kafel_ctxt != NULL);
   ASSERT(prog != NULL);
-
+  int rv = 0;
   if (kafel_ctxt->main_policy == NULL) {
     kafel_ctxt->main_policy = policy_create("@main", NULL);
   }
@@ -588,6 +632,10 @@ int compile_policy(struct kafel_ctxt *kafel_ctxt, struct sock_fprog *prog) {
   *prog = ((struct sock_fprog){.filter = ctxt->buffer.data,
                                .len = ctxt->buffer.len});
   ctxt->buffer.data = NULL;
+  if (ctxt->max_stack_ptr >= BPF_MEMWORDS) {
+    append_error(kafel_ctxt, "Required stack size exceeds available BPF memory\n");
+    rv = 1;
+  }
   context_destroy(&ctxt);
-  return 0;
+  return rv;
 }

@@ -115,6 +115,24 @@ TEST_CASE(broken_unterminated_comment) {
   TEST_COMPILE_ERROR("POLICY empty {} USE empty DEFAULT KILL /* oops ");
 }
 
+TEST_CASE(broken_stack_overflow) {
+  TEST_COMPILE_ERROR("POLICY stackoverflow {\
+                       ALLOW {\
+                        open {\
+                         flags & mode & 0x1337 & \
+                         flags & mode & 0x1337 & \
+                         flags & mode & 0x1337 & \
+                         flags & mode & 0x1337 & \
+                         flags & mode & 0x1337 & \
+                         flags & mode & 0x1337 & \
+                         flags & mode & 0x1337 & \
+                         flags & mode & 0x1337 & \
+                         flags & mode & 0x1337 == 0x1\
+                        }\
+                       }\
+                      } USE stackoverflow DEFAULT KILL");
+}
+
 TEST_CASE(broken_const_redefintion) {
   TEST_COMPILE_ERROR(
       "#define myconst 1\n"

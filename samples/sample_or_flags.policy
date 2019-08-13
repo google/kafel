@@ -1,0 +1,13 @@
+#define O_WRONLY 1
+#define O_RDWR   2
+#define O_CREAT  64
+
+POLICY sample {
+	ALLOW {
+		open {
+			(flags == O_RDWR|O_CREAT || flags == O_WRONLY|O_CREAT)
+		}
+	}
+}
+
+USE sample DEFAULT KILL

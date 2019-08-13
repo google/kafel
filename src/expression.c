@@ -111,7 +111,7 @@ static void expr_sort_operands(struct expr_tree *expr) {
           [EXPR_GE] = EXPR_LE,          [EXPR_GT] = EXPR_LT,
           [EXPR_LE] = EXPR_GE,          [EXPR_LT] = EXPR_GT,
           [EXPR_EQ] = EXPR_EQ,          [EXPR_NEQ] = EXPR_NEQ,
-          [EXPR_BIT_AND] = EXPR_BIT_AND};
+          [EXPR_BIT_OR] = EXPR_BIT_OR,  [EXPR_BIT_AND] = EXPR_BIT_AND};
       expr->type = swapped[expr->type];
       SWAP(expr->left, expr->right);
     }
@@ -168,6 +168,11 @@ static void expr_precompute_eliminate(struct expr_tree **expr) {
       expr_destroy(&(*expr)->right);
       *expr = (*expr)->left;
       free(original_expr);
+    } else if ((*expr)->type == EXPR_BIT_OR) {
+      (*expr)->left->number |= (*expr)->right->number;
+      expr_destroy(&(*expr)->right);
+      *expr = (*expr)->left;
+      free(original_expr);
     } else {
       (*expr)->type = expr_eval((*expr)->type, (*expr)->left->number,
                                 (*expr)->right->number);
@@ -211,6 +216,20 @@ static void expr_precompute_eliminate(struct expr_tree **expr) {
         (*expr)->type = eq_vars_result;
         expr_destroy(&(*expr)->left);
         expr_destroy(&(*expr)->right);
+      }
+      break;
+    case EXPR_BIT_OR:
+      if ((*expr)->right->type == EXPR_NUMBER) {
+        if ((*expr)->right->number == UINT64_MAX) {
+          expr_destroy(&(*expr)->left);
+          expr_destroy(&(*expr)->right);
+          (*expr)->type = EXPR_NUMBER;
+          (*expr)->number = UINT64_MAX;
+        } else if ((*expr)->right->number == 0) {
+          expr_destroy(&(*expr)->right);
+          *expr = (*expr)->left;
+          free(original_expr);
+        }
       }
       break;
     case EXPR_BIT_AND:
