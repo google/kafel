@@ -73,7 +73,7 @@ Kafel supports following number notations:
 
 You may define numeric constants to make your policies more readable.
 Constant definitions may be placed almost anywhere in the policy file.
-A constant definiton cannot be placed inside of a policy defintion.
+A constant definition cannot be placed inside of a policy definition.
 The defined constants can then be used anywhere where a number is expected.
 
 ```
