@@ -31,7 +31,7 @@ int main(int argc, char** argv) {
   int opt;
   while ((opt = getopt(argc, argv, "hc")) != -1) {
     switch (opt) {
-      case 'n':
+      case 'h':
         mode = HUMAN_READABLE;
         break;
       case 'c':
