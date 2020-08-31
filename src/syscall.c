@@ -25,75 +25,57 @@
 #include <string.h>
 
 #include "common.h"
+#include "syscalldb.h"
 
 // Fix for Linux <3.12
 #ifndef EM_ARM
 #define EM_ARM 40
 #endif
 
-#define SYSCALL_LIST_DECL(arch)                                 \
-  extern const struct syscall_descriptor arch##_syscall_list[]; \
-  extern const size_t arch##_syscall_list_size;
-
-#define SYSCALL_LIST(audit_arch, arch) \
-  { audit_arch, arch##_syscall_list, &arch##_syscall_list_size }
-
-SYSCALL_LIST_DECL(arm)
-SYSCALL_LIST_DECL(aarch64)
-SYSCALL_LIST_DECL(amd64)
-SYSCALL_LIST_DECL(mipso32)
-SYSCALL_LIST_DECL(mips64)
-SYSCALL_LIST_DECL(i386)
-
-const struct syscall_list syscall_lists[] = {
-#ifdef AUDIT_ARCH_ARM
-    SYSCALL_LIST(AUDIT_ARCH_ARM, arm),
-#endif
-#ifdef AUDIT_ARCH_AARCH64
-    SYSCALL_LIST(AUDIT_ARCH_AARCH64, aarch64),
-#endif
-#ifdef AUDIT_ARCH_X86_64
-    SYSCALL_LIST(AUDIT_ARCH_X86_64, amd64),
-#endif
-#ifdef AUDIT_ARCH_MIPS
-    SYSCALL_LIST(AUDIT_ARCH_MIPS, mipso32),
-#endif
-#ifdef AUDIT_ARCH_MIPS64
-    SYSCALL_LIST(AUDIT_ARCH_MIPS64, mips64),
-#endif
-#ifdef AUDIT_ARCH_I386
-    SYSCALL_LIST(AUDIT_ARCH_I386, i386),
-#endif
-};
-
 struct syscall_descriptor* syscall_custom(uint32_t nr) {
   struct syscall_descriptor* rv = calloc(1, sizeof(*rv));
   rv->nr = nr;
-  rv->is_custom = true;
   return rv;
 }
 
-const struct syscall_list* syscalls_lookup(uint32_t arch) {
-  for (size_t i = 0; i < sizeof(syscall_lists) / sizeof(syscall_lists[0]);
-       ++i) {
-    if (syscall_lists[i].arch == arch) {
-      return &syscall_lists[i];
-    }
+uint32_t syscall_get_arch_mask(uint32_t arch) {
+  switch (arch) {
+    default:
+      return 0;
+#ifdef AUDIT_ARCH_ARM
+    case AUDIT_ARCH_ARM:
+      return SYSCALLDB_ARCH_ARM_FLAG;
+#endif
+#ifdef AUDIT_ARCH_AARCH64
+    case AUDIT_ARCH_AARCH64:
+      return SYSCALLDB_ARCH_AARCH64_FLAG;
+#endif
+#ifdef AUDIT_ARCH_X86_64
+    case AUDIT_ARCH_X86_64:
+      return SYSCALLDB_ARCH_X86_64_FLAG;
+#endif
+#ifdef AUDIT_ARCH_MIPS
+    case AUDIT_ARCH_MIPS:
+      return SYSCALLDB_ARCH_MIPS_FLAG;
+#endif
+#ifdef AUDIT_ARCH_MIPS64
+    case AUDIT_ARCH_MIPS64:
+      return SYSCALLDB_ARCH_MIPS64_FLAG;
+#endif
+#ifdef AUDIT_ARCH_I386
+    case AUDIT_ARCH_I386:
+      return SYSCALLDB_ARCH_I386_FLAG;
+#endif
   }
-  return NULL;
 }
 
-const struct syscall_descriptor* syscall_lookup(const struct syscall_list* list,
+const struct syscall_descriptor* syscall_lookup(uint32_t mask,
                                                 const char* name) {
-  ASSERT(list != NULL);
-  ASSERT(name != NULL);
-  /* TODO use binary search if syscalls can be guaranteed to be
-   *  sorted alphabetically
-   */
-  for (size_t i = 0; i < *list->size; ++i) {
-    if (strcmp(name, list->syscalls[i].name) == 0) {
-      return &list->syscalls[i];
-    }
+  const struct syscalldb_definition* def = syscalldb_lookup(name);
+  if (def && mask & def->arch_mask) {
+    struct syscall_descriptor* rv = calloc(1, sizeof(*rv));
+    syscalldb_unpack(def, mask, rv);
+    return rv;
   }
   return NULL;
 }
@@ -102,8 +84,6 @@ void syscall_descriptor_destroy(struct syscall_descriptor** desc) {
   ASSERT(desc != NULL);
   ASSERT((*desc) != NULL);
 
-  if ((*desc)->is_custom) {
-    free(*desc);
-  }
+  free(*desc);
   (*desc) = NULL;
 }

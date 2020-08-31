@@ -298,7 +298,7 @@ syscall_id
                 $$ = syscall_custom(value);
             } else {
                 $$ = (struct syscall_descriptor*)
-                        syscall_lookup(ctxt->syscalls, $1);
+                        syscall_lookup(ctxt->target_arch_mask, $1);
                     if ($$ == NULL) {
                     emit_error(@1, "Undefined syscall `%s'", $1);
                     free($1); $1 = NULL;

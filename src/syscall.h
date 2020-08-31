@@ -40,15 +40,9 @@ struct syscall_descriptor {
   struct syscall_arg args[SYSCALL_MAX_ARGS];
 };
 
-struct syscall_list {
-  uint32_t arch;
-  const struct syscall_descriptor* const syscalls;
-  const size_t* const size;
-};
-
 struct syscall_descriptor* syscall_custom(uint32_t nr);
-const struct syscall_list* syscalls_lookup(uint32_t arch);
-const struct syscall_descriptor* syscall_lookup(const struct syscall_list* list,
+uint32_t syscall_get_arch_mask(uint32_t arch);
+const struct syscall_descriptor* syscall_lookup(uint32_t arch_mask,
                                                 const char* name);
 void syscall_descriptor_destroy(struct syscall_descriptor** desc);
 
