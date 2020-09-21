@@ -46,7 +46,7 @@ def output_syscall(nr, name):
 	else:
 		real_name = name
 	output('\t{"'+real_name+'", '+str(nr)+', {')
-	for j in xrange(0, nb_args):
+	for j in range(0, nb_args):
 		arg_name = get_string_val("print __syscall_meta__"+name+"->args["+str(j)+"]")
 		arg_type = get_string_val("print __syscall_meta__"+name+"->types["+str(j)+"]")
 		arg_size = get_int_val("print sizeof("+arg_type+")")
@@ -62,7 +62,7 @@ if num_syscalls <= 0:
 	table_cmd = "info symbol ((void**)sys_call_table)"
 	syscall_regex = "([Ss]y[Ss]|stub)_([^ ]*)"
 
-for i in xrange(0, num_syscalls):
+for i in range(0, num_syscalls):
 	try:
 		out = gdb.execute(table_cmd+"["+str(i)+"]", False, True)
 	except gdb.error:

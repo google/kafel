@@ -24,6 +24,8 @@ if [ $# -ne 1 ] || [ ! -e "$1" -o -d "$1" ]; then
 	exit 1
 fi
 
+export LANG=C
+
 linux="$1"
 arch="$(readelf -h "$linux" | sed -ne '/Machine:/{s/^[[:space:]]*Machine:[[:space:]]*//;P}')"
 if [ "$arch" = "Advanced Micro Devices X86-64" ]; then
