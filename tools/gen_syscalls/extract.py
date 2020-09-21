@@ -17,9 +17,11 @@
    limitations under the License.
 """
 
+import os
 import re
+import sys
 
-out_file = open('output_syscalls.c', 'w')
+# Functions
 
 def output(str):
 	out_file.write(str)
@@ -45,7 +47,7 @@ def output_syscall(nr, name):
 		real_name = m.group(1)
 	else:
 		real_name = name
-	output('\t{"'+real_name+'", '+str(nr)+', {')
+	output('\t{"'+real_name+'", '+str(nr | sys_call_bit)+', {')
 	for j in range(0, nb_args):
 		arg_name = get_string_val("print __syscall_meta__"+name+"->args["+str(j)+"]")
 		arg_type = get_string_val("print __syscall_meta__"+name+"->types["+str(j)+"]")
@@ -53,13 +55,40 @@ def output_syscall(nr, name):
 		output('[ARG_'+str(j)+'] = {"'+arg_name+'", '+str(arg_size)+'}, ')
 	output('}},\n')
 
-num_syscalls=get_int_val("print sizeof(sys_call_table)/sizeof(sys_call_table[0])")
-table_cmd = "print sys_call_table"
+# Start of script
+
+# Define syscall table name
+
+sys_call_table_name = os.getenv("SYSCALLTABLENAME")
+if (sys_call_table_name is None) or (sys_call_table_name == ""):
+	print("WARNING: Environment variable 'SYSCALLTABLENAME' not set!")
+	out_file.close()
+	sys.exit(1)
+
+# Define syscall bit
+
+sys_call_bit = os.getenv("SYSCALLBIT")
+if (sys_call_bit is None) or (sys_call_bit == ""):
+	print("WARNING: Environment variable 'SYSCALLBIT' not set!")
+	out_file.close()
+	sys.exit(1)
+else:
+	try:
+		sys_call_bit = int(sys_call_bit)
+	except:
+		print("WARNING: Wring value of environment varibable 'SYSCALLBIT'!")
+		out_file.close()
+		sys.exit(1)
+
+out_file = open('output_syscalls.c', 'a')
+
+num_syscalls=get_int_val(str("print sizeof(" + sys_call_table_name + ")/sizeof(" + sys_call_table_name + "[0])"))
+table_cmd = "print " + sys_call_table_name
 syscall_regex = "<([Ss]y[Ss]|stub)_([^>]*)>"
 
 if num_syscalls <= 0:
 	num_syscalls = 1000
-	table_cmd = "info symbol ((void**)sys_call_table)"
+	table_cmd = "info symbol ((void**)" + sys_call_table_name + ")"
 	syscall_regex = "([Ss]y[Ss]|stub)_([^ ]*)"
 
 for i in range(0, num_syscalls):
