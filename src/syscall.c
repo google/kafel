@@ -44,6 +44,7 @@ SYSCALL_LIST_DECL(amd64)
 SYSCALL_LIST_DECL(mipso32)
 SYSCALL_LIST_DECL(mips64)
 SYSCALL_LIST_DECL(i386)
+SYSCALL_LIST_DECL(x32)
 
 const struct syscall_list syscall_lists[] = {
 #ifdef AUDIT_ARCH_ARM
@@ -51,18 +52,27 @@ const struct syscall_list syscall_lists[] = {
 #endif
 #ifdef AUDIT_ARCH_AARCH64
     SYSCALL_LIST(AUDIT_ARCH_AARCH64, aarch64),
+    SYSCALL_LIST(AUDIT_ARCH_ARM, arm),
 #endif
 #ifdef AUDIT_ARCH_X86_64
     SYSCALL_LIST(AUDIT_ARCH_X86_64, amd64),
+    SYSCALL_LIST(AUDIT_ARCH_I386, i386),
 #endif
 #ifdef AUDIT_ARCH_MIPS
     SYSCALL_LIST(AUDIT_ARCH_MIPS, mipso32),
 #endif
 #ifdef AUDIT_ARCH_MIPS64
     SYSCALL_LIST(AUDIT_ARCH_MIPS64, mips64),
+    SYSCALL_LIST(AUDIT_ARCH_MIPS, mipso32),
 #endif
 #ifdef AUDIT_ARCH_I386
     SYSCALL_LIST(AUDIT_ARCH_I386, i386),
+#endif
+};
+
+const struct syscall_list companion_syscall_lists[] = {
+#ifdef AUDIT_ARCH_X86_64
+    SYSCALL_LIST(AUDIT_ARCH_X86_64, x32),
 #endif
 };
 
@@ -78,6 +88,17 @@ const struct syscall_list* syscalls_lookup(uint32_t arch) {
        ++i) {
     if (syscall_lists[i].arch == arch) {
       return &syscall_lists[i];
+    }
+  }
+  return NULL;
+}
+
+const struct syscall_list* companion_syscalls_lookup(uint32_t arch) {
+  for (size_t i = 0;
+       i < sizeof(companion_syscall_lists) / sizeof(companion_syscall_lists[0]);
+       ++i) {
+    if (companion_syscall_lists[i].arch == arch) {
+      return &companion_syscall_lists[i];
     }
   }
   return NULL;

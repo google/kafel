@@ -26,5 +26,11 @@
 #include "context.h"
 
 int compile_policy(struct kafel_ctxt *kafel_ctxt, struct sock_fprog *prog);
+void free_sock_program(struct sock_fprog* prog);
+int knit_policy(struct kafel_ctxt* kafel_ctxt,
+                struct sock_fprog* target_programs,
+                struct sock_fprog* companion_programs,
+                int default_action,
+                struct sock_fprog* prog);
 
 #endif /* KAFEL_CODEGEN_H */

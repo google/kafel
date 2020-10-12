@@ -39,30 +39,26 @@ static int parse(struct kafel_ctxt* ctxt) {
     return -1;
   }
 
-  YY_BUFFER_STATE buf_state;
-  switch (ctxt->input.type) {
-    case INPUT_FILE:
-      buf_state =
-          kafel_yy_create_buffer(ctxt->input.file, YY_BUF_SIZE, scanner);
-      kafel_yy_switch_to_buffer(buf_state, scanner);
-      break;
-    case INPUT_STRING:
-      buf_state = kafel_yy_scan_string(ctxt->input.string, scanner);
-      break;
-    default:
-      kafel_yylex_destroy(scanner);
-      return -1;
-  }
+  kafel_yy_scan_string(ctxt->input.string, scanner);
 
   kafel_yyset_column(1, scanner);
   kafel_yyset_lineno(1, scanner);
 
-  ctxt->syscalls = syscalls_lookup(ctxt->target_arch);
+  ctxt->syscalls = ctxt->use_companion_arch ?
+                   companion_syscalls_lookup(ctxt->target_arch) :
+                   syscalls_lookup(ctxt->target_arch);
   if (ctxt->syscalls == NULL) {
-    append_error(ctxt, "Cannot resolve syscall list for architecture %#x\n",
-                 ctxt->target_arch);
     kafel_yylex_destroy(scanner);
-    return -1;
+
+    // companion architectures may not be present,
+    // so ;et's indicate it is not there silently for end-user
+    if (ctxt->use_companion_arch) {
+      return -2;
+    } else {
+      append_error(ctxt, "Cannot resolve syscall list for architecture %#x\n",
+                   ctxt->target_arch);
+      return -1;
+    }
   }
 
   if (kafel_yyparse(ctxt, scanner) || ctxt->lexical_error) {
@@ -79,17 +75,57 @@ static int parse(struct kafel_ctxt* ctxt) {
   return 0;
 }
 
+void set_target_arch(kafel_ctxt_t ctxt, uint32_t target_arch) {
+  ctxt->target_arch = target_arch;
+}
+
+void set_use_companion_arch(kafel_ctxt_t ctxt, bool use_companion_arch) {
+  ctxt->use_companion_arch = use_companion_arch;
+}
+
 KAFEL_API void kafel_set_input_file(kafel_ctxt_t ctxt, FILE* file) {
   ASSERT(ctxt != NULL);
   ASSERT(file != NULL);
 
+  char *filebuf = NULL;
+
+  // Free and null the string if the type was FILE
+  if (ctxt->input.string && ctxt->input.type == INPUT_FILE) {
+    char *freestr = (char*)ctxt->input.string;
+    free(freestr);
+    ctxt->input.string = NULL;
+  }
+
+  // Read YY_BUF_SIZE from file as string
+  filebuf = calloc(1, YY_BUF_SIZE);
+  if (!filebuf) {
+    append_error(ctxt, "Cannot allocate file buffer of %d bytes",
+                 YY_BUF_SIZE);
+    return;
+  }
+
+  size_t bytes_read = fread(filebuf, 1, YY_BUF_SIZE, file);
+  if(!bytes_read || ferror(file)) {
+    append_error(ctxt, "Cannot read from file: %d",
+                 ferror(file));
+    free(filebuf);
+    return;
+  }
+
   ctxt->input.type = INPUT_FILE;
-  ctxt->input.file = file;
+  ctxt->input.string = filebuf;
 }
 
 KAFEL_API void kafel_set_input_string(kafel_ctxt_t ctxt, const char* string) {
   ASSERT(ctxt != NULL);
   ASSERT(string != NULL);
+
+  // Free and null the string if the type was FILE
+  if (ctxt->input.string && ctxt->input.type == INPUT_FILE) {
+    char *freestr = (char*)ctxt->input.string;
+    free(freestr);
+    ctxt->input.string = NULL;
+  }
 
   ctxt->input.type = INPUT_STRING;
   ctxt->input.string = string;
@@ -98,7 +134,20 @@ KAFEL_API void kafel_set_input_string(kafel_ctxt_t ctxt, const char* string) {
 KAFEL_API void kafel_set_target_arch(kafel_ctxt_t ctxt, uint32_t target_arch) {
   ASSERT(ctxt != NULL);
 
-  ctxt->target_arch = target_arch;
+  uint32_t target_archs[MAX_TARGET_ARCHS] = {target_arch, 0, 0, 0};
+  kafel_set_target_architectures(ctxt, target_archs, MAX_TARGET_ARCHS);
+}
+
+KAFEL_API void kafel_set_target_architectures(kafel_ctxt_t ctxt, uint32_t* target_archs, uint32_t size) {
+  ASSERT(ctxt != NULL);
+  ASSERT(target_archs != NULL);
+
+  size = size >= MAX_TARGET_ARCHS ? MAX_TARGET_ARCHS : size;
+
+  memset(ctxt->all_architectures, 0, MAX_TARGET_ARCHS * sizeof(uint32_t));
+  memcpy(ctxt->all_architectures, target_archs, size * sizeof(uint32_t));
+
+  ctxt->target_arch = ctxt->all_architectures[0];
 }
 
 KAFEL_API void kafel_add_include_search_path(kafel_ctxt_t ctxt,
@@ -114,14 +163,74 @@ KAFEL_API int kafel_compile(kafel_ctxt_t ctxt, struct sock_fprog* prog) {
     return -EINVAL;
   }
 
-  kafel_ctxt_reset(ctxt);
+  struct sock_fprog target_programs[MAX_TARGET_ARCHS] = { 0 };
+  struct sock_fprog companion_programs[MAX_TARGET_ARCHS] = { 0 };
+  unsigned char i = 0;
+  int default_action = 0;
 
-  int rv = parse(ctxt);
-  if (rv) {
-    return rv;
+  for (i = 0; i < MAX_TARGET_ARCHS; i++) {
+    if (!ctxt->all_architectures[i]) continue;
+
+    kafel_ctxt_reset(ctxt);
+    set_target_arch(ctxt, ctxt->all_architectures[i]);
+    set_use_companion_arch(ctxt, false);
+
+    int rv = parse(ctxt);
+    if (rv) {
+      for (i = 0; i < MAX_TARGET_ARCHS; i++) {
+        free_sock_program(&target_programs[i]);
+        free_sock_program(&companion_programs[i]);
+      }
+
+      return rv;
+    }
+
+    default_action = ctxt->default_action;
+
+    rv = compile_policy(ctxt, &target_programs[i]);
+    if (rv) {
+      for (i = 0; i < MAX_TARGET_ARCHS; i++) {
+        free_sock_program(&target_programs[i]);
+        free_sock_program(&companion_programs[i]);
+      }
+
+      return rv;
+    }
+
+    if (!rv && target_programs[0].len == 1) {
+      *prog = target_programs[0];
+      return rv;
+    }
+
+    kafel_ctxt_reset(ctxt);
+    set_target_arch(ctxt, ctxt->all_architectures[i]);
+    set_use_companion_arch(ctxt, true);
+
+    rv = parse(ctxt);
+    if (rv) {
+      if (rv == -2) continue;
+
+      for (i = 0; i < MAX_TARGET_ARCHS; i++) {
+        free_sock_program(&target_programs[i]);
+        free_sock_program(&companion_programs[i]);
+      }
+
+      return rv;
+    }
+
+    rv = compile_policy(ctxt, &companion_programs[i]);
+    if (rv) {
+      for (i = 0; i < MAX_TARGET_ARCHS; i++) {
+        free_sock_program(&target_programs[i]);
+        free_sock_program(&companion_programs[i]);
+      }
+
+      return rv;
+    }
   }
 
-  return compile_policy(ctxt, prog);
+  return knit_policy(ctxt, target_programs, companion_programs,
+                     default_action, prog);
 }
 
 KAFEL_API int kafel_compile_file(FILE* file, struct sock_fprog* prog) {

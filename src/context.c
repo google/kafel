@@ -30,12 +30,36 @@
 #include "common.h"
 #include "kafel.h"
 
+#ifndef KAFEL_DEFAULT_TARGET_ARCH
+
+uint32_t KAFEL_DEFAULT_TARGET_ARCH[4] =
+
+#if defined(__x86_64__)
+  { AUDIT_ARCH_X86_64, AUDIT_ARCH_I386, 0, 0 };
+#elif defined(__aarch64__)
+  { AUDIT_ARCH_AARCH64, AUDIT_ARCH_ARM, 0, 0 };
+#elif defined(__mips64__)
+  { AUDIT_ARCH_MIPS64, AUDIT_ARCH_MIPS, 0, 0 };
+#elif defined(__i386__)
+  { AUDIT_ARCH_I386, 0, 0, 0 };
+#elif defined(__arm__)
+  { AUDIT_ARCH_ARM, 0, 0, 0 };
+#elif defined(__mips__)
+  { AUDIT_ARCH_MIPS, 0, 0, 0 };
+#else
+#error "Unsupported architecture"
+#endif
+
+#endif /* KAFEL_DEFAULT_TARGET_ARCH */
+
 KAFEL_API kafel_ctxt_t kafel_ctxt_create(void) {
   struct kafel_ctxt* ctxt = calloc(1, sizeof(*ctxt));
   includes_ctxt_init(&ctxt->includes_ctxt);
   TAILQ_INIT(&ctxt->policies);
   TAILQ_INIT(&ctxt->constants);
-  ctxt->target_arch = KAFEL_DEFAULT_TARGET_ARCH;
+  kafel_set_target_architectures(ctxt,
+    KAFEL_DEFAULT_TARGET_ARCH,
+    sizeof(KAFEL_DEFAULT_TARGET_ARCH) / sizeof(uint32_t));
   return ctxt;
 }
 
@@ -71,7 +95,9 @@ void kafel_ctxt_reset(kafel_ctxt_t ctxt) {
   }
   ctxt->default_action = 0;
   ctxt->lexical_error = false;
-  ctxt->syscalls = NULL;
+  kafel_set_target_architectures(ctxt,
+    KAFEL_DEFAULT_TARGET_ARCH,
+    sizeof(KAFEL_DEFAULT_TARGET_ARCH) / sizeof(uint32_t));
 }
 
 void kafel_ctxt_clean(kafel_ctxt_t ctxt) {

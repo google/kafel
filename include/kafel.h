@@ -53,10 +53,20 @@ void kafel_set_input_file(kafel_ctxt_t ctxt, FILE* file);
 void kafel_set_input_string(kafel_ctxt_t ctxt, const char* string);
 
 /*
+ * Deprecated - left for backward compatibiliy only!
+ *
+ * Please use kafel_set_target_architectures() instead.
+ *
  * Sets compilation target architecture for ctxt to target_arch
  * target_arch must be a supported AUDIT_ARCH_* value (see <linux/audit.h>)
  */
 void kafel_set_target_arch(kafel_ctxt_t ctxt, uint32_t target_arch);
+
+/*
+ * Sets compilation target architecture for ctxt to target_archs
+ * target_arch must be a supported AUDIT_ARCH_* value (see <linux/audit.h>)
+ */
+void kafel_set_target_architectures(kafel_ctxt_t ctxt, uint32_t* target_archs, uint32_t size);
 
 /*
  * Adds path to list of include search paths for ctxt

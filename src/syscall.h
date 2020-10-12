@@ -48,6 +48,7 @@ struct syscall_list {
 
 struct syscall_descriptor* syscall_custom(uint32_t nr);
 const struct syscall_list* syscalls_lookup(uint32_t arch);
+const struct syscall_list* companion_syscalls_lookup(uint32_t arch);
 const struct syscall_descriptor* syscall_lookup(const struct syscall_list* list,
                                                 const char* name);
 void syscall_descriptor_destroy(struct syscall_descriptor** desc);

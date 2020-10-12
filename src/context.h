@@ -21,6 +21,8 @@
 #ifndef KAFEL_CONTEXT_H
 #define KAFEL_CONTEXT_H
 
+#include <linux/audit.h>
+
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
@@ -29,6 +31,8 @@
 #include "includes.h"
 #include "policy.h"
 #include "syscall.h"
+
+#define MAX_TARGET_ARCHS 4
 
 struct kafel_constant {
   char* name;
@@ -47,16 +51,15 @@ struct kafel_ctxt {
   int default_action;
   uint32_t target_arch;
   const struct syscall_list* syscalls;
+  uint32_t all_architectures[MAX_TARGET_ARCHS];
+  bool use_companion_arch;
   struct {
     enum {
       INPUT_NONE,
       INPUT_FILE,
       INPUT_STRING,
     } type;
-    union {
-      FILE* file;
-      const char* string;
-    };
+    const char* string;
   } input;
   bool lexical_error;
   struct {

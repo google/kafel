@@ -26,6 +26,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/queue.h>
 
 #include "common.h"
@@ -112,6 +113,14 @@ struct codegen_ctxt {
   } locations;
   size_t max_stack_ptr;
 };
+
+void free_sock_program(struct sock_fprog* prog) {
+  ASSERT(prog);
+
+  if (prog->filter) free(prog->filter);
+  prog->filter = NULL;
+  prog->len = 0;
+}
 
 static struct codegen_ctxt *context_create(void) {
   struct codegen_ctxt *ctxt = calloc(1, sizeof(*ctxt));
@@ -288,6 +297,8 @@ static int add_jump_set(struct codegen_ctxt *ctxt, __u32 what, int tloc,
   BPF_STMT(BPF_LD + BPF_W + BPF_ABS, offsetof(struct seccomp_data, nr))
 #define BPF_LOAD_ARG_WORD(arg, high) \
   BPF_STMT(BPF_LD + BPF_W + BPF_ABS, ARG_WORD(arg, high))
+#define BPF_NEXT_ARCH_MARKER \
+  BPF_STMT(BPF_LD + BPF_W + BPF_ABS, 0x12345678)
 
 static bool is_const_value(struct expr_tree *expr, int word) {
   return word == HIGH_WORD ? expr->high.is_const : expr->low.is_const;
@@ -615,15 +626,23 @@ int compile_policy(struct kafel_ctxt *kafel_ctxt, struct sock_fprog *prog) {
   normalize_rules(rules, kafel_ctxt->default_action);
   int begin = CURRENT_LOC;
   int next = generate_rules(ctxt, rules->data, rules->len);
+  int next2 = 0;
   range_rules_destroy(&rules);
   if (next > begin) {
     begin = next = ADD_INSTR(BPF_LOAD_SYSCALL);
+    if (!kafel_ctxt->use_companion_arch) {
+      next2 = ADD_INSTR(BPF_NEXT_ARCH_MARKER);
+    } else {
+      next2 = next;
+    }
   } else {
-    next = -kafel_ctxt->default_action;
+    next2 = next = -kafel_ctxt->default_action;
   }
-  next = add_jump(ctxt, BPF_JEQ, kafel_ctxt->target_arch, next, -ACTION_KILL);
-  if (next > begin) {
-    begin = next = ADD_INSTR(BPF_LOAD_ARCH);
+  if (!kafel_ctxt->use_companion_arch) {
+    next = add_jump(ctxt, BPF_JEQ, kafel_ctxt->target_arch, next, next2);
+    if (next > begin) {
+      begin = next = ADD_INSTR(BPF_LOAD_ARCH);
+    }
   }
   if (next < 0) {
     resolve_location(ctxt, next);
@@ -638,4 +657,90 @@ int compile_policy(struct kafel_ctxt *kafel_ctxt, struct sock_fprog *prog) {
   }
   context_destroy(&ctxt);
   return rv;
+}
+
+int knit_policy(struct kafel_ctxt* kafel_ctxt,
+                struct sock_fprog* target_programs,
+                struct sock_fprog* companion_programs,
+                int default_action,
+                struct sock_fprog* prog)
+{
+  unsigned char i = 0;
+  uint32_t j = 0;
+  uint32_t k = 0;
+  uint32_t cur_target_policy_start = 0;
+  uint32_t total_count = 1;
+
+  for (i = 0; i < MAX_TARGET_ARCHS; i++) {
+    if (!target_programs[i].len) continue;
+    total_count += target_programs[i].len;
+    if (!companion_programs[i].len) continue;
+    total_count += companion_programs[i].len;
+  }
+
+  struct sock_filter* filters = calloc(total_count, sizeof(struct sock_filter));
+  if (!filters) {
+    append_error(kafel_ctxt, "Cannot allocate %d bytes of memory",
+                 total_count * sizeof(struct sock_filter));
+
+    for (i = 0; i < MAX_TARGET_ARCHS; i++) {
+      free_sock_program(&target_programs[i]);
+      free_sock_program(&companion_programs[i]);
+    }
+
+    return -1;
+  }
+
+  for (i = 0; i < MAX_TARGET_ARCHS; i++) {
+    if (!target_programs[i].len) continue;
+
+    cur_target_policy_start = k;
+
+    memcpy(&filters[k], target_programs[i].filter,
+          target_programs[i].len * sizeof(struct sock_filter));
+    k += target_programs[i].len;
+
+    if (companion_programs[i].len) {
+      // In parent policy replace default action with JA
+      // to start of companion policy
+
+      for (j = k - 1; j > (k - target_programs[i].len); j--) {
+        if (filters[j].code == (BPF_RET | BPF_K) &&
+            filters[j].jt == 0 &&
+            filters[j].jf == 0 &&
+            filters[j].k == ACTION_TO_BPF(default_action)) {
+          filters[j].code = BPF_JMP | BPF_JA;
+          filters[j].k = k - j - 1;
+          break;
+        }
+      }
+
+      memcpy(&filters[k], companion_programs[i].filter,
+            companion_programs[i].len * sizeof(struct sock_filter));
+      k += companion_programs[i].len;
+    }
+
+    // Replace marker JA to next parent policy
+
+    for (j = cur_target_policy_start; j < k; j++) {
+        if (filters[j].code == (BPF_LD + BPF_W + BPF_ABS) &&
+            filters[j].jt == 0 &&
+            filters[j].jf == 0 &&
+            filters[j].k == 0x12345678) {
+          filters[j].code = BPF_JMP | BPF_JA;
+          filters[j].k = k - j - 1;
+          break;
+        }
+    }
+  }
+
+  // Finally, add one KILL statement to complete jumps
+
+  filters[total_count - 1].code = BPF_RET | BPF_K;
+  filters[total_count - 1].k = SECCOMP_RET_KILL;
+
+  prog->len = total_count;
+  prog->filter = filters;
+
+  return 0;
 }
