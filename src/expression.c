@@ -21,6 +21,7 @@
 #include "expression.h"
 
 #include <stdlib.h>
+#include <string.h>
 
 #include "common.h"
 
@@ -31,16 +32,10 @@ struct expr_tree *expr_create_number(uint64_t value) {
   return rv;
 }
 
-struct expr_tree *expr_create_var(int var, int size) {
-  if (size == 2) {  // TODO fully support 16-bit arguments
-    size = 4;
-  }
-  ASSERT(size == 4 || size == 8);  // 32- or 64-bit
-
+struct expr_tree *expr_create_identifier(struct kafel_identifier *identifier) {
   struct expr_tree *rv = calloc(1, sizeof(*rv));
-  rv->type = EXPR_VAR;
-  rv->var = var;
-  rv->size = size;
+  rv->type = EXPR_IDENTIFIER;
+  rv->identifier = identifier;
   return rv;
 }
 
@@ -255,6 +250,32 @@ void expr_simplify(struct expr_tree **expr) {
   expr_precompute_eliminate(expr);
 }
 
+struct expr_tree *expr_copy(const struct expr_tree *expr) {
+  ASSERT(expr != NULL);
+
+  struct expr_tree *rv = calloc(1, sizeof(*rv));
+  rv->type = expr->type;
+  if (expr->type >= EXPR_BINARY_MIN && expr->type <= EXPR_BINARY_MAX) {
+    rv->left = expr_copy(expr->left);
+    rv->right = expr_copy(expr->right);
+  } else if (expr->type >= EXPR_UNARY_MIN && expr->type <= EXPR_UNARY_MAX) {
+    rv->child = expr_copy(expr->child);
+  }
+  switch (expr->type) {
+    case EXPR_NUMBER:
+      rv->number = expr->number;
+      break;
+    case EXPR_VAR:
+      rv->var = expr->var;
+      rv->size = expr->size;
+      break;
+    case EXPR_IDENTIFIER:
+      rv->identifier = kafel_identifier_copy(expr->identifier);
+      break;
+  }
+  return rv;
+}
+
 void expr_destroy(struct expr_tree **expr) {
   ASSERT(expr != NULL);
   ASSERT((*expr) != NULL);
@@ -266,6 +287,35 @@ void expr_destroy(struct expr_tree **expr) {
              (*expr)->type <= EXPR_UNARY_MAX) {
     expr_destroy(&(*expr)->child);
   }
+  if ((*expr)->type == EXPR_IDENTIFIER) {
+    kafel_identifier_destroy(&(*expr)->identifier);
+  }
   free(*expr);
   *expr = NULL;
+}
+
+void expr_resolve_identifiers(struct expr_tree *expr,
+                              const struct syscall_arg args[SYSCALL_MAX_ARGS]) {
+  ASSERT(expr != NULL);
+
+  if (expr->type >= EXPR_BINARY_MIN && expr->type <= EXPR_BINARY_MAX) {
+    expr_resolve_identifiers(expr->left, args);
+    expr_resolve_identifiers(expr->right, args);
+  } else if (expr->type >= EXPR_UNARY_MIN && expr->type <= EXPR_UNARY_MAX) {
+    expr_resolve_identifiers(expr->child, args);
+  }
+  if (expr->type != EXPR_IDENTIFIER) {
+    return;
+  }
+  for (int i = 0; i < SYSCALL_MAX_ARGS; ++i) {
+    ASSERT(args[i].name != NULL);
+    if (strcmp(args[i].name, expr->identifier->id) == 0) {
+      kafel_identifier_destroy(&expr->identifier);
+      expr->type = EXPR_VAR;
+      expr->var = i;
+      expr->size = args[i].size;
+      return;
+    }
+  }
+  ASSERT(false);
 }

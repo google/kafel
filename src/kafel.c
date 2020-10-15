@@ -57,14 +57,6 @@ static int parse(struct kafel_ctxt* ctxt) {
   kafel_yyset_column(1, scanner);
   kafel_yyset_lineno(1, scanner);
 
-  ctxt->syscalls = syscalls_lookup(ctxt->target_arch);
-  if (ctxt->syscalls == NULL) {
-    append_error(ctxt, "Cannot resolve syscall list for architecture %#x\n",
-                 ctxt->target_arch);
-    kafel_yylex_destroy(scanner);
-    return -1;
-  }
-
   if (kafel_yyparse(ctxt, scanner) || ctxt->lexical_error) {
     // parse error
     // workaround for a flex bug
@@ -76,6 +68,79 @@ static int parse(struct kafel_ctxt* ctxt) {
   }
 
   kafel_yylex_destroy(scanner);
+  return 0;
+}
+
+static int validate_references_in_expr(
+    kafel_ctxt_t ctxt, const struct expr_tree* expr,
+    const struct syscall_arg args[SYSCALL_MAX_ARGS]) {
+  ASSERT(expr != NULL);
+
+  if (expr->type >= EXPR_BINARY_MIN && expr->type <= EXPR_BINARY_MAX) {
+    if (validate_references_in_expr(ctxt, expr->left, args) ||
+        validate_references_in_expr(ctxt, expr->right, args)) {
+      return -1;
+    }
+    return 0;
+  }
+  if (expr->type >= EXPR_UNARY_MIN && expr->type <= EXPR_UNARY_MAX) {
+    return validate_references_in_expr(ctxt, expr->child, args);
+  }
+  if (expr->type != EXPR_IDENTIFIER) {
+    return 0;
+  }
+  for (int i = 0; i < SYSCALL_MAX_ARGS; ++i) {
+    if (args[i].name == NULL) {
+      break;
+    }
+    if (strcmp(args[i].name, expr->identifier->id) == 0) {
+      return 0;
+    }
+  }
+  const struct kafel_identifier* identifier = expr->identifier;
+  const struct kafel_source_location* loc = &identifier->loc;
+  append_error(ctxt, "%d:%d: Undefined identifier `%s'", loc->first_line,
+               loc->first_column, identifier->id);
+  return -1;
+}
+
+static int validate_references(kafel_ctxt_t ctxt) {
+  const struct syscall_list* syscall_list = syscalls_lookup(ctxt->target_arch);
+  if (syscall_list == NULL) {
+    append_error(ctxt, "Cannot resolve syscall list for architecture %#x\n",
+                 ctxt->target_arch);
+    return -1;
+  }
+  struct policy* policy;
+  TAILQ_FOREACH(policy, &ctxt->policies, policies) {
+    struct policy_entry* entry;
+    TAILQ_FOREACH(entry, &policy->entries, entries) {
+      if (entry->type != POLICY_ACTION) {
+        continue;
+      }
+      struct syscall_filter* filter;
+      TAILQ_FOREACH(filter, &entry->filters, filters) {
+        if (filter->syscall->type == SYSCALL_SPEC_ID) {
+          const struct kafel_identifier* identifier =
+              filter->syscall->identifier;
+          if (syscall_lookup(syscall_list, identifier->id) == NULL) {
+            const struct kafel_source_location* loc = &identifier->loc;
+            append_error(ctxt, "%d:%d: Undefined identifier `%s'",
+                         loc->first_line, loc->first_column, identifier->id);
+            return -1;
+          }
+        }
+        if (filter->expr != NULL) {
+          struct syscall_arg args[SYSCALL_MAX_ARGS];
+          syscall_spec_get_args(filter->syscall, syscall_list, args);
+          int rv = validate_references_in_expr(ctxt, filter->expr, args);
+          if (rv) {
+            return rv;
+          }
+        }
+      }
+    }
+  }
   return 0;
 }
 
@@ -117,6 +182,10 @@ KAFEL_API int kafel_compile(kafel_ctxt_t ctxt, struct sock_fprog* prog) {
   kafel_ctxt_reset(ctxt);
 
   int rv = parse(ctxt);
+  if (rv) {
+    return rv;
+  }
+  rv = validate_references(ctxt);
   if (rv) {
     return rv;
   }

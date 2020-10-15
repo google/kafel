@@ -28,19 +28,27 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "common.h"
 #include "parser.h"
 #include "lexer.h"
 
 void yyerror(YYLTYPE * loc, struct kafel_ctxt* ctxt, yyscan_t scanner,
              const char *msg);
 
+struct custom_syscall_args {
+  int cur;
+  struct custom_syscall_arg args[SYSCALL_MAX_ARGS];
+};
+
+struct custom_syscall_args* custom_syscall_args_create(void);
+bool custom_syscall_args_has_already(struct custom_syscall_args* args, const char* name);
+void custom_syscall_args_destroy(struct custom_syscall_args** args);
+
 #define emit_error(loc, fmt, ...)                          \
     do {                                                   \
         append_error(ctxt, "%d:%d: "fmt, (loc).first_line, \
                     (loc).first_column, ##__VA_ARGS__);    \
     } while(0)                                             \
-
-#define INVALID_ARG_SIZE -1
 
 #define YYLLOC_DEFAULT(Cur, Rhs, N )                    \
 do {                                                    \
@@ -74,28 +82,7 @@ do {                                                    \
 typedef void* yyscan_t;
 #endif
 
-typedef struct KAFEL_YYLTYPE
-{
-    int first_line;
-    int first_column;
-    int last_line;
-    int last_column;
-    const char *filename;
-} KAFEL_YYLTYPE;
-#define KAFEL_YYLTYPE KAFEL_YYLTYPE
-}
-
-%code provides {
-#define YYSTYPE KAFEL_YYSTYPE
-typedef union YYSTYPE YYSTYPE;
-
-#define YYLTYPE KAFEL_YYLTYPE
-typedef struct YYLTYPE YYLTYPE;
-
-#define YY_DECL \
-      int kafel_yylex(YYSTYPE* yylval_param, YYLTYPE* yylloc_param, \
-                      struct kafel_ctxt* ctxt, yyscan_t yyscanner)
-YY_DECL;
+#define KAFEL_YYLTYPE struct kafel_source_location
 }
 
 %define parse.error verbose
@@ -109,12 +96,12 @@ YY_DECL;
 
 %union {
     char *id;
-    uint32_t syscall_nr;
     uint32_t action;
     uint64_t number;
+    struct custom_syscall_args *syscall_args;
     struct expr_tree *expr;
-    struct syscall_descriptor* syscall_desc;
     struct syscall_filter *filter;
+    struct syscall_spec *syscall_spec;
     struct filterslist filters;
     struct policy_entry *entry;
     struct entrieslist entries;
@@ -138,8 +125,9 @@ YY_DECL;
 %type <action> action
 %type <filters> syscall_filters
 %type <filter> syscall_filter
-%type <syscall_desc> syscall_id
-%type <syscall_nr> syscall
+%type <syscall_args> syscall_args
+%type <syscall_spec> syscall
+%type <syscall_spec> syscall_id
 
 %type <expr> bool_expr or_bool_expr and_bool_expr primary_bool_expr bit_or_expr bit_and_expr
 %type <expr> operand
@@ -149,7 +137,8 @@ YY_DECL;
 %destructor { policy_entries_destroy(&$$); } <entries>
 %destructor { syscall_filter_destroy(&$$); } <filter>
 %destructor { syscall_filters_destroy(&$$); } <filters>
-%destructor { syscall_descriptor_destroy(&$$); } <syscall_desc>
+%destructor { custom_syscall_args_destroy(&$$); } <syscall_args>
+%destructor { syscall_spec_destroy(&$$); } <syscall_spec>
 %destructor { expr_destroy(&$$); } <expr>
 %destructor { free($$); } <id>
 
@@ -295,71 +284,64 @@ syscall_id
         {
             uint64_t value = 0;
             if (lookup_const(ctxt, $1, &value) == 0) {
-                $$ = syscall_custom(value);
+                $$ = syscall_spec_create_custom(value);
             } else {
-                $$ = (struct syscall_descriptor*)
-                        syscall_lookup(ctxt->syscalls, $1);
-                    if ($$ == NULL) {
-                    emit_error(@1, "Undefined syscall `%s'", $1);
-                    free($1); $1 = NULL;
-                    YYERROR;
-                }
+                $$ = syscall_spec_create_identifier(kafel_identifier_create($1, &@1));
             }
             free($1);
         }
     | SYSCALL '[' NUMBER ']'
         {
-            $$ = syscall_custom($3);
+            $$ = syscall_spec_create_custom($3);
         }
     ;
 
 syscall
     : syscall_id
         {
-          $$ = $1->nr;
-          register_ftrace_args(ctxt, $1);
-          syscall_descriptor_destroy(&$1);
+          $$ = $1;
         }
     | syscall_id '(' ')'
         {
-          $$ = $1->nr;
-          clean_args(ctxt);
-          syscall_descriptor_destroy(&$1);
+          $$ = $1;
+          struct custom_syscall_arg custom_syscall_args[SYSCALL_MAX_ARGS];
+          memset(custom_syscall_args, 0, sizeof(custom_syscall_args));
+          syscall_spec_set_custom_args($$, custom_syscall_args);
         }
     | syscall_id '(' syscall_args ')'
         {
-          $$ = $1->nr;
-          for (int i = 0; i < SYSCALL_MAX_ARGS; ++i) {
-            if (ctxt->syscall.args[i].size == INVALID_ARG_SIZE) {
-              ctxt->syscall.args[i].size = 8;
-              if ($1->args[i].name != NULL) {
-                ctxt->syscall.args[i].size = $1->args[i].size;
-              }
-            }
-          }
-          syscall_descriptor_destroy(&$1);
+          $$ = $1;
+          syscall_spec_set_custom_args($$, $3->args);
+          memset($3->args, 0, sizeof($3->args));
+          custom_syscall_args_destroy(&$3);
         }
     ;
 
 syscall_args
     : IDENTIFIER
         {
-          register_first_arg(ctxt, $1, INVALID_ARG_SIZE);
-          free($1);
+          $$ = custom_syscall_args_create();
+          $$->args[0].name = $1;
+          $$->args[0].size = 8;
+          $$->cur = 1;
         }
     | syscall_args ',' IDENTIFIER
         {
-          if (lookup_var(ctxt, $3) >= 0) {
+          $$ = $1;
+          if (custom_syscall_args_has_already($$, $3)) {
             emit_error(@3, "Redefinition of argument `%s'", $3);
+            custom_syscall_args_destroy(&$$);
             free($3); $3 = NULL;
             YYERROR;
           }
-          if (register_arg(ctxt, $3, INVALID_ARG_SIZE)) {
+          if ($$->cur == SYSCALL_MAX_ARGS) {
             emit_error(@3, "Too many arguments defined for syscall");
+            custom_syscall_args_destroy(&$$);
             free($3); $3 = NULL;
             YYERROR;
           }
-          free($3);
+          $$->args[$$->cur].size = 8;
+          $$->args[$$->cur++].name = $3;
         }
     ;
 
@@ -410,13 +392,7 @@ operand
           if (lookup_const(ctxt, $1, &value) == 0) {
             $$ = expr_create_number(value);
           } else {
-            int var = lookup_var(ctxt, $1);
-            if (var < 0) {
-                emit_error(@1, "Undefined argument `%s'", $1);
-                free($1); $1 = NULL;
-                YYERROR;
-            }
-            $$ = expr_create_var(var, ctxt->syscall.args[var].size);
+            $$ = expr_create_identifier(kafel_identifier_create($1, &@1));
           }
           free($1);
         }
@@ -452,4 +428,31 @@ void yyerror(YYLTYPE * loc, struct kafel_ctxt* ctxt, yyscan_t scanner,
       append_error(ctxt, "%d:%d: %s", loc->first_line, loc->first_column, msg);
     }
   }
+}
+
+struct custom_syscall_args *custom_syscall_args_create(void) {
+  struct custom_syscall_args *rv = calloc(1, sizeof(*rv));
+  rv->cur = 0;
+  return rv;
+}
+
+bool custom_syscall_args_has_already(struct custom_syscall_args* args, const char* name) {
+  ASSERT(args != NULL);
+  ASSERT(name != NULL);
+  for (int i = 0; i < args->cur; ++i) {
+    if (strcmp(args->args[i].name, name) == 0) {
+      return true;
+    }
+  }
+  return false;
+}
+
+void custom_syscall_args_destroy(struct custom_syscall_args **args) {
+  ASSERT(args != NULL);
+  ASSERT((*args) != NULL);
+  for (int i = 0; i < SYSCALL_MAX_ARGS; ++i) {
+    free((*args)->args[i].name);
+  }
+  free(*args);
+  *args = NULL;
 }

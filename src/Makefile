@@ -34,6 +34,7 @@ SRCS:=kafel.c \
       codegen.c \
       expression.c \
       includes.c \
+      parser_types.c \
       policy.c \
       range_rules.c \
       syscall.c \
@@ -67,20 +68,23 @@ parser.h parser.c: parser.y
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.
 
-kafel.o: codegen.h context.h includes.h policy.h expression.h syscall.h
-kafel.o: common.h lexer.h parser.h
-context.o: context.h includes.h policy.h expression.h syscall.h common.h
-codegen.o: codegen.h context.h includes.h policy.h expression.h syscall.h
-codegen.o: common.h range_rules.h
-expression.o: expression.h common.h
+kafel.o: codegen.h context.h includes.h parser_types.h policy.h expression.h
+kafel.o: syscall.h common.h lexer.h parser.h
+context.o: context.h includes.h parser_types.h policy.h expression.h
+context.o: syscall.h common.h
+codegen.o: codegen.h context.h includes.h parser_types.h policy.h
+codegen.o: expression.h syscall.h common.h range_rules.h
+expression.o: expression.h parser_types.h syscall.h common.h
 includes.o: includes.h common.h
-policy.o: policy.h expression.h common.h
-range_rules.o: range_rules.h policy.h expression.h common.h syscall.h
+parser_types.o: parser_types.h common.h
+policy.o: policy.h expression.h parser_types.h syscall.h common.h
+range_rules.o: range_rules.h policy.h expression.h parser_types.h syscall.h
+range_rules.o: common.h
 syscall.o: syscall.h common.h
-lexer.o: parser.h context.h includes.h policy.h expression.h syscall.h
-lexer.o: common.h
-parser.o: parser.h context.h includes.h policy.h expression.h syscall.h
-parser.o: lexer.h
+lexer.o: parser.h context.h includes.h parser_types.h policy.h expression.h
+lexer.o: syscall.h common.h
+parser.o: common.h parser.h context.h includes.h parser_types.h policy.h
+parser.o: expression.h syscall.h lexer.h
 syscalls/amd64_syscalls.o: syscall.h
 syscalls/i386_syscalls.o: syscall.h
 syscalls/aarch64_syscalls.o: syscall.h

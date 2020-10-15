@@ -55,6 +55,15 @@ static bool pop_include(yyscan_t yyscanner);
 #include "parser.h"
 
 #define MAX_INCLUDE_DEPTH 16
+
+#define YYSTYPE KAFEL_YYSTYPE
+#define YYLTYPE KAFEL_YYLTYPE
+
+#define YY_DECL_IS_OURS 1
+#define YY_DECL \
+      int kafel_yylex(YYSTYPE* yylval_param, YYLTYPE* yylloc_param, \
+                      struct kafel_ctxt* ctxt, yyscan_t yyscanner)
+YY_DECL;
 }
 
 %option outfile="lexer.c" header-file="lexer.h"

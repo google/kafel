@@ -24,10 +24,14 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#include "parser_types.h"
+#include "syscall.h"
+
 enum {
   EXPR_LEAF_MIN,
   EXPR_NUMBER = EXPR_LEAF_MIN,
   EXPR_VAR,
+  EXPR_IDENTIFIER,
   EXPR_TRUE,
   EXPR_FALSE,
   EXPR_LEAF_MAX = EXPR_FALSE,
@@ -61,6 +65,7 @@ struct expr_tree {
       int var;
       int size;
     };
+    struct kafel_identifier *identifier;
     uint64_t number;
     struct expr_tree *child;
     struct {
@@ -73,13 +78,16 @@ struct expr_tree {
 };
 
 struct expr_tree *expr_create_number(uint64_t value);
-struct expr_tree *expr_create_var(int var, int size);
+struct expr_tree *expr_create_identifier(struct kafel_identifier *identifier);
 struct expr_tree *expr_create_unary(int op, struct expr_tree *child);
 struct expr_tree *expr_create_binary(int op, struct expr_tree *left,
                                      struct expr_tree *right);
+struct expr_tree *expr_copy(const struct expr_tree *expr);
 void expr_negate(struct expr_tree **expr);
 void expr_eliminate_negation(struct expr_tree **expr, bool neg);
 void expr_simplify(struct expr_tree **expr);
 void expr_destroy(struct expr_tree **expr);
+void expr_resolve_identifiers(struct expr_tree *expr,
+                              const struct syscall_arg args[SYSCALL_MAX_ARGS]);
 
 #endif /* KAFEL_EXPRESSION_H */

@@ -31,6 +31,9 @@ static void range_rule_deinit(struct syscall_range_rule *rule) {
 
   while (!TAILQ_EMPTY(&rule->expr_list)) {
     struct expression_to_action *mapping = TAILQ_FIRST(&rule->expr_list);
+    if (mapping->expr != NULL) {
+      expr_destroy(&mapping->expr);
+    }
     TAILQ_REMOVE(&rule->expr_list, mapping, list);
     free(mapping);
   }
@@ -113,8 +116,8 @@ static void add_range_rule(struct syscall_range_rules *rules,
   TAILQ_CONCAT(&added->expr_list, &rule->expr_list, list);
 }
 
-void add_policy_rules(struct syscall_range_rules *rules,
-                      struct policy *policy) {
+void add_policy_rules(struct syscall_range_rules *rules, struct policy *policy,
+                      const struct syscall_list *syscall_list) {
   ASSERT(rules != NULL);
   ASSERT(policy != NULL);
 
@@ -124,11 +127,12 @@ void add_policy_rules(struct syscall_range_rules *rules,
   TAILQ_FOREACH(entry, &policy->entries, entries) {
     switch (entry->type) {
       case POLICY_USE:
-        add_policy_rules(rules, entry->used);
+        add_policy_rules(rules, entry->used, syscall_list);
         break;
       case POLICY_ACTION:
         TAILQ_FOREACH(filter, &entry->filters, filters) {
-          uint32_t syscall_nr = filter->syscall_nr;
+          uint32_t syscall_nr =
+              syscall_spec_get_syscall_nr(filter->syscall, syscall_list);
           struct syscall_range_rule rule = {
               .first = syscall_nr,
               .last = syscall_nr,
@@ -138,7 +142,11 @@ void add_policy_rules(struct syscall_range_rules *rules,
             if (filter->expr->type == EXPR_FALSE) {
               continue;
             }
-            rule_add_expr(&rule, filter->expr, entry->action);
+            struct expr_tree *expr = expr_copy(filter->expr);
+            struct syscall_arg args[SYSCALL_MAX_ARGS];
+            syscall_spec_get_args(filter->syscall, syscall_list, args);
+            expr_resolve_identifiers(expr, args);
+            rule_add_expr(&rule, expr, entry->action);
           } else {
             rule.action = entry->action;
           }

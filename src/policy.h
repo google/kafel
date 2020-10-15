@@ -25,9 +25,30 @@
 #include <sys/queue.h>
 
 #include "expression.h"
+#include "parser_types.h"
+
+enum syscall_spec_type {
+  SYSCALL_SPEC_ID,
+  SYSCALL_SPEC_CUSTOM,
+};
+
+struct custom_syscall_arg {
+  char* name;
+  int size;
+};
+
+struct syscall_spec {
+  enum syscall_spec_type type;
+  union {
+    struct kafel_identifier* identifier;
+    int syscall_nr;
+  };
+  bool custom_args_declared;
+  struct custom_syscall_arg custom_args[SYSCALL_MAX_ARGS];
+};
 
 struct syscall_filter {
-  uint32_t syscall_nr;
+  struct syscall_spec* syscall;
   struct expr_tree* expr;
   TAILQ_ENTRY(syscall_filter) filters;
 };
@@ -78,7 +99,19 @@ struct policy_entry* policy_use_create(struct policy* used);
 void policy_entry_destroy(struct policy_entry** entry);
 void policy_entries_destroy(struct entrieslist* entries);
 
-struct syscall_filter* syscall_filter_create(uint32_t nr,
+struct syscall_spec* syscall_spec_create_identifier(
+    struct kafel_identifier* identifier);
+struct syscall_spec* syscall_spec_create_custom(int syscall_nr);
+void syscall_spec_set_custom_args(struct syscall_spec* spec,
+                                  struct custom_syscall_arg* custom_args);
+int syscall_spec_get_syscall_nr(const struct syscall_spec* spec,
+                                const struct syscall_list* syscall_list);
+void syscall_spec_get_args(const struct syscall_spec* spec,
+                           const struct syscall_list* syscall_list,
+                           struct syscall_arg out_args[SYSCALL_MAX_ARGS]);
+void syscall_spec_destroy(struct syscall_spec** spec);
+
+struct syscall_filter* syscall_filter_create(struct syscall_spec* syscall,
                                              struct expr_tree* expr);
 void syscall_filter_destroy(struct syscall_filter** filter);
 void syscall_filters_destroy(struct filterslist* filters);

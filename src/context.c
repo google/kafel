@@ -59,7 +59,6 @@ static void clean_constants(kafel_ctxt_t ctxt) {
 void kafel_ctxt_reset(kafel_ctxt_t ctxt) {
   ASSERT(ctxt != NULL);
 
-  clean_args(ctxt);
   clean_policies(ctxt);
   clean_constants(ctxt);
   free(ctxt->errors.data);
@@ -71,7 +70,6 @@ void kafel_ctxt_reset(kafel_ctxt_t ctxt) {
   }
   ctxt->default_action = 0;
   ctxt->lexical_error = false;
-  ctxt->syscalls = NULL;
 }
 
 void kafel_ctxt_clean(kafel_ctxt_t ctxt) {
@@ -98,47 +96,6 @@ KAFEL_API const char* kafel_error_msg(const kafel_ctxt_t ctxt) {
 
 void register_policy(struct kafel_ctxt* ctxt, struct policy* policy) {
   TAILQ_INSERT_TAIL(&ctxt->policies, policy, policies);
-}
-
-void clean_args(struct kafel_ctxt* ctxt) {
-  for (int i = 0; i < ctxt->syscall.args_num; ++i) {
-    free((char*)ctxt->syscall.args[i].name);
-    ctxt->syscall.args[i].name = NULL;
-  }
-  ctxt->syscall.args_num = 0;
-}
-
-void register_first_arg(struct kafel_ctxt* ctxt, const char* name, int size) {
-  clean_args(ctxt);
-  register_arg(ctxt, name, size);
-}
-
-int register_arg(struct kafel_ctxt* ctxt, const char* name, int size) {
-  if (ctxt->syscall.args_num >= SYSCALL_MAX_ARGS) {
-    return -1;
-  }
-  ctxt->syscall.args[ctxt->syscall.args_num++] =
-      ((struct syscall_arg){.name = strdup(name), .size = size});
-  return 0;
-}
-
-void register_ftrace_args(struct kafel_ctxt* ctxt,
-                          const struct syscall_descriptor* desc) {
-  clean_args(ctxt);
-  for (int i = 0; i < SYSCALL_MAX_ARGS; ++i) {
-    if (desc->args[i].name != NULL) {
-      register_arg(ctxt, desc->args[i].name, desc->args[i].size);
-    }
-  }
-}
-
-int lookup_var(struct kafel_ctxt* ctxt, const char* name) {
-  for (int i = 0; i < ctxt->syscall.args_num; ++i) {
-    if (strcmp(ctxt->syscall.args[i].name, name) == 0) {
-      return i;
-    }
-  }
-  return -1;
 }
 
 struct policy* lookup_policy(struct kafel_ctxt* ctxt, const char* name) {

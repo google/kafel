@@ -112,10 +112,91 @@ void policy_destroy(struct policy** policy) {
   *policy = NULL;
 }
 
-struct syscall_filter* syscall_filter_create(uint32_t nr,
+struct syscall_spec* syscall_spec_create_identifier(
+    struct kafel_identifier* identifier) {
+  ASSERT(identifier != NULL);
+
+  struct syscall_spec* rv = calloc(1, sizeof(*rv));
+  rv->type = SYSCALL_SPEC_ID;
+  rv->identifier = identifier;
+  rv->custom_args_declared = false;
+  return rv;
+}
+
+struct syscall_spec* syscall_spec_create_custom(int syscall_nr) {
+  struct syscall_spec* rv = calloc(1, sizeof(*rv));
+  rv->type = SYSCALL_SPEC_CUSTOM;
+  rv->syscall_nr = syscall_nr;
+  rv->custom_args_declared = false;
+  return rv;
+}
+
+void syscall_spec_set_custom_args(struct syscall_spec* spec,
+                                  struct custom_syscall_arg* custom_args) {
+  ASSERT(spec != NULL);
+  ASSERT(custom_args != NULL);
+  spec->custom_args_declared = true;
+  memcpy(spec->custom_args, custom_args, sizeof(spec->custom_args));
+}
+
+int syscall_spec_get_syscall_nr(const struct syscall_spec* spec,
+                                const struct syscall_list* syscall_list) {
+  switch (spec->type) {
+    case SYSCALL_SPEC_ID: {
+      const struct syscall_descriptor* desc =
+          syscall_lookup(syscall_list, spec->identifier->id);
+      ASSERT(desc != NULL);
+      return desc->nr;
+    }
+    case SYSCALL_SPEC_CUSTOM:
+      return spec->syscall_nr;
+  }
+  ASSERT(false);
+}
+
+void syscall_spec_get_args(const struct syscall_spec* spec,
+                           const struct syscall_list* syscall_list,
+                           struct syscall_arg out_args[SYSCALL_MAX_ARGS]) {
+  switch (spec->type) {
+    case SYSCALL_SPEC_ID: {
+      const struct syscall_descriptor* desc =
+          syscall_lookup(syscall_list, spec->identifier->id);
+      ASSERT(desc != NULL);
+      for (int i = 0; i < SYSCALL_MAX_ARGS; ++i) {
+        out_args[i].name = desc->args[i].name;
+        out_args[i].size = desc->args[i].size;
+      }
+      break;
+    }
+    case SYSCALL_SPEC_CUSTOM:
+      for (int i = 0; i < SYSCALL_MAX_ARGS; ++i) {
+        out_args[i].name = spec->custom_args[i].name;
+        out_args[i].size = spec->custom_args[i].size;
+      }
+      break;
+  }
+}
+
+void syscall_spec_destroy(struct syscall_spec** spec) {
+  ASSERT(spec != NULL);
+  ASSERT((*spec) != NULL);
+
+  if ((*spec)->type == SYSCALL_SPEC_ID) {
+    kafel_identifier_destroy(&(*spec)->identifier);
+  }
+  if ((*spec)->custom_args_declared) {
+    for (int i = 0; i < SYSCALL_MAX_ARGS; ++i) {
+      free((*spec)->custom_args[i].name);
+    }
+  }
+  free(*spec);
+  *spec = NULL;
+}
+
+struct syscall_filter* syscall_filter_create(struct syscall_spec* syscall,
                                              struct expr_tree* expr) {
   struct syscall_filter* rv = calloc(1, sizeof(*rv));
-  rv->syscall_nr = nr;
+  rv->syscall = syscall;
   if (expr != NULL) {
     expr_simplify(&expr);
   }
@@ -127,6 +208,7 @@ void syscall_filter_destroy(struct syscall_filter** filter) {
   ASSERT(filter != NULL);
   ASSERT((*filter) != NULL);
 
+  syscall_spec_destroy(&(*filter)->syscall);
   if ((*filter)->expr != NULL) {
     expr_destroy(&(*filter)->expr);
   }

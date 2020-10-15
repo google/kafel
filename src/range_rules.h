@@ -27,6 +27,7 @@
 #include <sys/queue.h>
 
 #include "policy.h"
+#include "syscall.h"
 
 #ifndef INITAL_RANGE_RULES_SIZE
 #define INITAL_RANGE_RULES_SIZE 16
@@ -56,7 +57,8 @@ struct syscall_range_rules {
 
 struct syscall_range_rules *range_rules_create(void);
 void range_rules_destroy(struct syscall_range_rules **rules);
-void add_policy_rules(struct syscall_range_rules *rules, struct policy *policy);
+void add_policy_rules(struct syscall_range_rules *rules, struct policy *policy,
+                      const struct syscall_list *syscall_list);
 void normalize_rules(struct syscall_range_rules *rules, int default_action);
 
 #endif /* KAFEL_RANGE_RULE_H */

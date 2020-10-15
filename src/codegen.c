@@ -611,7 +611,10 @@ int compile_policy(struct kafel_ctxt *kafel_ctxt, struct sock_fprog *prog) {
 
   struct codegen_ctxt *ctxt = context_create();
   struct syscall_range_rules *rules = range_rules_create();
-  add_policy_rules(rules, kafel_ctxt->main_policy);
+  const struct syscall_list *syscall_list =
+      syscalls_lookup(kafel_ctxt->target_arch);
+  ASSERT(syscall_list != NULL);
+  add_policy_rules(rules, kafel_ctxt->main_policy, syscall_list);
   normalize_rules(rules, kafel_ctxt->default_action);
   int begin = CURRENT_LOC;
   int next = generate_rules(ctxt, rules->data, rules->len);
