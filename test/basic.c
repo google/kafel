@@ -18,8 +18,8 @@
 
 */
 
-#include <linux/unistd.h>
 #include <fcntl.h>
+#include <linux/unistd.h>
 #include <unistd.h>
 
 #include "runner/harness.h"
@@ -129,8 +129,9 @@ TEST_CASE(bitwise_operations) {
       "POLICY a {\n"
       "  ALLOW { exit, read { buf | buf & count == buf } }\n"
       "} USE a DEFAULT KILL");
-  TEST_POLICY_ALLOWS_SYSCALL(SYSCALL_SPEC3(__NR_read, STDIN_FILENO, (long) &dummy, 0),
-                             SYSCALL_RESULT_SPEC(0));
+  TEST_POLICY_ALLOWS_SYSCALL(
+      SYSCALL_SPEC3(__NR_read, STDIN_FILENO, (long)&dummy, 0),
+      SYSCALL_RESULT_SPEC(0));
 
   // Test stack
   TEST_POLICY(

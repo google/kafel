@@ -108,10 +108,10 @@ static void expr_sort_operands(struct expr_tree *expr) {
     if (expr->type != EXPR_AND && expr->type != EXPR_OR &&
         expr->left->type < expr->right->type) {
       int swapped[EXPR_MAX + 1] = {
-          [EXPR_GE] = EXPR_LE,          [EXPR_GT] = EXPR_LT,
-          [EXPR_LE] = EXPR_GE,          [EXPR_LT] = EXPR_GT,
-          [EXPR_EQ] = EXPR_EQ,          [EXPR_NEQ] = EXPR_NEQ,
-          [EXPR_BIT_OR] = EXPR_BIT_OR,  [EXPR_BIT_AND] = EXPR_BIT_AND};
+          [EXPR_GE] = EXPR_LE,         [EXPR_GT] = EXPR_LT,
+          [EXPR_LE] = EXPR_GE,         [EXPR_LT] = EXPR_GT,
+          [EXPR_EQ] = EXPR_EQ,         [EXPR_NEQ] = EXPR_NEQ,
+          [EXPR_BIT_OR] = EXPR_BIT_OR, [EXPR_BIT_AND] = EXPR_BIT_AND};
       expr->type = swapped[expr->type];
       SWAP(expr->left, expr->right);
     }

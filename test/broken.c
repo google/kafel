@@ -116,21 +116,22 @@ TEST_CASE(broken_unterminated_comment) {
 }
 
 TEST_CASE(broken_stack_overflow) {
-  TEST_COMPILE_ERROR("POLICY stackoverflow {\
-                       ALLOW {\
-                        open {\
-                         flags & mode & 0x1337 & \
-                         flags & mode & 0x1337 & \
-                         flags & mode & 0x1337 & \
-                         flags & mode & 0x1337 & \
-                         flags & mode & 0x1337 & \
-                         flags & mode & 0x1337 & \
-                         flags & mode & 0x1337 & \
-                         flags & mode & 0x1337 & \
-                         flags & mode & 0x1337 == 0x1\
-                        }\
-                       }\
-                      } USE stackoverflow DEFAULT KILL");
+  TEST_COMPILE_ERROR(
+      "POLICY stackoverflow {\n"
+      "  ALLOW {\n"
+      "    open {\n"
+      "      flags & mode & 0x1337 & \n"
+      "      flags & mode & 0x1337 & \n"
+      "      flags & mode & 0x1337 & \n"
+      "      flags & mode & 0x1337 & \n"
+      "      flags & mode & 0x1337 & \n"
+      "      flags & mode & 0x1337 & \n"
+      "      flags & mode & 0x1337 & \n"
+      "      flags & mode & 0x1337 & \n"
+      "      flags & mode & 0x1337 == 0x1\n"
+      "    }\n"
+      "  }\n"
+      "} USE stackoverflow DEFAULT KILL");
 }
 
 TEST_CASE(broken_const_redefintion) {

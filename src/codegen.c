@@ -319,7 +319,7 @@ static void cache_constants_by_word(struct expr_tree *expr, int word) {
         cached->is_const = true;
         cached->value = clobber_value;
       } else if (is_const_value(expr->left, word) &&
-          value_of(expr->left, word) == clobber_value) {
+                 value_of(expr->left, word) == clobber_value) {
         cached->is_const = true;
         cached->value = clobber_value;
       } else {
@@ -633,7 +633,8 @@ int compile_policy(struct kafel_ctxt *kafel_ctxt, struct sock_fprog *prog) {
                                .len = ctxt->buffer.len});
   ctxt->buffer.data = NULL;
   if (ctxt->max_stack_ptr >= BPF_MEMWORDS) {
-    append_error(kafel_ctxt, "Required stack size exceeds available BPF memory\n");
+    append_error(kafel_ctxt,
+                 "Required stack size exceeds available BPF memory\n");
     rv = 1;
   }
   context_destroy(&ctxt);
