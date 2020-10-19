@@ -18,6 +18,7 @@
 
 */
 
+#include <errno.h>
 #include <fcntl.h>
 #include <linux/unistd.h>
 #include <unistd.h>
@@ -146,4 +147,28 @@ TEST_CASE(bitwise_operations) {
   TEST_POLICY_ALLOWS_SYSCALL(SYSCALL_SPEC3(__NR_read, 0, 0, 0),
                              SYSCALL_RESULT_SPEC(0));
   TEST_POLICY_BLOCKS_SYSCALL(SYSCALL_SPEC3(__NR_read, 0, 0, 1));
+}
+
+TEST_CASE(32bit_args) {
+  // fcntl should be defined for all archs
+  // and fd should be 32-bit argument
+  TEST_POLICY("ALLOW { fcntl { fd == 0x1234 }, exit } DEFAULT KILL");
+  TEST_POLICY_ALLOWS_SYSCALL(SYSCALL_SPEC3(__NR_fcntl, 0x000001234, F_GETFD, 0),
+                             SYSCALL_ERRNO_SPEC(EBADF));
+  TEST_POLICY_ALLOWS_SYSCALL(SYSCALL_SPEC3(__NR_fcntl, 0x100001234, F_GETFD, 0),
+                             SYSCALL_ERRNO_SPEC(EBADF));
+  TEST_POLICY_BLOCKS_SYSCALL(
+      SYSCALL_SPEC3(__NR_fcntl, 0x000001235, F_GETFD, 0));
+  TEST_POLICY_BLOCKS_SYSCALL(
+      SYSCALL_SPEC3(__NR_fcntl, 0x100001235, F_GETFD, 0));
+  // Even though fd is 32-bit a compare with 64-bit const should check whole arg
+  TEST_POLICY("ALLOW { fcntl { fd == 0x100001234 }, exit } DEFAULT KILL");
+  TEST_POLICY_BLOCKS_SYSCALL(
+      SYSCALL_SPEC3(__NR_fcntl, 0x000001234, F_GETFD, 0));
+  TEST_POLICY_ALLOWS_SYSCALL(SYSCALL_SPEC3(__NR_fcntl, 0x100001234, F_GETFD, 0),
+                             SYSCALL_ERRNO_SPEC(EBADF));
+  TEST_POLICY_BLOCKS_SYSCALL(
+      SYSCALL_SPEC3(__NR_fcntl, 0x000001235, F_GETFD, 0));
+  TEST_POLICY_BLOCKS_SYSCALL(
+      SYSCALL_SPEC3(__NR_fcntl, 0x100001235, F_GETFD, 0));
 }
