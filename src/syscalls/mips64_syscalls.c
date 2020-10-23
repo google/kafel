@@ -29,12 +29,9 @@
 #define ARG_4 4
 #define ARG_5 5
 
-#define NORMAL false
-
 const struct syscall_descriptor mips64_syscall_list[] = {
     {"accept",
      5042,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"upeer_sockaddr", 8},
@@ -42,7 +39,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"accept4",
      5293,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"upeer_sockaddr", 8},
@@ -51,13 +47,11 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"acct",
      5158,
-     NORMAL,
      {
          [ARG_0] = {"name", 8},
      }},
     {"add_key",
      5239,
-     NORMAL,
      {
          [ARG_0] = {"_type", 8},
          [ARG_1] = {"_description", 8},
@@ -67,13 +61,11 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"adjtimex",
      5154,
-     NORMAL,
      {
          [ARG_0] = {"txc_p", 8},
      }},
     {"bind",
      5048,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"umyaddr", 8},
@@ -81,7 +73,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"bpf",
      5315,
-     NORMAL,
      {
          [ARG_0] = {"cmd", 4},
          [ARG_1] = {"uattr", 8},
@@ -89,60 +80,51 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"brk",
      5012,
-     NORMAL,
      {
          [ARG_0] = {"brk", 8},
      }},
     {"capget",
      5123,
-     NORMAL,
      {
          [ARG_0] = {"header", 8},
          [ARG_1] = {"dataptr", 8},
      }},
     {"capset",
      5124,
-     NORMAL,
      {
          [ARG_0] = {"header", 8},
          [ARG_1] = {"data", 8},
      }},
     {"chdir",
      5078,
-     NORMAL,
      {
          [ARG_0] = {"filename", 8},
      }},
     {"chroot",
      5156,
-     NORMAL,
      {
          [ARG_0] = {"filename", 8},
      }},
     {"clock_adjtime",
      5300,
-     NORMAL,
      {
          [ARG_0] = {"which_clock", 4},
          [ARG_1] = {"utx", 8},
      }},
     {"clock_getres",
      5223,
-     NORMAL,
      {
          [ARG_0] = {"which_clock", 4},
          [ARG_1] = {"tp", 8},
      }},
     {"clock_gettime",
      5222,
-     NORMAL,
      {
          [ARG_0] = {"which_clock", 4},
          [ARG_1] = {"tp", 8},
      }},
     {"clock_nanosleep",
      5224,
-     NORMAL,
      {
          [ARG_0] = {"which_clock", 4},
          [ARG_1] = {"flags", 4},
@@ -151,14 +133,12 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"clock_settime",
      5221,
-     NORMAL,
      {
          [ARG_0] = {"which_clock", 4},
          [ARG_1] = {"tp", 8},
      }},
     {"clone",
      5055,
-     NORMAL,
      {
          [ARG_0] = {"clone_flags", 8},
          [ARG_1] = {"newsp", 8},
@@ -168,13 +148,11 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"close",
      5003,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
      }},
     {"connect",
      5041,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"uservaddr", 8},
@@ -182,7 +160,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"copy_file_range",
      285,
-     NORMAL,
      {
          [ARG_0] = {"fd_in", 4},
          [ARG_1] = {"off_in", 8},
@@ -193,20 +170,17 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"delete_module",
      5169,
-     NORMAL,
      {
          [ARG_0] = {"name_user", 8},
          [ARG_1] = {"flags", 4},
      }},
     {"dup",
      5031,
-     NORMAL,
      {
          [ARG_0] = {"fildes", 4},
      }},
     {"dup3",
      5286,
-     NORMAL,
      {
          [ARG_0] = {"oldfd", 4},
          [ARG_1] = {"newfd", 4},
@@ -214,13 +188,11 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"epoll_create1",
      5285,
-     NORMAL,
      {
          [ARG_0] = {"flags", 4},
      }},
     {"epoll_ctl",
      5208,
-     NORMAL,
      {
          [ARG_0] = {"epfd", 4},
          [ARG_1] = {"op", 4},
@@ -229,7 +201,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"epoll_pwait",
      5272,
-     NORMAL,
      {
          [ARG_0] = {"epfd", 4},
          [ARG_1] = {"events", 8},
@@ -240,14 +211,12 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"eventfd2",
      5284,
-     NORMAL,
      {
          [ARG_0] = {"count", 4},
          [ARG_1] = {"flags", 4},
      }},
     {"execve",
      5057,
-     NORMAL,
      {
          [ARG_0] = {"filename", 8},
          [ARG_1] = {"argv", 8},
@@ -255,7 +224,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"execveat",
      5316,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"filename", 8},
@@ -265,19 +233,16 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"exit",
      5058,
-     NORMAL,
      {
          [ARG_0] = {"error_code", 4},
      }},
     {"exit_group",
      5205,
-     NORMAL,
      {
          [ARG_0] = {"error_code", 4},
      }},
     {"faccessat",
      5259,
-     NORMAL,
      {
          [ARG_0] = {"dfd", 4},
          [ARG_1] = {"filename", 8},
@@ -285,7 +250,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"fadvise64",
      5215,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"offset", 8},
@@ -294,7 +258,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"fallocate",
      5279,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"mode", 4},
@@ -303,14 +266,12 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"fanotify_init",
      5295,
-     NORMAL,
      {
          [ARG_0] = {"flags", 4},
          [ARG_1] = {"event_f_flags", 4},
      }},
     {"fanotify_mark",
      5296,
-     NORMAL,
      {
          [ARG_0] = {"fanotify_fd", 4},
          [ARG_1] = {"flags", 4},
@@ -320,20 +281,17 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"fchdir",
      5079,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
      }},
     {"fchmod",
      5089,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"mode", 2},
      }},
     {"fchmodat",
      5258,
-     NORMAL,
      {
          [ARG_0] = {"dfd", 4},
          [ARG_1] = {"filename", 8},
@@ -341,7 +299,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"fchown",
      5091,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"user", 4},
@@ -349,7 +306,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"fchownat",
      5250,
-     NORMAL,
      {
          [ARG_0] = {"dfd", 4},
          [ARG_1] = {"filename", 8},
@@ -359,7 +315,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"fcntl",
      5070,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"cmd", 4},
@@ -367,13 +322,11 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"fdatasync",
      5073,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
      }},
     {"fgetxattr",
      5185,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"name", 8},
@@ -382,7 +335,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"finit_module",
      5307,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"uargs", 8},
@@ -390,7 +342,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"flistxattr",
      5188,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"list", 8},
@@ -398,21 +349,18 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"flock",
      5071,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"cmd", 4},
      }},
     {"fremovexattr",
      16,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"name", 8},
      }},
     {"fsetxattr",
      5182,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"name", 8},
@@ -422,27 +370,23 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"fstatfs",
      5135,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"buf", 8},
      }},
     {"fsync",
      5072,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
      }},
     {"ftruncate",
      5075,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"length", 8},
      }},
     {"futex",
      5194,
-     NORMAL,
      {
          [ARG_0] = {"uaddr", 8},
          [ARG_1] = {"op", 4},
@@ -453,7 +397,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"getcpu",
      5271,
-     NORMAL,
      {
          [ARG_0] = {"cpup", 8},
          [ARG_1] = {"nodep", 8},
@@ -461,39 +404,34 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"getcwd",
      5077,
-     NORMAL,
      {
          [ARG_0] = {"buf", 8},
          [ARG_1] = {"size", 8},
      }},
     {"getdents64",
      5308,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"dirent", 8},
          [ARG_2] = {"count", 4},
      }},
-    {"getegid", 177, NORMAL, {}},
-    {"geteuid", 175, NORMAL, {}},
-    {"getgid", 176, NORMAL, {}},
+    {"getegid", 177, {}},
+    {"geteuid", 175, {}},
+    {"getgid", 176, {}},
     {"getgroups",
      158,
-     NORMAL,
      {
          [ARG_0] = {"gidsetsize", 4},
          [ARG_1] = {"grouplist", 8},
      }},
     {"getitimer",
      5035,
-     NORMAL,
      {
          [ARG_0] = {"which", 4},
          [ARG_1] = {"value", 8},
      }},
     {"get_mempolicy",
      5228,
-     NORMAL,
      {
          [ARG_0] = {"policy", 8},
          [ARG_1] = {"nmask", 8},
@@ -503,7 +441,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"getpeername",
      5051,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"usockaddr", 8},
@@ -511,22 +448,19 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"getpgid",
      5119,
-     NORMAL,
      {
          [ARG_0] = {"pid", 4},
      }},
-    {"getpid", 172, NORMAL, {}},
-    {"getppid", 173, NORMAL, {}},
+    {"getpid", 172, {}},
+    {"getppid", 173, {}},
     {"getpriority",
      141,
-     NORMAL,
      {
          [ARG_0] = {"which", 4},
          [ARG_1] = {"who", 4},
      }},
     {"getrandom",
      5313,
-     NORMAL,
      {
          [ARG_0] = {"buf", 8},
          [ARG_1] = {"count", 8},
@@ -534,7 +468,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"getresgid",
      5118,
-     NORMAL,
      {
          [ARG_0] = {"rgidp", 8},
          [ARG_1] = {"egidp", 8},
@@ -542,7 +475,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"getresuid",
      5116,
-     NORMAL,
      {
          [ARG_0] = {"ruidp", 8},
          [ARG_1] = {"euidp", 8},
@@ -550,14 +482,12 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"getrlimit",
      5095,
-     NORMAL,
      {
          [ARG_0] = {"resource", 4},
          [ARG_1] = {"rlim", 8},
      }},
     {"get_robust_list",
      5269,
-     NORMAL,
      {
          [ARG_0] = {"pid", 4},
          [ARG_1] = {"head_ptr", 8},
@@ -565,20 +495,17 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"getrusage",
      5096,
-     NORMAL,
      {
          [ARG_0] = {"who", 4},
          [ARG_1] = {"ru", 8},
      }},
     {"getsid",
      5122,
-     NORMAL,
      {
          [ARG_0] = {"pid", 4},
      }},
     {"getsockname",
      5050,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"usockaddr", 8},
@@ -586,7 +513,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"getsockopt",
      5054,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"level", 4},
@@ -594,18 +520,16 @@ const struct syscall_descriptor mips64_syscall_list[] = {
          [ARG_3] = {"optval", 8},
          [ARG_4] = {"optlen", 8},
      }},
-    {"gettid", 178, NORMAL, {}},
+    {"gettid", 178, {}},
     {"gettimeofday",
      169,
-     NORMAL,
      {
          [ARG_0] = {"tv", 8},
          [ARG_1] = {"tz", 8},
      }},
-    {"getuid", 174, NORMAL, {}},
+    {"getuid", 174, {}},
     {"getxattr",
      8,
-     NORMAL,
      {
          [ARG_0] = {"pathname", 8},
          [ARG_1] = {"name", 8},
@@ -614,7 +538,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"init_module",
      5168,
-     NORMAL,
      {
          [ARG_0] = {"umod", 8},
          [ARG_1] = {"len", 8},
@@ -622,7 +545,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"inotify_add_watch",
      5244,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"pathname", 8},
@@ -630,20 +552,17 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"inotify_init1",
      26,
-     NORMAL,
      {
          [ARG_0] = {"flags", 4},
      }},
     {"inotify_rm_watch",
      5245,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"wd", 4},
      }},
     {"io_cancel",
      5204,
-     NORMAL,
      {
          [ARG_0] = {"ctx_id", 8},
          [ARG_1] = {"iocb", 8},
@@ -651,7 +570,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"ioctl",
      5015,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"cmd", 4},
@@ -659,13 +577,11 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"io_destroy",
      5201,
-     NORMAL,
      {
          [ARG_0] = {"ctx", 8},
      }},
     {"io_getevents",
      5202,
-     NORMAL,
      {
          [ARG_0] = {"ctx_id", 8},
          [ARG_1] = {"min_nr", 8},
@@ -675,14 +591,12 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"ioprio_get",
      5274,
-     NORMAL,
      {
          [ARG_0] = {"which", 4},
          [ARG_1] = {"who", 4},
      }},
     {"ioprio_set",
      5273,
-     NORMAL,
      {
          [ARG_0] = {"which", 4},
          [ARG_1] = {"who", 4},
@@ -690,14 +604,12 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"io_setup",
      5200,
-     NORMAL,
      {
          [ARG_0] = {"nr_events", 4},
          [ARG_1] = {"ctxp", 8},
      }},
     {"io_submit",
      5203,
-     NORMAL,
      {
          [ARG_0] = {"ctx_id", 8},
          [ARG_1] = {"nr", 8},
@@ -705,7 +617,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"kcmp",
      5306,
-     NORMAL,
      {
          [ARG_0] = {"pid1", 4},
          [ARG_1] = {"pid2", 4},
@@ -715,7 +626,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"kexec_load",
      5270,
-     NORMAL,
      {
          [ARG_0] = {"entry", 8},
          [ARG_1] = {"nr_segments", 8},
@@ -724,7 +634,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"keyctl",
      5241,
-     NORMAL,
      {
          [ARG_0] = {"option", 4},
          [ARG_1] = {"arg2", 8},
@@ -734,14 +643,12 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"kill",
      5060,
-     NORMAL,
      {
          [ARG_0] = {"pid", 4},
          [ARG_1] = {"sig", 4},
      }},
     {"lgetxattr",
      5184,
-     NORMAL,
      {
          [ARG_0] = {"pathname", 8},
          [ARG_1] = {"name", 8},
@@ -750,7 +657,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"linkat",
      5255,
-     NORMAL,
      {
          [ARG_0] = {"olddfd", 4},
          [ARG_1] = {"oldname", 8},
@@ -760,14 +666,12 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"listen",
      5049,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"backlog", 4},
      }},
     {"listxattr",
      5186,
-     NORMAL,
      {
          [ARG_0] = {"pathname", 8},
          [ARG_1] = {"list", 8},
@@ -775,7 +679,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"llistxattr",
      5187,
-     NORMAL,
      {
          [ARG_0] = {"pathname", 8},
          [ARG_1] = {"list", 8},
@@ -783,7 +686,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"lookup_dcookie",
      5206,
-     NORMAL,
      {
          [ARG_0] = {"cookie64", 8},
          [ARG_1] = {"buf", 8},
@@ -791,14 +693,12 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"lremovexattr",
      5190,
-     NORMAL,
      {
          [ARG_0] = {"pathname", 8},
          [ARG_1] = {"name", 8},
      }},
     {"lseek",
      5008,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"offset", 8},
@@ -806,7 +706,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"lsetxattr",
      5181,
-     NORMAL,
      {
          [ARG_0] = {"pathname", 8},
          [ARG_1] = {"name", 8},
@@ -816,7 +715,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"madvise",
      5027,
-     NORMAL,
      {
          [ARG_0] = {"start", 8},
          [ARG_1] = {"len_in", 8},
@@ -824,7 +722,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"mbind",
      5227,
-     NORMAL,
      {
          [ARG_0] = {"start", 8},
          [ARG_1] = {"len", 8},
@@ -835,21 +732,18 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"membarrier",
      5318,
-     NORMAL,
      {
          [ARG_0] = {"cmd", 4},
          [ARG_1] = {"flags", 4},
      }},
     {"memfd_create",
      5314,
-     NORMAL,
      {
          [ARG_0] = {"uname", 8},
          [ARG_1] = {"flags", 4},
      }},
     {"migrate_pages",
      5246,
-     NORMAL,
      {
          [ARG_0] = {"pid", 4},
          [ARG_1] = {"maxnode", 8},
@@ -858,7 +752,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"mincore",
      5026,
-     NORMAL,
      {
          [ARG_0] = {"start", 8},
          [ARG_1] = {"len", 8},
@@ -866,7 +759,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"mkdirat",
      5248,
-     NORMAL,
      {
          [ARG_0] = {"dfd", 4},
          [ARG_1] = {"pathname", 8},
@@ -874,7 +766,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"mknodat",
      5249,
-     NORMAL,
      {
          [ARG_0] = {"dfd", 4},
          [ARG_1] = {"filename", 8},
@@ -883,14 +774,12 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"mlock",
      5146,
-     NORMAL,
      {
          [ARG_0] = {"start", 8},
          [ARG_1] = {"len", 8},
      }},
     {"mlock2",
      5319,
-     NORMAL,
      {
          [ARG_0] = {"start", 8},
          [ARG_1] = {"len", 8},
@@ -898,13 +787,11 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"mlockall",
      5148,
-     NORMAL,
      {
          [ARG_0] = {"flags", 4},
      }},
     {"mmap",
      5009,
-     NORMAL,
      {
          [ARG_0] = {"addr", 8},
          [ARG_1] = {"len", 8},
@@ -915,7 +802,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"mount",
      5160,
-     NORMAL,
      {
          [ARG_0] = {"dev_name", 8},
          [ARG_1] = {"dir_name", 8},
@@ -925,7 +811,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"move_pages",
      5267,
-     NORMAL,
      {
          [ARG_0] = {"pid", 4},
          [ARG_1] = {"nr_pages", 8},
@@ -936,7 +821,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"mprotect",
      5010,
-     NORMAL,
      {
          [ARG_0] = {"start", 8},
          [ARG_1] = {"len", 8},
@@ -944,7 +828,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"mq_getsetattr",
      5235,
-     NORMAL,
      {
          [ARG_0] = {"mqdes", 4},
          [ARG_1] = {"u_mqstat", 8},
@@ -952,14 +835,12 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"mq_notify",
      5234,
-     NORMAL,
      {
          [ARG_0] = {"mqdes", 4},
          [ARG_1] = {"u_notification", 8},
      }},
     {"mq_open",
      5230,
-     NORMAL,
      {
          [ARG_0] = {"u_name", 8},
          [ARG_1] = {"oflag", 4},
@@ -968,7 +849,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"mq_timedreceive",
      5233,
-     NORMAL,
      {
          [ARG_0] = {"mqdes", 4},
          [ARG_1] = {"u_msg_ptr", 8},
@@ -978,7 +858,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"mq_timedsend",
      5232,
-     NORMAL,
      {
          [ARG_0] = {"mqdes", 4},
          [ARG_1] = {"u_msg_ptr", 8},
@@ -988,13 +867,11 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"mq_unlink",
      5231,
-     NORMAL,
      {
          [ARG_0] = {"u_name", 8},
      }},
     {"mremap",
      5024,
-     NORMAL,
      {
          [ARG_0] = {"addr", 8},
          [ARG_1] = {"old_len", 8},
@@ -1004,7 +881,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"msgctl",
      5069,
-     NORMAL,
      {
          [ARG_0] = {"msqid", 4},
          [ARG_1] = {"cmd", 4},
@@ -1012,14 +888,12 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"msgget",
      5066,
-     NORMAL,
      {
          [ARG_0] = {"key", 4},
          [ARG_1] = {"msgflg", 4},
      }},
     {"msgrcv",
      5068,
-     NORMAL,
      {
          [ARG_0] = {"msqid", 4},
          [ARG_1] = {"msgp", 8},
@@ -1029,7 +903,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"msgsnd",
      5067,
-     NORMAL,
      {
          [ARG_0] = {"msqid", 4},
          [ARG_1] = {"msgp", 8},
@@ -1038,7 +911,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"msync",
      5025,
-     NORMAL,
      {
          [ARG_0] = {"start", 8},
          [ARG_1] = {"len", 8},
@@ -1046,22 +918,19 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"munlock",
      5147,
-     NORMAL,
      {
          [ARG_0] = {"start", 8},
          [ARG_1] = {"len", 8},
      }},
-    {"munlockall", 231, NORMAL, {}},
+    {"munlockall", 231, {}},
     {"munmap",
      215,
-     NORMAL,
      {
          [ARG_0] = {"addr", 8},
          [ARG_1] = {"len", 8},
      }},
     {"name_to_handle_at",
      5298,
-     NORMAL,
      {
          [ARG_0] = {"dfd", 4},
          [ARG_1] = {"name", 8},
@@ -1071,21 +940,18 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"nanosleep",
      5034,
-     NORMAL,
      {
          [ARG_0] = {"rqtp", 8},
          [ARG_1] = {"rmtp", 8},
      }},
     {"newfstat",
      80,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"statbuf", 8},
      }},
     {"newfstatat",
      5252,
-     NORMAL,
      {
          [ARG_0] = {"dfd", 4},
          [ARG_1] = {"filename", 8},
@@ -1094,13 +960,11 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"newuname",
      160,
-     NORMAL,
      {
          [ARG_0] = {"name", 8},
      }},
     {"nfsservctl",
      5173,
-     NORMAL,
      {
          [ARG_0] = {"cmd", 4},
          [ARG_1] = {"argp", 8},
@@ -1108,7 +972,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"openat",
      5247,
-     NORMAL,
      {
          [ARG_0] = {"dfd", 4},
          [ARG_1] = {"filename", 8},
@@ -1117,7 +980,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"open_by_handle_at",
      5299,
-     NORMAL,
      {
          [ARG_0] = {"mountdirfd", 4},
          [ARG_1] = {"handle", 8},
@@ -1125,7 +987,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"perf_event_open",
      241,
-     NORMAL,
      {
          [ARG_0] = {"attr_uptr", 8},
          [ARG_1] = {"pid", 4},
@@ -1135,27 +996,23 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"personality",
      5132,
-     NORMAL,
      {
          [ARG_0] = {"personality", 4},
      }},
     {"pipe2",
      5287,
-     NORMAL,
      {
          [ARG_0] = {"fildes", 8},
          [ARG_1] = {"flags", 4},
      }},
     {"pivot_root",
      5151,
-     NORMAL,
      {
          [ARG_0] = {"new_root", 8},
          [ARG_1] = {"put_old", 8},
      }},
     {"ppoll",
      5261,
-     NORMAL,
      {
          [ARG_0] = {"ufds", 8},
          [ARG_1] = {"nfds", 4},
@@ -1165,7 +1022,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"prctl",
      5153,
-     NORMAL,
      {
          [ARG_0] = {"option", 4},
          [ARG_1] = {"arg2", 8},
@@ -1175,7 +1031,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"pread64",
      5016,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"buf", 8},
@@ -1184,7 +1039,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"preadv",
      5289,
-     NORMAL,
      {
          [ARG_0] = {"fd", 8},
          [ARG_1] = {"vec", 8},
@@ -1194,7 +1048,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"preadv2",
      286,
-     NORMAL,
      {
          [ARG_0] = {"fd", 8},
          [ARG_1] = {"vec", 8},
@@ -1205,7 +1058,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"prlimit64",
      5297,
-     NORMAL,
      {
          [ARG_0] = {"pid", 4},
          [ARG_1] = {"resource", 4},
@@ -1214,7 +1066,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"process_vm_readv",
      5304,
-     NORMAL,
      {
          [ARG_0] = {"pid", 4},
          [ARG_1] = {"lvec", 8},
@@ -1225,7 +1076,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"process_vm_writev",
      5305,
-     NORMAL,
      {
          [ARG_0] = {"pid", 4},
          [ARG_1] = {"lvec", 8},
@@ -1236,7 +1086,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"pselect6",
      5260,
-     NORMAL,
      {
          [ARG_0] = {"n", 4},
          [ARG_1] = {"inp", 8},
@@ -1247,7 +1096,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"ptrace",
      5099,
-     NORMAL,
      {
          [ARG_0] = {"request", 8},
          [ARG_1] = {"pid", 8},
@@ -1256,7 +1104,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"pwrite64",
      5017,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"buf", 8},
@@ -1265,7 +1112,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"pwritev",
      5290,
-     NORMAL,
      {
          [ARG_0] = {"fd", 8},
          [ARG_1] = {"vec", 8},
@@ -1275,7 +1121,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"pwritev2",
      287,
-     NORMAL,
      {
          [ARG_0] = {"fd", 8},
          [ARG_1] = {"vec", 8},
@@ -1286,7 +1131,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"quotactl",
      5172,
-     NORMAL,
      {
          [ARG_0] = {"cmd", 4},
          [ARG_1] = {"special", 8},
@@ -1295,7 +1139,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"read",
      5000,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"buf", 8},
@@ -1303,7 +1146,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"readahead",
      5179,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"offset", 8},
@@ -1311,7 +1153,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"readlinkat",
      5257,
-     NORMAL,
      {
          [ARG_0] = {"dfd", 4},
          [ARG_1] = {"pathname", 8},
@@ -1320,7 +1161,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"readv",
      5018,
-     NORMAL,
      {
          [ARG_0] = {"fd", 8},
          [ARG_1] = {"vec", 8},
@@ -1328,7 +1168,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"reboot",
      5164,
-     NORMAL,
      {
          [ARG_0] = {"magic1", 4},
          [ARG_1] = {"magic2", 4},
@@ -1337,7 +1176,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"recvfrom",
      5044,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"ubuf", 8},
@@ -1348,7 +1186,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"recvmmsg",
      5294,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"mmsg", 8},
@@ -1358,7 +1195,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"recvmsg",
      5046,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"msg", 8},
@@ -1366,7 +1202,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"remap_file_pages",
      5210,
-     NORMAL,
      {
          [ARG_0] = {"start", 8},
          [ARG_1] = {"size", 8},
@@ -1376,14 +1211,12 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"removexattr",
      5189,
-     NORMAL,
      {
          [ARG_0] = {"pathname", 8},
          [ARG_1] = {"name", 8},
      }},
     {"renameat",
      5254,
-     NORMAL,
      {
          [ARG_0] = {"olddfd", 4},
          [ARG_1] = {"oldname", 8},
@@ -1392,7 +1225,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"renameat2",
      5311,
-     NORMAL,
      {
          [ARG_0] = {"olddfd", 4},
          [ARG_1] = {"oldname", 8},
@@ -1402,17 +1234,15 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"request_key",
      5240,
-     NORMAL,
      {
          [ARG_0] = {"_type", 8},
          [ARG_1] = {"_description", 8},
          [ARG_2] = {"_callout_info", 8},
          [ARG_3] = {"destringid", 4},
      }},
-    {"restart_syscall", 128, NORMAL, {}},
+    {"restart_syscall", 128, {}},
     {"rt_sigaction",
      5013,
-     NORMAL,
      {
          [ARG_0] = {"sig", 4},
          [ARG_1] = {"act", 8},
@@ -1421,14 +1251,12 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"rt_sigpending",
      5125,
-     NORMAL,
      {
          [ARG_0] = {"uset", 8},
          [ARG_1] = {"sigsetsize", 8},
      }},
     {"rt_sigprocmask",
      5014,
-     NORMAL,
      {
          [ARG_0] = {"how", 4},
          [ARG_1] = {"nset", 8},
@@ -1437,23 +1265,20 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"rt_sigqueueinfo",
      5127,
-     NORMAL,
      {
          [ARG_0] = {"pid", 4},
          [ARG_1] = {"sig", 4},
          [ARG_2] = {"uinfo", 8},
      }},
-    {"rt_sigreturn", 139, NORMAL, {}},
+    {"rt_sigreturn", 139, {}},
     {"rt_sigsuspend",
      133,
-     NORMAL,
      {
          [ARG_0] = {"unewset", 8},
          [ARG_1] = {"sigsetsize", 8},
      }},
     {"rt_sigtimedwait",
      5126,
-     NORMAL,
      {
          [ARG_0] = {"uthese", 8},
          [ARG_1] = {"uinfo", 8},
@@ -1462,7 +1287,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"rt_tgsigqueueinfo",
      5291,
-     NORMAL,
      {
          [ARG_0] = {"tgid", 4},
          [ARG_1] = {"pid", 4},
@@ -1471,7 +1295,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"sched_getaffinity",
      5196,
-     NORMAL,
      {
          [ARG_0] = {"pid", 4},
          [ARG_1] = {"len", 4},
@@ -1479,7 +1302,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"sched_getattr",
      5310,
-     NORMAL,
      {
          [ARG_0] = {"pid", 4},
          [ARG_1] = {"uattr", 8},
@@ -1488,39 +1310,33 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"sched_getparam",
      5140,
-     NORMAL,
      {
          [ARG_0] = {"pid", 4},
          [ARG_1] = {"param", 8},
      }},
     {"sched_get_priority_max",
      5143,
-     NORMAL,
      {
          [ARG_0] = {"policy", 4},
      }},
     {"sched_get_priority_min",
      5144,
-     NORMAL,
      {
          [ARG_0] = {"policy", 4},
      }},
     {"sched_getscheduler",
      5142,
-     NORMAL,
      {
          [ARG_0] = {"pid", 4},
      }},
     {"sched_rr_get_interval",
      5145,
-     NORMAL,
      {
          [ARG_0] = {"pid", 4},
          [ARG_1] = {"interval", 8},
      }},
     {"sched_setaffinity",
      5195,
-     NORMAL,
      {
          [ARG_0] = {"pid", 4},
          [ARG_1] = {"len", 4},
@@ -1528,7 +1344,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"sched_setattr",
      5309,
-     NORMAL,
      {
          [ARG_0] = {"pid", 4},
          [ARG_1] = {"uattr", 8},
@@ -1536,23 +1351,20 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"sched_setparam",
      5139,
-     NORMAL,
      {
          [ARG_0] = {"pid", 4},
          [ARG_1] = {"param", 8},
      }},
     {"sched_setscheduler",
      5141,
-     NORMAL,
      {
          [ARG_0] = {"pid", 4},
          [ARG_1] = {"policy", 4},
          [ARG_2] = {"param", 8},
      }},
-    {"sched_yield", 124, NORMAL, {}},
+    {"sched_yield", 124, {}},
     {"seccomp",
      277,
-     NORMAL,
      {
          [ARG_0] = {"op", 4},
          [ARG_1] = {"flags", 4},
@@ -1560,7 +1372,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"semctl",
      5064,
-     NORMAL,
      {
          [ARG_0] = {"semid", 4},
          [ARG_1] = {"semnum", 4},
@@ -1569,7 +1380,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"semget",
      5062,
-     NORMAL,
      {
          [ARG_0] = {"key", 4},
          [ARG_1] = {"nsems", 4},
@@ -1577,7 +1387,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"semop",
      5063,
-     NORMAL,
      {
          [ARG_0] = {"semid", 4},
          [ARG_1] = {"tsops", 8},
@@ -1585,7 +1394,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"semtimedop",
      5214,
-     NORMAL,
      {
          [ARG_0] = {"semid", 4},
          [ARG_1] = {"tsops", 8},
@@ -1594,7 +1402,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"sendfile",
      71,
-     NORMAL,
      {
          [ARG_0] = {"out_fd", 4},
          [ARG_1] = {"in_fd", 4},
@@ -1603,7 +1410,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"sendmmsg",
      5302,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"mmsg", 8},
@@ -1612,7 +1418,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"sendmsg",
      5045,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"msg", 8},
@@ -1620,7 +1425,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"sendto",
      5043,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"buff", 8},
@@ -1631,46 +1435,39 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"setdomainname",
      5166,
-     NORMAL,
      {
          [ARG_0] = {"name", 8},
          [ARG_1] = {"len", 4},
      }},
     {"setfsgid",
      5121,
-     NORMAL,
      {
          [ARG_0] = {"gid", 4},
      }},
     {"setfsuid",
      5120,
-     NORMAL,
      {
          [ARG_0] = {"uid", 4},
      }},
     {"setgid",
      5104,
-     NORMAL,
      {
          [ARG_0] = {"gid", 4},
      }},
     {"setgroups",
      5114,
-     NORMAL,
      {
          [ARG_0] = {"gidsetsize", 4},
          [ARG_1] = {"grouplist", 8},
      }},
     {"sethostname",
      5165,
-     NORMAL,
      {
          [ARG_0] = {"name", 8},
          [ARG_1] = {"len", 4},
      }},
     {"setitimer",
      5036,
-     NORMAL,
      {
          [ARG_0] = {"which", 4},
          [ARG_1] = {"value", 8},
@@ -1678,7 +1475,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"set_mempolicy",
      5229,
-     NORMAL,
      {
          [ARG_0] = {"mode", 4},
          [ARG_1] = {"nmask", 8},
@@ -1686,21 +1482,18 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"setns",
      5303,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"nstype", 4},
      }},
     {"setpgid",
      5107,
-     NORMAL,
      {
          [ARG_0] = {"pid", 4},
          [ARG_1] = {"pgid", 4},
      }},
     {"setpriority",
      5138,
-     NORMAL,
      {
          [ARG_0] = {"which", 4},
          [ARG_1] = {"who", 4},
@@ -1708,14 +1501,12 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"setregid",
      5112,
-     NORMAL,
      {
          [ARG_0] = {"rgid", 4},
          [ARG_1] = {"egid", 4},
      }},
     {"setresgid",
      5117,
-     NORMAL,
      {
          [ARG_0] = {"rgid", 4},
          [ARG_1] = {"egid", 4},
@@ -1723,7 +1514,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"setresuid",
      5115,
-     NORMAL,
      {
          [ARG_0] = {"ruid", 4},
          [ARG_1] = {"euid", 4},
@@ -1731,29 +1521,25 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"setreuid",
      5111,
-     NORMAL,
      {
          [ARG_0] = {"ruid", 4},
          [ARG_1] = {"euid", 4},
      }},
     {"setrlimit",
      5155,
-     NORMAL,
      {
          [ARG_0] = {"resource", 4},
          [ARG_1] = {"rlim", 8},
      }},
     {"set_robust_list",
      5268,
-     NORMAL,
      {
          [ARG_0] = {"head", 8},
          [ARG_1] = {"len", 8},
      }},
-    {"setsid", 157, NORMAL, {}},
+    {"setsid", 157, {}},
     {"setsockopt",
      208,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"level", 4},
@@ -1763,26 +1549,22 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"set_tid_address",
      5212,
-     NORMAL,
      {
          [ARG_0] = {"tidptr", 8},
      }},
     {"settimeofday",
      5159,
-     NORMAL,
      {
          [ARG_0] = {"tv", 8},
          [ARG_1] = {"tz", 8},
      }},
     {"setuid",
      5103,
-     NORMAL,
      {
          [ARG_0] = {"uid", 4},
      }},
     {"setxattr",
      5180,
-     NORMAL,
      {
          [ARG_0] = {"pathname", 8},
          [ARG_1] = {"name", 8},
@@ -1792,7 +1574,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"shmat",
      5029,
-     NORMAL,
      {
          [ARG_0] = {"shmid", 4},
          [ARG_1] = {"shmaddr", 8},
@@ -1800,7 +1581,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"shmctl",
      5030,
-     NORMAL,
      {
          [ARG_0] = {"shmid", 4},
          [ARG_1] = {"cmd", 4},
@@ -1808,13 +1588,11 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"shmdt",
      5065,
-     NORMAL,
      {
          [ARG_0] = {"shmaddr", 8},
      }},
     {"shmget",
      5028,
-     NORMAL,
      {
          [ARG_0] = {"key", 4},
          [ARG_1] = {"size", 8},
@@ -1822,21 +1600,18 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"shutdown",
      5047,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"how", 4},
      }},
     {"sigaltstack",
      5129,
-     NORMAL,
      {
          [ARG_0] = {"uss", 8},
          [ARG_1] = {"uoss", 8},
      }},
     {"signalfd4",
      5283,
-     NORMAL,
      {
          [ARG_0] = {"ufd", 4},
          [ARG_1] = {"user_mask", 8},
@@ -1845,7 +1620,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"socket",
      5040,
-     NORMAL,
      {
          [ARG_0] = {"family", 4},
          [ARG_1] = {"type", 4},
@@ -1853,7 +1627,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"socketpair",
      5052,
-     NORMAL,
      {
          [ARG_0] = {"family", 4},
          [ARG_1] = {"type", 4},
@@ -1862,7 +1635,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"splice",
      5263,
-     NORMAL,
      {
          [ARG_0] = {"fd_in", 4},
          [ARG_1] = {"off_in", 8},
@@ -1873,36 +1645,31 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"statfs",
      5134,
-     NORMAL,
      {
          [ARG_0] = {"pathname", 8},
          [ARG_1] = {"buf", 8},
      }},
     {"swapoff",
      5163,
-     NORMAL,
      {
          [ARG_0] = {"specialfile", 8},
      }},
     {"swapon",
      5162,
-     NORMAL,
      {
          [ARG_0] = {"specialfile", 8},
          [ARG_1] = {"swap_flags", 4},
      }},
     {"symlinkat",
      5256,
-     NORMAL,
      {
          [ARG_0] = {"oldname", 8},
          [ARG_1] = {"newdfd", 4},
          [ARG_2] = {"newname", 8},
      }},
-    {"sync", 81, NORMAL, {}},
+    {"sync", 81, {}},
     {"sync_file_range2",
      84,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"offset", 8},
@@ -1911,19 +1678,16 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"syncfs",
      5301,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
      }},
     {"sysinfo",
      5097,
-     NORMAL,
      {
          [ARG_0] = {"info", 8},
      }},
     {"syslog",
      5101,
-     NORMAL,
      {
          [ARG_0] = {"type", 4},
          [ARG_1] = {"buf", 8},
@@ -1931,7 +1695,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"tee",
      5265,
-     NORMAL,
      {
          [ARG_0] = {"fdin", 4},
          [ARG_1] = {"fdout", 4},
@@ -1940,7 +1703,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"tgkill",
      5225,
-     NORMAL,
      {
          [ARG_0] = {"tgid", 4},
          [ARG_1] = {"pid", 4},
@@ -1948,7 +1710,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"timer_create",
      5216,
-     NORMAL,
      {
          [ARG_0] = {"which_clock", 4},
          [ARG_1] = {"timer_event_spec", 8},
@@ -1956,27 +1717,23 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"timer_delete",
      5220,
-     NORMAL,
      {
          [ARG_0] = {"timer_id", 4},
      }},
     {"timerfd_create",
      5280,
-     NORMAL,
      {
          [ARG_0] = {"clockid", 4},
          [ARG_1] = {"flags", 4},
      }},
     {"timerfd_gettime",
      5281,
-     NORMAL,
      {
          [ARG_0] = {"ufd", 4},
          [ARG_1] = {"otmr", 8},
      }},
     {"timerfd_settime",
      5282,
-     NORMAL,
      {
          [ARG_0] = {"ufd", 4},
          [ARG_1] = {"flags", 4},
@@ -1985,20 +1742,17 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"timer_getoverrun",
      5219,
-     NORMAL,
      {
          [ARG_0] = {"timer_id", 4},
      }},
     {"timer_gettime",
      5218,
-     NORMAL,
      {
          [ARG_0] = {"timer_id", 4},
          [ARG_1] = {"setting", 8},
      }},
     {"timer_settime",
      5217,
-     NORMAL,
      {
          [ARG_0] = {"timer_id", 4},
          [ARG_1] = {"flags", 4},
@@ -2007,33 +1761,28 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"times",
      5098,
-     NORMAL,
      {
          [ARG_0] = {"tbuf", 8},
      }},
     {"tkill",
      5192,
-     NORMAL,
      {
          [ARG_0] = {"pid", 4},
          [ARG_1] = {"sig", 4},
      }},
     {"truncate",
      5074,
-     NORMAL,
      {
          [ARG_0] = {"path", 8},
          [ARG_1] = {"length", 8},
      }},
     {"umask",
      5093,
-     NORMAL,
      {
          [ARG_0] = {"mask", 4},
      }},
     {"unlinkat",
      5253,
-     NORMAL,
      {
          [ARG_0] = {"dfd", 4},
          [ARG_1] = {"pathname", 8},
@@ -2041,29 +1790,25 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"unshare",
      5262,
-     NORMAL,
      {
          [ARG_0] = {"unshare_flags", 8},
      }},
     {"userfaultfd",
      5317,
-     NORMAL,
      {
          [ARG_0] = {"flags", 4},
      }},
     {"utimensat",
      5275,
-     NORMAL,
      {
          [ARG_0] = {"dfd", 4},
          [ARG_1] = {"filename", 8},
          [ARG_2] = {"utimes", 8},
          [ARG_3] = {"flags", 4},
      }},
-    {"vhangup", 58, NORMAL, {}},
+    {"vhangup", 58, {}},
     {"vmsplice",
      5266,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"iov", 8},
@@ -2072,7 +1817,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"wait4",
      5059,
-     NORMAL,
      {
          [ARG_0] = {"upid", 4},
          [ARG_1] = {"stat_addr", 8},
@@ -2081,7 +1825,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"waitid",
      5237,
-     NORMAL,
      {
          [ARG_0] = {"which", 4},
          [ARG_1] = {"upid", 4},
@@ -2091,7 +1834,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"write",
      5001,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"buf", 8},
@@ -2099,7 +1841,6 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      }},
     {"writev",
      5019,
-     NORMAL,
      {
          [ARG_0] = {"fd", 8},
          [ARG_1] = {"vec", 8},

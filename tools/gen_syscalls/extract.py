@@ -45,7 +45,7 @@ def output_syscall(nr, name):
 		real_name = m.group(1)
 	else:
 		real_name = name
-	output('\t{"'+real_name+'", '+str(nr)+', NORMAL, {')
+	output('\t{"'+real_name+'", '+str(nr)+', {')
 	for j in xrange(0, nb_args):
 		arg_name = get_string_val("print __syscall_meta__"+name+"->args["+str(j)+"]")
 		arg_type = get_string_val("print __syscall_meta__"+name+"->types["+str(j)+"]")

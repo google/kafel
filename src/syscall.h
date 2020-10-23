@@ -36,7 +36,6 @@ struct syscall_arg {
 struct syscall_descriptor {
   const char* name;
   uint32_t nr;
-  bool is_custom;
   struct syscall_arg args[SYSCALL_MAX_ARGS];
 };
 
@@ -46,7 +45,6 @@ struct syscall_list {
   const size_t* const size;
 };
 
-struct syscall_descriptor* syscall_custom(uint32_t nr);
 const struct syscall_list* syscalls_lookup(uint32_t arch);
 const struct syscall_descriptor* syscall_lookup(const struct syscall_list* list,
                                                 const char* name);

@@ -29,12 +29,9 @@
 #define ARG_4 4
 #define ARG_5 5
 
-#define NORMAL false
-
 const struct syscall_descriptor i386_syscall_list[] = {
     {"accept4",
      364,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"upeer_sockaddr", 4},
@@ -43,20 +40,17 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"access",
      33,
-     NORMAL,
      {
          [ARG_0] = {"filename", 4},
          [ARG_1] = {"mode", 4},
      }},
     {"acct",
      51,
-     NORMAL,
      {
          [ARG_0] = {"name", 4},
      }},
     {"add_key",
      286,
-     NORMAL,
      {
          [ARG_0] = {"_type", 4},
          [ARG_1] = {"_description", 4},
@@ -66,33 +60,28 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"adjtimex",
      124,
-     NORMAL,
      {
          [ARG_0] = {"txc_p", 4},
      }},
     {"alarm",
      27,
-     NORMAL,
      {
          [ARG_0] = {"seconds", 4},
      }},
     {"arch_prctl",
      384,
-     NORMAL,
      {
          [ARG_0] = {"option", 4},
          [ARG_1] = {"arg2", 4},
      }},
     {"bdflush",
      134,
-     NORMAL,
      {
          [ARG_0] = {"func", 4},
          [ARG_1] = {"data", 4},
      }},
     {"bind",
      361,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"umyaddr", 4},
@@ -100,40 +89,34 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"brk",
      45,
-     NORMAL,
      {
          [ARG_0] = {"brk", 4},
      }},
     {"capget",
      184,
-     NORMAL,
      {
          [ARG_0] = {"header", 4},
          [ARG_1] = {"dataptr", 4},
      }},
     {"capset",
      185,
-     NORMAL,
      {
          [ARG_0] = {"header", 4},
          [ARG_1] = {"data", 4},
      }},
     {"chdir",
      12,
-     NORMAL,
      {
          [ARG_0] = {"filename", 4},
      }},
     {"chmod",
      15,
-     NORMAL,
      {
          [ARG_0] = {"filename", 4},
          [ARG_1] = {"mode", 2},
      }},
     {"chown",
      212,
-     NORMAL,
      {
          [ARG_0] = {"filename", 4},
          [ARG_1] = {"user", 4},
@@ -141,7 +124,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"chown16",
      182,
-     NORMAL,
      {
          [ARG_0] = {"filename", 4},
          [ARG_1] = {"user", 2},
@@ -149,34 +131,29 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"chroot",
      61,
-     NORMAL,
      {
          [ARG_0] = {"filename", 4},
      }},
     {"clock_adjtime",
      343,
-     NORMAL,
      {
          [ARG_0] = {"which_clock", 4},
          [ARG_1] = {"utx", 4},
      }},
     {"clock_getres",
      266,
-     NORMAL,
      {
          [ARG_0] = {"which_clock", 4},
          [ARG_1] = {"tp", 4},
      }},
     {"clock_gettime",
      265,
-     NORMAL,
      {
          [ARG_0] = {"which_clock", 4},
          [ARG_1] = {"tp", 4},
      }},
     {"clock_nanosleep",
      267,
-     NORMAL,
      {
          [ARG_0] = {"which_clock", 4},
          [ARG_1] = {"flags", 4},
@@ -185,14 +162,12 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"clock_settime",
      264,
-     NORMAL,
      {
          [ARG_0] = {"which_clock", 4},
          [ARG_1] = {"tp", 4},
      }},
     {"clone",
      120,
-     NORMAL,
      {
          [ARG_0] = {"clone_flags", 4},
          [ARG_1] = {"newsp", 4},
@@ -202,13 +177,11 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"close",
      6,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
      }},
     {"connect",
      362,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"uservaddr", 4},
@@ -216,7 +189,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"copy_file_range",
      377,
-     NORMAL,
      {
          [ARG_0] = {"fd_in", 4},
          [ARG_1] = {"off_in", 4},
@@ -227,34 +199,29 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"creat",
      8,
-     NORMAL,
      {
          [ARG_0] = {"pathname", 4},
          [ARG_1] = {"mode", 2},
      }},
     {"delete_module",
      129,
-     NORMAL,
      {
          [ARG_0] = {"name_user", 4},
          [ARG_1] = {"flags", 4},
      }},
     {"dup",
      41,
-     NORMAL,
      {
          [ARG_0] = {"fildes", 4},
      }},
     {"dup2",
      63,
-     NORMAL,
      {
          [ARG_0] = {"oldfd", 4},
          [ARG_1] = {"newfd", 4},
      }},
     {"dup3",
      330,
-     NORMAL,
      {
          [ARG_0] = {"oldfd", 4},
          [ARG_1] = {"newfd", 4},
@@ -262,19 +229,16 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"epoll_create",
      254,
-     NORMAL,
      {
          [ARG_0] = {"size", 4},
      }},
     {"epoll_create1",
      329,
-     NORMAL,
      {
          [ARG_0] = {"flags", 4},
      }},
     {"epoll_ctl",
      255,
-     NORMAL,
      {
          [ARG_0] = {"epfd", 4},
          [ARG_1] = {"op", 4},
@@ -283,7 +247,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"epoll_pwait",
      319,
-     NORMAL,
      {
          [ARG_0] = {"epfd", 4},
          [ARG_1] = {"events", 4},
@@ -294,7 +257,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"epoll_wait",
      256,
-     NORMAL,
      {
          [ARG_0] = {"epfd", 4},
          [ARG_1] = {"events", 4},
@@ -303,20 +265,17 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"eventfd",
      323,
-     NORMAL,
      {
          [ARG_0] = {"count", 4},
      }},
     {"eventfd2",
      328,
-     NORMAL,
      {
          [ARG_0] = {"count", 4},
          [ARG_1] = {"flags", 4},
      }},
     {"execve",
      11,
-     NORMAL,
      {
          [ARG_0] = {"filename", 4},
          [ARG_1] = {"argv", 4},
@@ -324,7 +283,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"execveat",
      358,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"filename", 4},
@@ -334,19 +292,16 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"exit",
      1,
-     NORMAL,
      {
          [ARG_0] = {"error_code", 4},
      }},
     {"exit_group",
      252,
-     NORMAL,
      {
          [ARG_0] = {"error_code", 4},
      }},
     {"faccessat",
      307,
-     NORMAL,
      {
          [ARG_0] = {"dfd", 4},
          [ARG_1] = {"filename", 4},
@@ -354,7 +309,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"fadvise64",
      250,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"offset", 8},
@@ -363,7 +317,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"fadvise64_64",
      272,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"offset", 8},
@@ -372,7 +325,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"fallocate",
      324,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"mode", 4},
@@ -381,14 +333,12 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"fanotify_init",
      338,
-     NORMAL,
      {
          [ARG_0] = {"flags", 4},
          [ARG_1] = {"event_f_flags", 4},
      }},
     {"fanotify_mark",
      339,
-     NORMAL,
      {
          [ARG_0] = {"fanotify_fd", 4},
          [ARG_1] = {"flags", 4},
@@ -398,20 +348,17 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"fchdir",
      133,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
      }},
     {"fchmod",
      94,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"mode", 2},
      }},
     {"fchmodat",
      306,
-     NORMAL,
      {
          [ARG_0] = {"dfd", 4},
          [ARG_1] = {"filename", 4},
@@ -419,7 +366,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"fchown",
      207,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"user", 4},
@@ -427,7 +373,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"fchown16",
      95,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"user", 2},
@@ -435,7 +380,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"fchownat",
      298,
-     NORMAL,
      {
          [ARG_0] = {"dfd", 4},
          [ARG_1] = {"filename", 4},
@@ -445,7 +389,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"fcntl",
      55,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"cmd", 4},
@@ -453,7 +396,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"fcntl64",
      221,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"cmd", 4},
@@ -461,13 +403,11 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"fdatasync",
      148,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
      }},
     {"fgetxattr",
      231,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"name", 4},
@@ -476,7 +416,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"finit_module",
      350,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"uargs", 4},
@@ -484,7 +423,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"flistxattr",
      234,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"list", 4},
@@ -492,22 +430,19 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"flock",
      143,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"cmd", 4},
      }},
-    {"fork", 2, NORMAL, {}},
+    {"fork", 2, {}},
     {"fremovexattr",
      237,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"name", 4},
      }},
     {"fsetxattr",
      228,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"name", 4},
@@ -517,21 +452,18 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"fstat",
      28,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"statbuf", 4},
      }},
     {"fstat64",
      197,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"statbuf", 4},
      }},
     {"fstatat64",
      300,
-     NORMAL,
      {
          [ARG_0] = {"dfd", 4},
          [ARG_1] = {"filename", 4},
@@ -540,14 +472,12 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"fstatfs",
      100,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"buf", 4},
      }},
     {"fstatfs64",
      269,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"sz", 4},
@@ -555,27 +485,23 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"fsync",
      118,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
      }},
     {"ftruncate",
      93,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"length", 4},
      }},
     {"ftruncate64",
      194,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"length", 8},
      }},
     {"futex",
      240,
-     NORMAL,
      {
          [ARG_0] = {"uaddr", 4},
          [ARG_1] = {"op", 4},
@@ -586,7 +512,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"futimesat",
      299,
-     NORMAL,
      {
          [ARG_0] = {"dfd", 4},
          [ARG_1] = {"filename", 4},
@@ -594,7 +519,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"getcpu",
      318,
-     NORMAL,
      {
          [ARG_0] = {"cpup", 4},
          [ARG_1] = {"nodep", 4},
@@ -602,14 +526,12 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"getcwd",
      183,
-     NORMAL,
      {
          [ARG_0] = {"buf", 4},
          [ARG_1] = {"size", 4},
      }},
     {"getdents",
      141,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"dirent", 4},
@@ -617,42 +539,37 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"getdents64",
      220,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"dirent", 4},
          [ARG_2] = {"count", 4},
      }},
-    {"getegid", 202, NORMAL, {}},
-    {"getegid16", 50, NORMAL, {}},
-    {"geteuid", 201, NORMAL, {}},
-    {"geteuid16", 49, NORMAL, {}},
-    {"getgid", 200, NORMAL, {}},
-    {"getgid16", 47, NORMAL, {}},
+    {"getegid", 202, {}},
+    {"getegid16", 50, {}},
+    {"geteuid", 201, {}},
+    {"geteuid16", 49, {}},
+    {"getgid", 200, {}},
+    {"getgid16", 47, {}},
     {"getgroups",
      205,
-     NORMAL,
      {
          [ARG_0] = {"gidsetsize", 4},
          [ARG_1] = {"grouplist", 4},
      }},
     {"getgroups16",
      80,
-     NORMAL,
      {
          [ARG_0] = {"gidsetsize", 4},
          [ARG_1] = {"grouplist", 4},
      }},
     {"getitimer",
      105,
-     NORMAL,
      {
          [ARG_0] = {"which", 4},
          [ARG_1] = {"value", 4},
      }},
     {"getpeername",
      368,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"usockaddr", 4},
@@ -660,23 +577,20 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"getpgid",
      132,
-     NORMAL,
      {
          [ARG_0] = {"pid", 4},
      }},
-    {"getpgrp", 65, NORMAL, {}},
-    {"getpid", 20, NORMAL, {}},
-    {"getppid", 64, NORMAL, {}},
+    {"getpgrp", 65, {}},
+    {"getpid", 20, {}},
+    {"getppid", 64, {}},
     {"getpriority",
      96,
-     NORMAL,
      {
          [ARG_0] = {"which", 4},
          [ARG_1] = {"who", 4},
      }},
     {"getrandom",
      355,
-     NORMAL,
      {
          [ARG_0] = {"buf", 4},
          [ARG_1] = {"count", 4},
@@ -684,7 +598,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"getresgid",
      211,
-     NORMAL,
      {
          [ARG_0] = {"rgidp", 4},
          [ARG_1] = {"egidp", 4},
@@ -692,7 +605,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"getresgid16",
      171,
-     NORMAL,
      {
          [ARG_0] = {"rgidp", 4},
          [ARG_1] = {"egidp", 4},
@@ -700,7 +612,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"getresuid",
      209,
-     NORMAL,
      {
          [ARG_0] = {"ruidp", 4},
          [ARG_1] = {"euidp", 4},
@@ -708,7 +619,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"getresuid16",
      165,
-     NORMAL,
      {
          [ARG_0] = {"ruidp", 4},
          [ARG_1] = {"euidp", 4},
@@ -716,14 +626,12 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"getrlimit",
      191,
-     NORMAL,
      {
          [ARG_0] = {"resource", 4},
          [ARG_1] = {"rlim", 4},
      }},
     {"get_robust_list",
      312,
-     NORMAL,
      {
          [ARG_0] = {"pid", 4},
          [ARG_1] = {"head_ptr", 4},
@@ -731,20 +639,17 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"getrusage",
      77,
-     NORMAL,
      {
          [ARG_0] = {"who", 4},
          [ARG_1] = {"ru", 4},
      }},
     {"getsid",
      147,
-     NORMAL,
      {
          [ARG_0] = {"pid", 4},
      }},
     {"getsockname",
      367,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"usockaddr", 4},
@@ -752,7 +657,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"getsockopt",
      365,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"level", 4},
@@ -762,23 +666,20 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"get_thread_area",
      244,
-     NORMAL,
      {
          [ARG_0] = {"u_info", 4},
      }},
-    {"gettid", 224, NORMAL, {}},
+    {"gettid", 224, {}},
     {"gettimeofday",
      78,
-     NORMAL,
      {
          [ARG_0] = {"tv", 4},
          [ARG_1] = {"tz", 4},
      }},
-    {"getuid", 199, NORMAL, {}},
-    {"getuid16", 24, NORMAL, {}},
+    {"getuid", 199, {}},
+    {"getuid16", 24, {}},
     {"getxattr",
      229,
-     NORMAL,
      {
          [ARG_0] = {"pathname", 4},
          [ARG_1] = {"name", 4},
@@ -787,7 +688,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"init_module",
      128,
-     NORMAL,
      {
          [ARG_0] = {"umod", 4},
          [ARG_1] = {"len", 4},
@@ -795,29 +695,25 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"inotify_add_watch",
      292,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"pathname", 4},
          [ARG_2] = {"mask", 4},
      }},
-    {"inotify_init", 291, NORMAL, {}},
+    {"inotify_init", 291, {}},
     {"inotify_init1",
      332,
-     NORMAL,
      {
          [ARG_0] = {"flags", 4},
      }},
     {"inotify_rm_watch",
      293,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"wd", 4},
      }},
     {"io_cancel",
      249,
-     NORMAL,
      {
          [ARG_0] = {"ctx_id", 4},
          [ARG_1] = {"iocb", 4},
@@ -825,7 +721,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"ioctl",
      54,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"cmd", 4},
@@ -833,13 +728,11 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"io_destroy",
      246,
-     NORMAL,
      {
          [ARG_0] = {"ctx", 4},
      }},
     {"io_getevents",
      247,
-     NORMAL,
      {
          [ARG_0] = {"ctx_id", 4},
          [ARG_1] = {"min_nr", 4},
@@ -849,7 +742,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"ioperm",
      101,
-     NORMAL,
      {
          [ARG_0] = {"from", 4},
          [ARG_1] = {"num", 4},
@@ -857,20 +749,17 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"iopl",
      110,
-     NORMAL,
      {
          [ARG_0] = {"level", 4},
      }},
     {"ioprio_get",
      290,
-     NORMAL,
      {
          [ARG_0] = {"which", 4},
          [ARG_1] = {"who", 4},
      }},
     {"ioprio_set",
      289,
-     NORMAL,
      {
          [ARG_0] = {"which", 4},
          [ARG_1] = {"who", 4},
@@ -878,14 +767,12 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"io_setup",
      245,
-     NORMAL,
      {
          [ARG_0] = {"nr_events", 4},
          [ARG_1] = {"ctxp", 4},
      }},
     {"io_submit",
      248,
-     NORMAL,
      {
          [ARG_0] = {"ctx_id", 4},
          [ARG_1] = {"nr", 4},
@@ -893,7 +780,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"ipc",
      117,
-     NORMAL,
      {
          [ARG_0] = {"call", 4},
          [ARG_1] = {"first", 4},
@@ -904,7 +790,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"kexec_load",
      283,
-     NORMAL,
      {
          [ARG_0] = {"entry", 4},
          [ARG_1] = {"nr_segments", 4},
@@ -913,7 +798,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"keyctl",
      288,
-     NORMAL,
      {
          [ARG_0] = {"option", 4},
          [ARG_1] = {"arg2", 4},
@@ -923,14 +807,12 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"kill",
      37,
-     NORMAL,
      {
          [ARG_0] = {"pid", 4},
          [ARG_1] = {"sig", 4},
      }},
     {"lchown",
      198,
-     NORMAL,
      {
          [ARG_0] = {"filename", 4},
          [ARG_1] = {"user", 4},
@@ -938,7 +820,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"lchown16",
      16,
-     NORMAL,
      {
          [ARG_0] = {"filename", 4},
          [ARG_1] = {"user", 2},
@@ -946,7 +827,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"lgetxattr",
      230,
-     NORMAL,
      {
          [ARG_0] = {"pathname", 4},
          [ARG_1] = {"name", 4},
@@ -955,14 +835,12 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"link",
      9,
-     NORMAL,
      {
          [ARG_0] = {"oldname", 4},
          [ARG_1] = {"newname", 4},
      }},
     {"linkat",
      303,
-     NORMAL,
      {
          [ARG_0] = {"olddfd", 4},
          [ARG_1] = {"oldname", 4},
@@ -972,14 +850,12 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"listen",
      363,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"backlog", 4},
      }},
     {"listxattr",
      232,
-     NORMAL,
      {
          [ARG_0] = {"pathname", 4},
          [ARG_1] = {"list", 4},
@@ -987,7 +863,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"llistxattr",
      233,
-     NORMAL,
      {
          [ARG_0] = {"pathname", 4},
          [ARG_1] = {"list", 4},
@@ -995,7 +870,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"llseek",
      140,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"offset_high", 4},
@@ -1005,7 +879,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"lookup_dcookie",
      253,
-     NORMAL,
      {
          [ARG_0] = {"cookie64", 8},
          [ARG_1] = {"buf", 4},
@@ -1013,14 +886,12 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"lremovexattr",
      236,
-     NORMAL,
      {
          [ARG_0] = {"pathname", 4},
          [ARG_1] = {"name", 4},
      }},
     {"lseek",
      19,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"offset", 4},
@@ -1028,7 +899,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"lsetxattr",
      227,
-     NORMAL,
      {
          [ARG_0] = {"pathname", 4},
          [ARG_1] = {"name", 4},
@@ -1038,21 +908,18 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"lstat",
      84,
-     NORMAL,
      {
          [ARG_0] = {"filename", 4},
          [ARG_1] = {"statbuf", 4},
      }},
     {"lstat64",
      196,
-     NORMAL,
      {
          [ARG_0] = {"filename", 4},
          [ARG_1] = {"statbuf", 4},
      }},
     {"madvise",
      219,
-     NORMAL,
      {
          [ARG_0] = {"start", 4},
          [ARG_1] = {"len_in", 4},
@@ -1060,21 +927,18 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"membarrier",
      375,
-     NORMAL,
      {
          [ARG_0] = {"cmd", 4},
          [ARG_1] = {"flags", 4},
      }},
     {"memfd_create",
      356,
-     NORMAL,
      {
          [ARG_0] = {"uname", 4},
          [ARG_1] = {"flags", 4},
      }},
     {"mincore",
      218,
-     NORMAL,
      {
          [ARG_0] = {"start", 4},
          [ARG_1] = {"len", 4},
@@ -1082,14 +946,12 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"mkdir",
      39,
-     NORMAL,
      {
          [ARG_0] = {"pathname", 4},
          [ARG_1] = {"mode", 2},
      }},
     {"mkdirat",
      296,
-     NORMAL,
      {
          [ARG_0] = {"dfd", 4},
          [ARG_1] = {"pathname", 4},
@@ -1097,7 +959,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"mknod",
      14,
-     NORMAL,
      {
          [ARG_0] = {"filename", 4},
          [ARG_1] = {"mode", 2},
@@ -1105,7 +966,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"mknodat",
      297,
-     NORMAL,
      {
          [ARG_0] = {"dfd", 4},
          [ARG_1] = {"filename", 4},
@@ -1114,14 +974,12 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"mlock",
      150,
-     NORMAL,
      {
          [ARG_0] = {"start", 4},
          [ARG_1] = {"len", 4},
      }},
     {"mlock2",
      376,
-     NORMAL,
      {
          [ARG_0] = {"start", 4},
          [ARG_1] = {"len", 4},
@@ -1129,13 +987,11 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"mlockall",
      152,
-     NORMAL,
      {
          [ARG_0] = {"flags", 4},
      }},
     {"mmap_pgoff",
      192,
-     NORMAL,
      {
          [ARG_0] = {"addr", 4},
          [ARG_1] = {"len", 4},
@@ -1146,7 +1002,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"modify_ldt",
      123,
-     NORMAL,
      {
          [ARG_0] = {"func", 4},
          [ARG_1] = {"ptr", 4},
@@ -1154,7 +1009,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"mount",
      21,
-     NORMAL,
      {
          [ARG_0] = {"dev_name", 4},
          [ARG_1] = {"dir_name", 4},
@@ -1164,7 +1018,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"mprotect",
      125,
-     NORMAL,
      {
          [ARG_0] = {"start", 4},
          [ARG_1] = {"len", 4},
@@ -1172,7 +1025,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"mq_getsetattr",
      282,
-     NORMAL,
      {
          [ARG_0] = {"mqdes", 4},
          [ARG_1] = {"u_mqstat", 4},
@@ -1180,14 +1032,12 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"mq_notify",
      281,
-     NORMAL,
      {
          [ARG_0] = {"mqdes", 4},
          [ARG_1] = {"u_notification", 4},
      }},
     {"mq_open",
      277,
-     NORMAL,
      {
          [ARG_0] = {"u_name", 4},
          [ARG_1] = {"oflag", 4},
@@ -1196,7 +1046,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"mq_timedreceive",
      280,
-     NORMAL,
      {
          [ARG_0] = {"mqdes", 4},
          [ARG_1] = {"u_msg_ptr", 4},
@@ -1206,7 +1055,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"mq_timedsend",
      279,
-     NORMAL,
      {
          [ARG_0] = {"mqdes", 4},
          [ARG_1] = {"u_msg_ptr", 4},
@@ -1216,13 +1064,11 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"mq_unlink",
      278,
-     NORMAL,
      {
          [ARG_0] = {"u_name", 4},
      }},
     {"mremap",
      163,
-     NORMAL,
      {
          [ARG_0] = {"addr", 4},
          [ARG_1] = {"old_len", 4},
@@ -1232,7 +1078,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"msync",
      144,
-     NORMAL,
      {
          [ARG_0] = {"start", 4},
          [ARG_1] = {"len", 4},
@@ -1240,22 +1085,19 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"munlock",
      151,
-     NORMAL,
      {
          [ARG_0] = {"start", 4},
          [ARG_1] = {"len", 4},
      }},
-    {"munlockall", 153, NORMAL, {}},
+    {"munlockall", 153, {}},
     {"munmap",
      91,
-     NORMAL,
      {
          [ARG_0] = {"addr", 4},
          [ARG_1] = {"len", 4},
      }},
     {"name_to_handle_at",
      341,
-     NORMAL,
      {
          [ARG_0] = {"dfd", 4},
          [ARG_1] = {"name", 4},
@@ -1265,60 +1107,51 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"nanosleep",
      162,
-     NORMAL,
      {
          [ARG_0] = {"rqtp", 4},
          [ARG_1] = {"rmtp", 4},
      }},
     {"newfstat",
      108,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"statbuf", 4},
      }},
     {"newlstat",
      107,
-     NORMAL,
      {
          [ARG_0] = {"filename", 4},
          [ARG_1] = {"statbuf", 4},
      }},
     {"newstat",
      106,
-     NORMAL,
      {
          [ARG_0] = {"filename", 4},
          [ARG_1] = {"statbuf", 4},
      }},
     {"newuname",
      122,
-     NORMAL,
      {
          [ARG_0] = {"name", 4},
      }},
     {"nice",
      34,
-     NORMAL,
      {
          [ARG_0] = {"increment", 4},
      }},
     {"old_getrlimit",
      76,
-     NORMAL,
      {
          [ARG_0] = {"resource", 4},
          [ARG_1] = {"rlim", 4},
      }},
     {"old_mmap",
      90,
-     NORMAL,
      {
          [ARG_0] = {"arg", 4},
      }},
     {"old_readdir",
      89,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"dirent", 4},
@@ -1326,25 +1159,21 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"old_select",
      82,
-     NORMAL,
      {
          [ARG_0] = {"arg", 4},
      }},
     {"oldumount",
      22,
-     NORMAL,
      {
          [ARG_0] = {"name", 4},
      }},
     {"olduname",
      59,
-     NORMAL,
      {
          [ARG_0] = {"name", 4},
      }},
     {"open",
      5,
-     NORMAL,
      {
          [ARG_0] = {"filename", 4},
          [ARG_1] = {"flags", 4},
@@ -1352,7 +1181,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"openat",
      295,
-     NORMAL,
      {
          [ARG_0] = {"dfd", 4},
          [ARG_1] = {"filename", 4},
@@ -1361,16 +1189,14 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"open_by_handle_at",
      342,
-     NORMAL,
      {
          [ARG_0] = {"mountdirfd", 4},
          [ARG_1] = {"handle", 4},
          [ARG_2] = {"flags", 4},
      }},
-    {"pause", 29, NORMAL, {}},
+    {"pause", 29, {}},
     {"perf_event_open",
      336,
-     NORMAL,
      {
          [ARG_0] = {"attr_uptr", 4},
          [ARG_1] = {"pid", 4},
@@ -1380,33 +1206,28 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"personality",
      136,
-     NORMAL,
      {
          [ARG_0] = {"personality", 4},
      }},
     {"pipe",
      42,
-     NORMAL,
      {
          [ARG_0] = {"fildes", 4},
      }},
     {"pipe2",
      331,
-     NORMAL,
      {
          [ARG_0] = {"fildes", 4},
          [ARG_1] = {"flags", 4},
      }},
     {"pivot_root",
      217,
-     NORMAL,
      {
          [ARG_0] = {"new_root", 4},
          [ARG_1] = {"put_old", 4},
      }},
     {"poll",
      168,
-     NORMAL,
      {
          [ARG_0] = {"ufds", 4},
          [ARG_1] = {"nfds", 4},
@@ -1414,7 +1235,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"ppoll",
      309,
-     NORMAL,
      {
          [ARG_0] = {"ufds", 4},
          [ARG_1] = {"nfds", 4},
@@ -1424,7 +1244,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"prctl",
      172,
-     NORMAL,
      {
          [ARG_0] = {"option", 4},
          [ARG_1] = {"arg2", 4},
@@ -1434,7 +1253,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"pread64",
      180,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"buf", 4},
@@ -1443,7 +1261,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"preadv",
      333,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"vec", 4},
@@ -1453,7 +1270,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"preadv2",
      378,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"vec", 4},
@@ -1464,7 +1280,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"prlimit64",
      340,
-     NORMAL,
      {
          [ARG_0] = {"pid", 4},
          [ARG_1] = {"resource", 4},
@@ -1473,7 +1288,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"process_vm_readv",
      347,
-     NORMAL,
      {
          [ARG_0] = {"pid", 4},
          [ARG_1] = {"lvec", 4},
@@ -1484,7 +1298,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"process_vm_writev",
      348,
-     NORMAL,
      {
          [ARG_0] = {"pid", 4},
          [ARG_1] = {"lvec", 4},
@@ -1495,7 +1308,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"pselect6",
      308,
-     NORMAL,
      {
          [ARG_0] = {"n", 4},
          [ARG_1] = {"inp", 4},
@@ -1506,7 +1318,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"ptrace",
      26,
-     NORMAL,
      {
          [ARG_0] = {"request", 4},
          [ARG_1] = {"pid", 4},
@@ -1515,7 +1326,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"pwrite64",
      181,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"buf", 4},
@@ -1524,7 +1334,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"pwritev",
      334,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"vec", 4},
@@ -1534,7 +1343,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"pwritev2",
      379,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"vec", 4},
@@ -1545,7 +1353,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"quotactl",
      131,
-     NORMAL,
      {
          [ARG_0] = {"cmd", 4},
          [ARG_1] = {"special", 4},
@@ -1554,7 +1361,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"read",
      3,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"buf", 4},
@@ -1562,7 +1368,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"readahead",
      225,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"offset", 8},
@@ -1570,7 +1375,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"readlink",
      85,
-     NORMAL,
      {
          [ARG_0] = {"path", 4},
          [ARG_1] = {"buf", 4},
@@ -1578,7 +1382,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"readlinkat",
      305,
-     NORMAL,
      {
          [ARG_0] = {"dfd", 4},
          [ARG_1] = {"pathname", 4},
@@ -1587,7 +1390,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"readv",
      145,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"vec", 4},
@@ -1595,7 +1397,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"reboot",
      88,
-     NORMAL,
      {
          [ARG_0] = {"magic1", 4},
          [ARG_1] = {"magic2", 4},
@@ -1604,7 +1405,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"recvfrom",
      371,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"ubuf", 4},
@@ -1615,7 +1415,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"recvmmsg",
      337,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"mmsg", 4},
@@ -1625,7 +1424,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"recvmsg",
      372,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"msg", 4},
@@ -1633,7 +1431,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"remap_file_pages",
      257,
-     NORMAL,
      {
          [ARG_0] = {"start", 4},
          [ARG_1] = {"size", 4},
@@ -1643,21 +1440,18 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"removexattr",
      235,
-     NORMAL,
      {
          [ARG_0] = {"pathname", 4},
          [ARG_1] = {"name", 4},
      }},
     {"rename",
      38,
-     NORMAL,
      {
          [ARG_0] = {"oldname", 4},
          [ARG_1] = {"newname", 4},
      }},
     {"renameat",
      302,
-     NORMAL,
      {
          [ARG_0] = {"olddfd", 4},
          [ARG_1] = {"oldname", 4},
@@ -1666,7 +1460,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"renameat2",
      353,
-     NORMAL,
      {
          [ARG_0] = {"olddfd", 4},
          [ARG_1] = {"oldname", 4},
@@ -1676,23 +1469,20 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"request_key",
      287,
-     NORMAL,
      {
          [ARG_0] = {"_type", 4},
          [ARG_1] = {"_description", 4},
          [ARG_2] = {"_callout_info", 4},
          [ARG_3] = {"destringid", 4},
      }},
-    {"restart_syscall", 0, NORMAL, {}},
+    {"restart_syscall", 0, {}},
     {"rmdir",
      40,
-     NORMAL,
      {
          [ARG_0] = {"pathname", 4},
      }},
     {"rt_sigaction",
      174,
-     NORMAL,
      {
          [ARG_0] = {"sig", 4},
          [ARG_1] = {"act", 4},
@@ -1701,14 +1491,12 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"rt_sigpending",
      176,
-     NORMAL,
      {
          [ARG_0] = {"uset", 4},
          [ARG_1] = {"sigsetsize", 4},
      }},
     {"rt_sigprocmask",
      175,
-     NORMAL,
      {
          [ARG_0] = {"how", 4},
          [ARG_1] = {"nset", 4},
@@ -1717,7 +1505,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"rt_sigqueueinfo",
      178,
-     NORMAL,
      {
          [ARG_0] = {"pid", 4},
          [ARG_1] = {"sig", 4},
@@ -1725,14 +1512,12 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"rt_sigsuspend",
      179,
-     NORMAL,
      {
          [ARG_0] = {"unewset", 4},
          [ARG_1] = {"sigsetsize", 4},
      }},
     {"rt_sigtimedwait",
      177,
-     NORMAL,
      {
          [ARG_0] = {"uthese", 4},
          [ARG_1] = {"uinfo", 4},
@@ -1741,7 +1526,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"rt_tgsigqueueinfo",
      335,
-     NORMAL,
      {
          [ARG_0] = {"tgid", 4},
          [ARG_1] = {"pid", 4},
@@ -1750,7 +1534,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"sched_getaffinity",
      242,
-     NORMAL,
      {
          [ARG_0] = {"pid", 4},
          [ARG_1] = {"len", 4},
@@ -1758,7 +1541,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"sched_getattr",
      352,
-     NORMAL,
      {
          [ARG_0] = {"pid", 4},
          [ARG_1] = {"uattr", 4},
@@ -1767,39 +1549,33 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"sched_getparam",
      155,
-     NORMAL,
      {
          [ARG_0] = {"pid", 4},
          [ARG_1] = {"param", 4},
      }},
     {"sched_get_priority_max",
      159,
-     NORMAL,
      {
          [ARG_0] = {"policy", 4},
      }},
     {"sched_get_priority_min",
      160,
-     NORMAL,
      {
          [ARG_0] = {"policy", 4},
      }},
     {"sched_getscheduler",
      157,
-     NORMAL,
      {
          [ARG_0] = {"pid", 4},
      }},
     {"sched_rr_get_interval",
      161,
-     NORMAL,
      {
          [ARG_0] = {"pid", 4},
          [ARG_1] = {"interval", 4},
      }},
     {"sched_setaffinity",
      241,
-     NORMAL,
      {
          [ARG_0] = {"pid", 4},
          [ARG_1] = {"len", 4},
@@ -1807,7 +1583,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"sched_setattr",
      351,
-     NORMAL,
      {
          [ARG_0] = {"pid", 4},
          [ARG_1] = {"uattr", 4},
@@ -1815,23 +1590,20 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"sched_setparam",
      154,
-     NORMAL,
      {
          [ARG_0] = {"pid", 4},
          [ARG_1] = {"param", 4},
      }},
     {"sched_setscheduler",
      156,
-     NORMAL,
      {
          [ARG_0] = {"pid", 4},
          [ARG_1] = {"policy", 4},
          [ARG_2] = {"param", 4},
      }},
-    {"sched_yield", 158, NORMAL, {}},
+    {"sched_yield", 158, {}},
     {"seccomp",
      354,
-     NORMAL,
      {
          [ARG_0] = {"op", 4},
          [ARG_1] = {"flags", 4},
@@ -1839,7 +1611,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"select",
      142,
-     NORMAL,
      {
          [ARG_0] = {"n", 4},
          [ARG_1] = {"inp", 4},
@@ -1849,7 +1620,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"sendfile",
      187,
-     NORMAL,
      {
          [ARG_0] = {"out_fd", 4},
          [ARG_1] = {"in_fd", 4},
@@ -1858,7 +1628,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"sendfile64",
      239,
-     NORMAL,
      {
          [ARG_0] = {"out_fd", 4},
          [ARG_1] = {"in_fd", 4},
@@ -1867,7 +1636,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"sendmmsg",
      345,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"mmsg", 4},
@@ -1876,7 +1644,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"sendmsg",
      370,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"msg", 4},
@@ -1884,7 +1651,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"sendto",
      369,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"buff", 4},
@@ -1895,71 +1661,60 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"setdomainname",
      121,
-     NORMAL,
      {
          [ARG_0] = {"name", 4},
          [ARG_1] = {"len", 4},
      }},
     {"setfsgid",
      216,
-     NORMAL,
      {
          [ARG_0] = {"gid", 4},
      }},
     {"setfsgid16",
      139,
-     NORMAL,
      {
          [ARG_0] = {"gid", 2},
      }},
     {"setfsuid",
      215,
-     NORMAL,
      {
          [ARG_0] = {"uid", 4},
      }},
     {"setfsuid16",
      138,
-     NORMAL,
      {
          [ARG_0] = {"uid", 2},
      }},
     {"setgid",
      214,
-     NORMAL,
      {
          [ARG_0] = {"gid", 4},
      }},
     {"setgid16",
      46,
-     NORMAL,
      {
          [ARG_0] = {"gid", 2},
      }},
     {"setgroups",
      206,
-     NORMAL,
      {
          [ARG_0] = {"gidsetsize", 4},
          [ARG_1] = {"grouplist", 4},
      }},
     {"setgroups16",
      81,
-     NORMAL,
      {
          [ARG_0] = {"gidsetsize", 4},
          [ARG_1] = {"grouplist", 4},
      }},
     {"sethostname",
      74,
-     NORMAL,
      {
          [ARG_0] = {"name", 4},
          [ARG_1] = {"len", 4},
      }},
     {"setitimer",
      104,
-     NORMAL,
      {
          [ARG_0] = {"which", 4},
          [ARG_1] = {"value", 4},
@@ -1967,21 +1722,18 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"setns",
      346,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"nstype", 4},
      }},
     {"setpgid",
      57,
-     NORMAL,
      {
          [ARG_0] = {"pid", 4},
          [ARG_1] = {"pgid", 4},
      }},
     {"setpriority",
      97,
-     NORMAL,
      {
          [ARG_0] = {"which", 4},
          [ARG_1] = {"who", 4},
@@ -1989,21 +1741,18 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"setregid",
      204,
-     NORMAL,
      {
          [ARG_0] = {"rgid", 4},
          [ARG_1] = {"egid", 4},
      }},
     {"setregid16",
      71,
-     NORMAL,
      {
          [ARG_0] = {"rgid", 2},
          [ARG_1] = {"egid", 2},
      }},
     {"setresgid",
      210,
-     NORMAL,
      {
          [ARG_0] = {"rgid", 4},
          [ARG_1] = {"egid", 4},
@@ -2011,7 +1760,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"setresgid16",
      170,
-     NORMAL,
      {
          [ARG_0] = {"rgid", 2},
          [ARG_1] = {"egid", 2},
@@ -2019,7 +1767,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"setresuid",
      208,
-     NORMAL,
      {
          [ARG_0] = {"ruid", 4},
          [ARG_1] = {"euid", 4},
@@ -2027,7 +1774,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"setresuid16",
      164,
-     NORMAL,
      {
          [ARG_0] = {"ruid", 2},
          [ARG_1] = {"euid", 2},
@@ -2035,36 +1781,31 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"setreuid",
      203,
-     NORMAL,
      {
          [ARG_0] = {"ruid", 4},
          [ARG_1] = {"euid", 4},
      }},
     {"setreuid16",
      70,
-     NORMAL,
      {
          [ARG_0] = {"ruid", 2},
          [ARG_1] = {"euid", 2},
      }},
     {"setrlimit",
      75,
-     NORMAL,
      {
          [ARG_0] = {"resource", 4},
          [ARG_1] = {"rlim", 4},
      }},
     {"set_robust_list",
      311,
-     NORMAL,
      {
          [ARG_0] = {"head", 4},
          [ARG_1] = {"len", 4},
      }},
-    {"setsid", 66, NORMAL, {}},
+    {"setsid", 66, {}},
     {"setsockopt",
      366,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"level", 4},
@@ -2074,38 +1815,32 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"set_thread_area",
      243,
-     NORMAL,
      {
          [ARG_0] = {"u_info", 4},
      }},
     {"set_tid_address",
      258,
-     NORMAL,
      {
          [ARG_0] = {"tidptr", 4},
      }},
     {"settimeofday",
      79,
-     NORMAL,
      {
          [ARG_0] = {"tv", 4},
          [ARG_1] = {"tz", 4},
      }},
     {"setuid",
      213,
-     NORMAL,
      {
          [ARG_0] = {"uid", 4},
      }},
     {"setuid16",
      23,
-     NORMAL,
      {
          [ARG_0] = {"uid", 2},
      }},
     {"setxattr",
      226,
-     NORMAL,
      {
          [ARG_0] = {"pathname", 4},
          [ARG_1] = {"name", 4},
@@ -2113,17 +1848,15 @@ const struct syscall_descriptor i386_syscall_list[] = {
          [ARG_3] = {"size", 4},
          [ARG_4] = {"flags", 4},
      }},
-    {"sgetmask", 68, NORMAL, {}},
+    {"sgetmask", 68, {}},
     {"shutdown",
      373,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"how", 4},
      }},
     {"sigaction",
      67,
-     NORMAL,
      {
          [ARG_0] = {"sig", 4},
          [ARG_1] = {"act", 4},
@@ -2131,21 +1864,18 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"sigaltstack",
      186,
-     NORMAL,
      {
          [ARG_0] = {"uss", 4},
          [ARG_1] = {"uoss", 4},
      }},
     {"signal",
      48,
-     NORMAL,
      {
          [ARG_0] = {"sig", 4},
          [ARG_1] = {"handler", 4},
      }},
     {"signalfd",
      321,
-     NORMAL,
      {
          [ARG_0] = {"ufd", 4},
          [ARG_1] = {"user_mask", 4},
@@ -2153,7 +1883,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"signalfd4",
      327,
-     NORMAL,
      {
          [ARG_0] = {"ufd", 4},
          [ARG_1] = {"user_mask", 4},
@@ -2162,13 +1891,11 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"sigpending",
      73,
-     NORMAL,
      {
          [ARG_0] = {"set", 4},
      }},
     {"sigprocmask",
      126,
-     NORMAL,
      {
          [ARG_0] = {"how", 4},
          [ARG_1] = {"nset", 4},
@@ -2176,7 +1903,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"sigsuspend",
      72,
-     NORMAL,
      {
          [ARG_0] = {"unused1", 4},
          [ARG_1] = {"unused2", 4},
@@ -2184,7 +1910,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"socket",
      359,
-     NORMAL,
      {
          [ARG_0] = {"family", 4},
          [ARG_1] = {"type", 4},
@@ -2192,14 +1917,12 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"socketcall",
      102,
-     NORMAL,
      {
          [ARG_0] = {"call", 4},
          [ARG_1] = {"args", 4},
      }},
     {"socketpair",
      360,
-     NORMAL,
      {
          [ARG_0] = {"family", 4},
          [ARG_1] = {"type", 4},
@@ -2208,7 +1931,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"splice",
      313,
-     NORMAL,
      {
          [ARG_0] = {"fd_in", 4},
          [ARG_1] = {"off_in", 4},
@@ -2219,34 +1941,29 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"ssetmask",
      69,
-     NORMAL,
      {
          [ARG_0] = {"newmask", 4},
      }},
     {"stat",
      18,
-     NORMAL,
      {
          [ARG_0] = {"filename", 4},
          [ARG_1] = {"statbuf", 4},
      }},
     {"stat64",
      195,
-     NORMAL,
      {
          [ARG_0] = {"filename", 4},
          [ARG_1] = {"statbuf", 4},
      }},
     {"statfs",
      99,
-     NORMAL,
      {
          [ARG_0] = {"pathname", 4},
          [ARG_1] = {"buf", 4},
      }},
     {"statfs64",
      268,
-     NORMAL,
      {
          [ARG_0] = {"pathname", 4},
          [ARG_1] = {"sz", 4},
@@ -2254,7 +1971,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"statx",
      383,
-     NORMAL,
      {
          [ARG_0] = {"dfd", 4},
          [ARG_1] = {"filename", 4},
@@ -2264,42 +1980,36 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"stime",
      25,
-     NORMAL,
      {
          [ARG_0] = {"tptr", 4},
      }},
     {"swapoff",
      115,
-     NORMAL,
      {
          [ARG_0] = {"specialfile", 4},
      }},
     {"swapon",
      87,
-     NORMAL,
      {
          [ARG_0] = {"specialfile", 4},
          [ARG_1] = {"swap_flags", 4},
      }},
     {"symlink",
      83,
-     NORMAL,
      {
          [ARG_0] = {"oldname", 4},
          [ARG_1] = {"newname", 4},
      }},
     {"symlinkat",
      304,
-     NORMAL,
      {
          [ARG_0] = {"oldname", 4},
          [ARG_1] = {"newdfd", 4},
          [ARG_2] = {"newname", 4},
      }},
-    {"sync", 36, NORMAL, {}},
+    {"sync", 36, {}},
     {"sync_file_range",
      314,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"offset", 8},
@@ -2308,19 +2018,16 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"syncfs",
      344,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
      }},
     {"sysctl",
      149,
-     NORMAL,
      {
          [ARG_0] = {"args", 4},
      }},
     {"sysfs",
      135,
-     NORMAL,
      {
          [ARG_0] = {"option", 4},
          [ARG_1] = {"arg1", 4},
@@ -2328,13 +2035,11 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"sysinfo",
      116,
-     NORMAL,
      {
          [ARG_0] = {"info", 4},
      }},
     {"syslog",
      103,
-     NORMAL,
      {
          [ARG_0] = {"type", 4},
          [ARG_1] = {"buf", 4},
@@ -2342,7 +2047,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"tee",
      315,
-     NORMAL,
      {
          [ARG_0] = {"fdin", 4},
          [ARG_1] = {"fdout", 4},
@@ -2351,7 +2055,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"tgkill",
      270,
-     NORMAL,
      {
          [ARG_0] = {"tgid", 4},
          [ARG_1] = {"pid", 4},
@@ -2359,13 +2062,11 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"time",
      13,
-     NORMAL,
      {
          [ARG_0] = {"tloc", 4},
      }},
     {"timer_create",
      259,
-     NORMAL,
      {
          [ARG_0] = {"which_clock", 4},
          [ARG_1] = {"timer_event_spec", 4},
@@ -2373,27 +2074,23 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"timer_delete",
      263,
-     NORMAL,
      {
          [ARG_0] = {"timer_id", 4},
      }},
     {"timerfd_create",
      322,
-     NORMAL,
      {
          [ARG_0] = {"clockid", 4},
          [ARG_1] = {"flags", 4},
      }},
     {"timerfd_gettime",
      326,
-     NORMAL,
      {
          [ARG_0] = {"ufd", 4},
          [ARG_1] = {"otmr", 4},
      }},
     {"timerfd_settime",
      325,
-     NORMAL,
      {
          [ARG_0] = {"ufd", 4},
          [ARG_1] = {"flags", 4},
@@ -2402,20 +2099,17 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"timer_getoverrun",
      262,
-     NORMAL,
      {
          [ARG_0] = {"timer_id", 4},
      }},
     {"timer_gettime",
      261,
-     NORMAL,
      {
          [ARG_0] = {"timer_id", 4},
          [ARG_1] = {"setting", 4},
      }},
     {"timer_settime",
      260,
-     NORMAL,
      {
          [ARG_0] = {"timer_id", 4},
          [ARG_1] = {"flags", 4},
@@ -2424,59 +2118,50 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"times",
      43,
-     NORMAL,
      {
          [ARG_0] = {"tbuf", 4},
      }},
     {"tkill",
      238,
-     NORMAL,
      {
          [ARG_0] = {"pid", 4},
          [ARG_1] = {"sig", 4},
      }},
     {"truncate",
      92,
-     NORMAL,
      {
          [ARG_0] = {"path", 4},
          [ARG_1] = {"length", 4},
      }},
     {"truncate64",
      193,
-     NORMAL,
      {
          [ARG_0] = {"path", 4},
          [ARG_1] = {"length", 8},
      }},
     {"umask",
      60,
-     NORMAL,
      {
          [ARG_0] = {"mask", 4},
      }},
     {"umount",
      52,
-     NORMAL,
      {
          [ARG_0] = {"name", 4},
          [ARG_1] = {"flags", 4},
      }},
     {"uname",
      109,
-     NORMAL,
      {
          [ARG_0] = {"name", 4},
      }},
     {"unlink",
      10,
-     NORMAL,
      {
          [ARG_0] = {"pathname", 4},
      }},
     {"unlinkat",
      301,
-     NORMAL,
      {
          [ARG_0] = {"dfd", 4},
          [ARG_1] = {"pathname", 4},
@@ -2484,27 +2169,23 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"unshare",
      310,
-     NORMAL,
      {
          [ARG_0] = {"unshare_flags", 4},
      }},
     {"ustat",
      62,
-     NORMAL,
      {
          [ARG_0] = {"dev", 4},
          [ARG_1] = {"ubuf", 4},
      }},
     {"utime",
      30,
-     NORMAL,
      {
          [ARG_0] = {"filename", 4},
          [ARG_1] = {"times", 4},
      }},
     {"utimensat",
      320,
-     NORMAL,
      {
          [ARG_0] = {"dfd", 4},
          [ARG_1] = {"filename", 4},
@@ -2513,29 +2194,25 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"utimes",
      271,
-     NORMAL,
      {
          [ARG_0] = {"filename", 4},
          [ARG_1] = {"utimes", 4},
      }},
-    {"vfork", 190, NORMAL, {}},
-    {"vhangup", 111, NORMAL, {}},
+    {"vfork", 190, {}},
+    {"vhangup", 111, {}},
     {"vm86",
      166,
-     NORMAL,
      {
          [ARG_0] = {"cmd", 4},
          [ARG_1] = {"arg", 4},
      }},
     {"vm86old",
      113,
-     NORMAL,
      {
          [ARG_0] = {"user_vm86", 4},
      }},
     {"vmsplice",
      316,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"iov", 4},
@@ -2544,7 +2221,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"wait4",
      114,
-     NORMAL,
      {
          [ARG_0] = {"upid", 4},
          [ARG_1] = {"stat_addr", 4},
@@ -2553,7 +2229,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"waitid",
      284,
-     NORMAL,
      {
          [ARG_0] = {"which", 4},
          [ARG_1] = {"upid", 4},
@@ -2563,7 +2238,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"waitpid",
      7,
-     NORMAL,
      {
          [ARG_0] = {"pid", 4},
          [ARG_1] = {"stat_addr", 4},
@@ -2571,7 +2245,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"write",
      4,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"buf", 4},
@@ -2579,7 +2252,6 @@ const struct syscall_descriptor i386_syscall_list[] = {
      }},
     {"writev",
      146,
-     NORMAL,
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"vec", 4},

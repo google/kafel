@@ -66,13 +66,6 @@ const struct syscall_list syscall_lists[] = {
 #endif
 };
 
-struct syscall_descriptor* syscall_custom(uint32_t nr) {
-  struct syscall_descriptor* rv = calloc(1, sizeof(*rv));
-  rv->nr = nr;
-  rv->is_custom = true;
-  return rv;
-}
-
 const struct syscall_list* syscalls_lookup(uint32_t arch) {
   for (size_t i = 0; i < sizeof(syscall_lists) / sizeof(syscall_lists[0]);
        ++i) {
@@ -96,14 +89,4 @@ const struct syscall_descriptor* syscall_lookup(const struct syscall_list* list,
     }
   }
   return NULL;
-}
-
-void syscall_descriptor_destroy(struct syscall_descriptor** desc) {
-  ASSERT(desc != NULL);
-  ASSERT((*desc) != NULL);
-
-  if ((*desc)->is_custom) {
-    free(*desc);
-  }
-  (*desc) = NULL;
 }
