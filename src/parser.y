@@ -420,8 +420,8 @@ const_def
 
 void yyerror(YYLTYPE * loc, struct kafel_ctxt* ctxt, yyscan_t scanner,
              const char *msg) {
+  (void)scanner; /* suppress unused-parameter warning */
   if (!ctxt->lexical_error) {
-    YYUSE(scanner);
     if (loc->filename != NULL) {
       append_error(ctxt, "%s:%d:%d: %s", loc->filename, loc->first_line, loc->first_column, msg);
     } else {
