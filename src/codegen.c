@@ -166,7 +166,7 @@ static void purge_location_cache(struct codegen_ctxt *ctxt) {
   ctxt->locations.cache_size = j;
 }
 
-static __u8 resolve_action(struct codegen_ctxt *ctxt, int action) {
+static int resolve_action(struct codegen_ctxt *ctxt, int action) {
   ASSERT(ctxt != NULL);
 
   struct sock_filter action_inst =
@@ -178,7 +178,7 @@ static __u8 resolve_action(struct codegen_ctxt *ctxt, int action) {
       ctxt->locations.basic_actions[action] =
           add_instruction(ctxt, action_inst);
     }
-    return LOC_TO_JUMP(ctxt->locations.basic_actions[action]);
+    return ctxt->locations.basic_actions[action];
   }
 
   // search cache
@@ -187,7 +187,7 @@ static __u8 resolve_action(struct codegen_ctxt *ctxt, int action) {
       if (LOC_TO_JUMP(ctxt->locations.cache[i].location) > MAX_JUMP) {
         ctxt->locations.cache[i].location = add_instruction(ctxt, action_inst);
       }
-      return LOC_TO_JUMP(ctxt->locations.cache[i].location);
+      return ctxt->locations.cache[i].location;
     }
   }
 
@@ -199,10 +199,10 @@ static __u8 resolve_action(struct codegen_ctxt *ctxt, int action) {
   ctxt->locations.cache[ctxt->locations.cache_size].action = action;
   ctxt->locations.cache[ctxt->locations.cache_size].location = location;
   ++ctxt->locations.cache_size;
-  return LOC_TO_JUMP(location);
+  return location;
 }
 
-static __u8 resolve_location(struct codegen_ctxt *ctxt, int loc) {
+static int resolve_location(struct codegen_ctxt *ctxt, int loc) {
   ASSERT(ctxt != NULL);
 
   if (loc < 0) {
@@ -219,7 +219,7 @@ static __u8 resolve_location(struct codegen_ctxt *ctxt, int loc) {
   ASSERT(pos >= 0);
   ASSERT(pos <= MAX_JUMP);
 
-  return pos;
+  return loc;
 }
 
 static int add_jump(struct codegen_ctxt *ctxt, __u16 type, __u32 k, int tloc,
@@ -230,11 +230,12 @@ static int add_jump(struct codegen_ctxt *ctxt, __u16 type, __u32 k, int tloc,
     return tloc;
   }
 
-  __u8 tpos = resolve_location(ctxt, tloc);
-  __u8 fpos = resolve_location(ctxt, floc);
+  int tpos = resolve_location(ctxt, tloc);
+  int fpos = resolve_location(ctxt, floc);
   // do tloc one more time as instruction added by floc may make it unreachable
   tpos = resolve_location(ctxt, tloc);
-  return ADD_INSTR(BPF_JUMP(BPF_JMP | type, k, tpos, fpos));
+  return ADD_INSTR(
+      BPF_JUMP(BPF_JMP | type, k, LOC_TO_JUMP(tpos), LOC_TO_JUMP(fpos)));
 }
 
 static int add_jump_ge(struct codegen_ctxt *ctxt, __u32 than, int tloc,
