@@ -33,6 +33,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
+#include "interpreter.h"
 #include "runner.h"
 
 #define TEST_PASSED() \
@@ -48,6 +49,8 @@
 
 static struct sock_fprog test_policy_prog = {0, NULL};
 static bool test_policy_compilation_flag;
+static int test_syscalls_mode =
+    KAFEL_TEST_SYSCALLS_EXECUTE | KAFEL_TEST_SYSCALLS_INTERPRET;
 
 int test_policy(bool should_fail, const char* source) {
   free(test_policy_prog.filter);
@@ -183,6 +186,38 @@ int test_policy_enforcment(test_func_t test_func, void* data,
   TEST_PASSED();
 }
 
+int test_policy_enforcement_syscalls_interpret(
+    syscall_exec_spec_t syscall_specs[]) {
+  for (const syscall_exec_spec_t* syscall_spec = syscall_specs;
+       !syscall_spec->is_last; ++syscall_spec) {
+    uint32_t seccomp_ret = syscall_spec->result.seccomp_ret;
+    const syscall_spec_t* data = &syscall_spec->syscall;
+    uint64_t args[6];
+    for (int i = 0; i < 6; ++i) {
+      args[i] = data->args[i];
+    }
+    interpreter_ctxt_t ctxt;
+    if (!interpreter_run(&ctxt, &test_policy_prog, data)) {
+      TEST_FAIL("interpreter error for syscall(%d, %#" PRIx64 ", %#" PRIx64
+                ", %#" PRIx64 ", %#" PRIx64 ", %#" PRIx64 ", %#" PRIx64
+                ") @ %#" PRIx64 " with arch = %#" PRIx32 ": %s",
+                data->nr, args[0], args[1], args[2], args[3], args[4], args[5],
+                (uint64_t)data->instruction_pointer, data->arch,
+                ctxt.error_buf);
+    }
+    if (ctxt.result != seccomp_ret) {
+      TEST_FAIL("invalid result for syscall(%d, %#" PRIx64 ", %#" PRIx64
+                ", %#" PRIx64 ", %#" PRIx64 ", %#" PRIx64 ", %#" PRIx64
+                ") @ %#" PRIx64 " with arch = %#" PRIx32 ": got %#" PRIx32
+                ", expected %#" PRIx32,
+                data->nr, args[0], args[1], args[2], args[3], args[4], args[5],
+                (uint64_t)data->instruction_pointer, data->arch, ctxt.result,
+                seccomp_ret);
+    }
+  }
+  TEST_PASSED();
+}
+
 static int syscall_caller_helper(void* data) {
   int syscall_no = 0;
   for (const syscall_exec_spec_t* syscall_spec =
@@ -190,7 +225,10 @@ static int syscall_caller_helper(void* data) {
        !syscall_spec->is_last; ++syscall_spec) {
     ++syscall_no;
     long nr = syscall_spec->syscall.nr;
-    const long* arg = syscall_spec->syscall.args;
+    long arg[6];
+    for (int i = 0; i < 6; ++i) {
+      arg[i] = syscall_spec->syscall.args[i];
+    }
     long expected = syscall_spec->result.rv;
     long expected_errno = syscall_spec->result.expected_errno;
     long ret = syscall(nr, arg[0], arg[1], arg[2], arg[3], arg[4], arg[5]);
@@ -201,8 +239,24 @@ static int syscall_caller_helper(void* data) {
   return 0;
 }
 
-int test_policy_enforcment_syscalls(syscall_exec_spec_t syscall_specs[],
-                                    bool should_kill) {
-  return test_policy_enforcment(syscall_caller_helper, syscall_specs,
-                                should_kill);
+int test_policy_enforcment_syscalls(syscall_exec_spec_t syscall_specs[]) {
+  int ret = 0;
+
+  if (test_syscalls_mode & KAFEL_TEST_SYSCALLS_EXECUTE) {
+    bool should_kill = false;
+    for (const syscall_exec_spec_t* syscall_spec = syscall_specs;
+         !syscall_spec->is_last; ++syscall_spec) {
+      uint32_t seccomp_ret = syscall_spec->result.seccomp_ret;
+      if (seccomp_ret == SECCOMP_RET_KILL ||
+          seccomp_ret == SECCOMP_RET_KILL_PROCESS) {
+        should_kill = true;
+      }
+    }
+    ret |= test_policy_enforcment(syscall_caller_helper, syscall_specs,
+                                  should_kill);
+  }
+  if (test_syscalls_mode & KAFEL_TEST_SYSCALLS_INTERPRET) {
+    ret |= test_policy_enforcement_syscalls_interpret(syscall_specs);
+  }
+  return ret;
 }

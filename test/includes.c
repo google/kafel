@@ -60,7 +60,7 @@ TEST_CASE(chained_includes) {
       "USE composite DEFAULT KILL");
   TEST_POLICY_ALLOWS(empty, NULL);
   TEST_POLICY_ALLOWS_SYSCALL(SYSCALL_SPEC3(__NR_read, STDIN_FILENO, 0, 0),
-                             SYSCALL_RESULT_SPEC(0));
+                             SYSCALL_EXECUTED_SPEC(0, 0));
   TEST_POLICY_BLOCKS_SYSCALL(SYSCALL_SPEC0(__NR_ptrace));
 }
 

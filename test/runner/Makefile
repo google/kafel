@@ -18,6 +18,7 @@
 #
 
 SRCS:=harness.c\
+      interpreter.c\
       runner.c
 TARGET:=librunner.a
 
@@ -28,5 +29,6 @@ ${TARGET}: ${OBJECTS} ${LIBS}
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.
 
-harness.o: harness.h runner.h
+harness.o: harness.h interpreter.h runner.h
+interpreter.o: interpreter.h
 runner.o: runner.h

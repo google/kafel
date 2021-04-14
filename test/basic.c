@@ -48,7 +48,7 @@ TEST_CASE(actions) {
       "  ALLOW { exit, read }\n"
       "} USE a DEFAULT KILL");
   TEST_POLICY_ALLOWS_SYSCALL(SYSCALL_SPEC3(__NR_read, STDIN_FILENO, 0, 0),
-                             SYSCALL_RESULT_SPEC(0));
+                             SYSCALL_EXECUTED_SPEC(0, 0));
   TEST_POLICY_BLOCKS_SYSCALL(SYSCALL_SPEC3(__NR_write, STDIN_FILENO, 0, 0));
   TEST_POLICY(
       "POLICY a {\n"
@@ -91,7 +91,7 @@ TEST_CASE(rules_order) {
       "  DENY { read, write }\n"
       "} USE a DEFAULT KILL");
   TEST_POLICY_ALLOWS_SYSCALL(SYSCALL_SPEC3(__NR_read, STDIN_FILENO, 0, 0),
-                             SYSCALL_RESULT_SPEC(0));
+                             SYSCALL_EXECUTED_SPEC(0, 0));
   TEST_POLICY_BLOCKS_SYSCALL(SYSCALL_SPEC3(__NR_write, STDIN_FILENO, 0, 0));
   TEST_POLICY(
       "POLICY a {\n"
@@ -99,7 +99,7 @@ TEST_CASE(rules_order) {
       "  ERRNO(1) { read { count == 0 } }\n"
       "} USE a DEFAULT KILL");
   TEST_POLICY_ALLOWS_SYSCALL(SYSCALL_SPEC3(__NR_read, 0, 0, 0),
-                             SYSCALL_RESULT_SPEC(0));
+                             SYSCALL_EXECUTED_SPEC(0, 0));
   TEST_POLICY_ALLOWS_SYSCALL(SYSCALL_SPEC3(__NR_read, 5, 0, 0),
                              SYSCALL_ERRNO_SPEC(1));
   TEST_POLICY_BLOCKS_SYSCALL(SYSCALL_SPEC3(__NR_read, 5, 0, 1));
@@ -111,7 +111,7 @@ TEST_CASE(bitwise_operations) {
       "  ALLOW { exit, read { count | 8 | fd == 8 } }\n"
       "} USE a DEFAULT KILL");
   TEST_POLICY_ALLOWS_SYSCALL(SYSCALL_SPEC3(__NR_read, 0, 0, 0),
-                             SYSCALL_RESULT_SPEC(0));
+                             SYSCALL_EXECUTED_SPEC(0, 0));
   TEST_POLICY_BLOCKS_SYSCALL(SYSCALL_SPEC3(__NR_read, 5, 0, 0));
 
   // Test literals
@@ -132,7 +132,7 @@ TEST_CASE(bitwise_operations) {
       "} USE a DEFAULT KILL");
   TEST_POLICY_ALLOWS_SYSCALL(
       SYSCALL_SPEC3(__NR_read, STDIN_FILENO, (long)&dummy, 0),
-      SYSCALL_RESULT_SPEC(0));
+      SYSCALL_EXECUTED_SPEC(0, 0));
 
   // Test stack
   TEST_POLICY(
@@ -145,7 +145,7 @@ TEST_CASE(bitwise_operations) {
       "  }\n"
       "} USE a DEFAULT KILL");
   TEST_POLICY_ALLOWS_SYSCALL(SYSCALL_SPEC3(__NR_read, 0, 0, 0),
-                             SYSCALL_RESULT_SPEC(0));
+                             SYSCALL_EXECUTED_SPEC(0, 0));
   TEST_POLICY_BLOCKS_SYSCALL(SYSCALL_SPEC3(__NR_read, 0, 0, 1));
 }
 
@@ -154,9 +154,9 @@ TEST_CASE(32bit_args) {
   // and fd should be 32-bit argument
   TEST_POLICY("ALLOW { fcntl { fd == 0x1234 }, exit } DEFAULT KILL");
   TEST_POLICY_ALLOWS_SYSCALL(SYSCALL_SPEC3(__NR_fcntl, 0x000001234, F_GETFD, 0),
-                             SYSCALL_ERRNO_SPEC(EBADF));
+                             SYSCALL_EXECUTED_SPEC(-1, EBADF));
   TEST_POLICY_ALLOWS_SYSCALL(SYSCALL_SPEC3(__NR_fcntl, 0x100001234, F_GETFD, 0),
-                             SYSCALL_ERRNO_SPEC(EBADF));
+                             SYSCALL_EXECUTED_SPEC(-1, EBADF));
   TEST_POLICY_BLOCKS_SYSCALL(
       SYSCALL_SPEC3(__NR_fcntl, 0x000001235, F_GETFD, 0));
   TEST_POLICY_BLOCKS_SYSCALL(
@@ -166,7 +166,7 @@ TEST_CASE(32bit_args) {
   TEST_POLICY_BLOCKS_SYSCALL(
       SYSCALL_SPEC3(__NR_fcntl, 0x000001234, F_GETFD, 0));
   TEST_POLICY_ALLOWS_SYSCALL(SYSCALL_SPEC3(__NR_fcntl, 0x100001234, F_GETFD, 0),
-                             SYSCALL_ERRNO_SPEC(EBADF));
+                             SYSCALL_EXECUTED_SPEC(-1, EBADF));
   TEST_POLICY_BLOCKS_SYSCALL(
       SYSCALL_SPEC3(__NR_fcntl, 0x000001235, F_GETFD, 0));
   TEST_POLICY_BLOCKS_SYSCALL(
