@@ -4,7 +4,7 @@
 #   Kafel - syscalls extractor
 #   -----------------------------------------
 #
-#   Copyright 2016 Google Inc. All Rights Reserved.
+#   Copyright 2016 Google LLC
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -33,12 +33,13 @@ outname="${arch,,}_syscalls.c"
 
 echo -n "Generating syscalls for $arch... "
 
+year=$(date +%Y)
 cat > "$outname" <<HEADER
 /*
    Kafel - syscalls ($arch)
    -----------------------------------------
 
-   Copyright 2016 Google Inc. All Rights Reserved.
+   Copyright $(year) Google LLC
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
