@@ -65,9 +65,7 @@ void kafel_ctxt_reset(kafel_ctxt_t ctxt) {
   ctxt->errors.capacity = 0;
   ctxt->errors.len = 0;
   ctxt->errors.data = NULL;
-  if (ctxt->main_policy) {
-    policy_destroy(&ctxt->main_policy);
-  }
+  ctxt->main_policy = NULL;
   ctxt->default_action = 0;
   ctxt->lexical_error = false;
 }

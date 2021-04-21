@@ -605,6 +605,7 @@ int compile_policy(struct kafel_ctxt *kafel_ctxt, struct sock_fprog *prog) {
   int rv = 0;
   if (kafel_ctxt->main_policy == NULL) {
     kafel_ctxt->main_policy = policy_create("@main", NULL);
+    register_policy(kafel_ctxt, kafel_ctxt->main_policy);
   }
   if (kafel_ctxt->default_action == 0) {
     kafel_ctxt->default_action = ACTION_KILL;

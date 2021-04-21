@@ -173,6 +173,7 @@ program_stmt
         {
           if (ctxt->main_policy == NULL) {
             ctxt->main_policy = policy_create("@main", &$1);
+            register_policy(ctxt, ctxt->main_policy);
           } else {
             TAILQ_CONCAT(&ctxt->main_policy->entries, &$1, entries);
           }

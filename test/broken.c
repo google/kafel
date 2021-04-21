@@ -111,6 +111,10 @@ TEST_CASE(broken_undefined_syscall) {
       "USE broken DEFAULT KILL");
 }
 
+TEST_CASE(broken_undefined_syscall_main_policy) {
+  TEST_COMPILE_ERROR("ALLOW { this_is_a_syscall_that_does_not_exist }\n");
+}
+
 TEST_CASE(broken_unterminated_comment) {
   TEST_COMPILE_ERROR("POLICY empty {} USE empty DEFAULT KILL /* oops ");
 }
