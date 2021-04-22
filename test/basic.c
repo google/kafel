@@ -84,6 +84,15 @@ TEST_CASE(custom_syscalls) {
   TEST_POLICY_BLOCKS_SYSCALL(SYSCALL_SPEC0(1));
 }
 
+TEST_CASE(custom_args) {
+  TEST_POLICY(
+      "ALLOW { exit }\n"
+      "ERRNO(1) { SYSCALL[-1](a, b, c) { a == 1 } }\n"
+      "ERRNO(2) { SYSCALL[-1] }");
+  TEST_POLICY_ALLOWS_SYSCALL(SYSCALL_SPEC3(-1, 1, 2, 3), SYSCALL_ERRNO_SPEC(1));
+  TEST_POLICY_ALLOWS_SYSCALL(SYSCALL_SPEC3(-1, 2, 3, 4), SYSCALL_ERRNO_SPEC(2));
+}
+
 TEST_CASE(rules_order) {
   TEST_POLICY(
       "POLICY a {\n"

@@ -235,7 +235,6 @@ static size_t normalize_rules_count_missing(struct syscall_range_rules *rules,
         ++to_add;
       }
     }
-    normalize_expr_list(cur, default_action);
     if (j != i) {
       struct syscall_range_rule *dst = &rules->data[j];
       *dst = *cur;
@@ -247,7 +246,6 @@ static size_t normalize_rules_count_missing(struct syscall_range_rules *rules,
   rules->len = j;
 
   struct syscall_range_rule *first_rule = &rules->data[0];
-  normalize_expr_list(first_rule, default_action);
   if (first_rule->first != 0) {
     if (first_rule->action == default_action) {
       first_rule->first = 0;
@@ -289,6 +287,7 @@ static void add_missing_rules(struct syscall_range_rules *rules, size_t to_add,
   for (size_t i = oldlen; i > 0; --i) {
     struct syscall_range_rule *cur = &rules->data[(i - 1)];
     struct syscall_range_rule *dst = &rules->data[(i - 1) + to_add];
+    normalize_expr_list(cur, default_action);
     if (prev != NULL && prev->first != cur->last + 1) {
       ASSERT(to_add > 0);
       dst->first = cur->last + 1;

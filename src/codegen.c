@@ -299,6 +299,8 @@ static uint32_t value_of(struct expr_tree *expr, int word) {
 }
 
 static void cache_constants_by_word(struct expr_tree *expr, int word) {
+  ASSERT(expr != NULL);
+
   struct cached_value *cached = (word == HIGH_WORD) ? &expr->high : &expr->low;
   uint32_t clobber_value = 0;
   switch (expr->type) {
@@ -336,6 +338,8 @@ static void cache_constants_by_word(struct expr_tree *expr, int word) {
 }
 
 static void cache_constants(struct expr_tree *expr) {
+  ASSERT(expr != NULL);
+
   cache_constants_by_word(expr, HIGH_WORD);
   cache_constants_by_word(expr, LOW_WORD);
 }
@@ -567,6 +571,7 @@ static int generate_action(struct codegen_ctxt *ctxt,
       ASSERT(mapping->expr == NULL || mapping->expr->type == EXPR_TRUE);
       last_loc = -mapping->action;
     } else {
+      ASSERT(mapping->expr != NULL);
       cache_constants(mapping->expr);
       last_loc = generate_expr(ctxt, mapping->expr, -mapping->action, last_loc);
     }
