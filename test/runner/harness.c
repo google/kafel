@@ -188,6 +188,11 @@ int test_policy_enforcment(test_func_t test_func, void* data,
 
 int test_policy_enforcement_syscalls_interpret(
     syscall_exec_spec_t syscall_specs[]) {
+  // Skip tests when compilation failed
+  if (!test_policy_compilation_flag) {
+    TEST_PASSED();
+  }
+
   for (const syscall_exec_spec_t* syscall_spec = syscall_specs;
        !syscall_spec->is_last; ++syscall_spec) {
     uint32_t seccomp_ret = syscall_spec->result.seccomp_ret;
