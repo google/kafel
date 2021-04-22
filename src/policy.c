@@ -157,6 +157,13 @@ int syscall_spec_get_syscall_nr(const struct syscall_spec* spec,
 void syscall_spec_get_args(const struct syscall_spec* spec,
                            const struct syscall_list* syscall_list,
                            struct syscall_arg out_args[SYSCALL_MAX_ARGS]) {
+  if (spec->custom_args_declared) {
+    for (int i = 0; i < SYSCALL_MAX_ARGS; ++i) {
+      out_args[i].name = spec->custom_args[i].name;
+      out_args[i].size = spec->custom_args[i].size;
+    }
+    return;
+  }
   switch (spec->type) {
     case SYSCALL_SPEC_ID: {
       const struct syscall_descriptor* desc =
@@ -170,8 +177,8 @@ void syscall_spec_get_args(const struct syscall_spec* spec,
     }
     case SYSCALL_SPEC_CUSTOM:
       for (int i = 0; i < SYSCALL_MAX_ARGS; ++i) {
-        out_args[i].name = spec->custom_args[i].name;
-        out_args[i].size = spec->custom_args[i].size;
+        out_args[i].name = NULL;
+        out_args[i].size = 0;
       }
       break;
   }
