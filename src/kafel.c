@@ -23,6 +23,7 @@
 #include "codegen.h"
 #include "common.h"
 #include "context.h"
+#include "expression.h"
 #include "includes.h"
 #include "lexer.h"
 #include "parser.h"
@@ -73,18 +74,24 @@ static int parse(struct kafel_ctxt* ctxt) {
 
 static int validate_references_in_expr(
     kafel_ctxt_t ctxt, const struct expr_tree* expr,
-    const struct syscall_arg args[SYSCALL_MAX_ARGS]) {
+    const struct syscall_arg args[SYSCALL_MAX_ARGS], int depth) {
   ASSERT(expr != NULL);
 
+  if (depth >= MAX_EXPRESSION_DEPTH) {
+    append_error(ctxt, "Expression depth limit (%d) exceeded\n",
+                 MAX_EXPRESSION_DEPTH);
+    return -1;
+  }
+
   if (expr->type >= EXPR_BINARY_MIN && expr->type <= EXPR_BINARY_MAX) {
-    if (validate_references_in_expr(ctxt, expr->left, args) ||
-        validate_references_in_expr(ctxt, expr->right, args)) {
+    if (validate_references_in_expr(ctxt, expr->left, args, depth + 1) ||
+        validate_references_in_expr(ctxt, expr->right, args, depth + 1)) {
       return -1;
     }
     return 0;
   }
   if (expr->type >= EXPR_UNARY_MIN && expr->type <= EXPR_UNARY_MAX) {
-    return validate_references_in_expr(ctxt, expr->child, args);
+    return validate_references_in_expr(ctxt, expr->child, args, depth + 1);
   }
   if (expr->type != EXPR_IDENTIFIER) {
     return 0;
@@ -99,7 +106,7 @@ static int validate_references_in_expr(
   }
   const struct kafel_identifier* identifier = expr->identifier;
   const struct kafel_source_location* loc = &identifier->loc;
-  append_error(ctxt, "%d:%d: Undefined identifier `%s'", loc->first_line,
+  append_error(ctxt, "%d:%d: Undefined identifier `%s'\n", loc->first_line,
                loc->first_column, identifier->id);
   return -1;
 }
@@ -133,7 +140,7 @@ static int validate_references(kafel_ctxt_t ctxt) {
         if (filter->expr != NULL) {
           struct syscall_arg args[SYSCALL_MAX_ARGS];
           syscall_spec_get_args(filter->syscall, syscall_list, args);
-          int rv = validate_references_in_expr(ctxt, filter->expr, args);
+          int rv = validate_references_in_expr(ctxt, filter->expr, args, 0);
           if (rv) {
             return rv;
           }

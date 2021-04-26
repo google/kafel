@@ -27,6 +27,8 @@
 #include "parser_types.h"
 #include "syscall.h"
 
+#define MAX_EXPRESSION_DEPTH 200
+
 enum {
   EXPR_LEAF_MIN,
   EXPR_NUMBER = EXPR_LEAF_MIN,

@@ -86,7 +86,8 @@ TEST_CASE(custom_syscalls) {
 
 TEST_CASE(custom_args) {
   TEST_POLICY("ALLOW { read(f, buff, c) { f == 1 }, exit }");
-  TEST_POLICY_ALLOWS_SYSCALL(SYSCALL_SPEC3(__NR_read, 1, 0, 0), SYSCALL_EXECUTED_SPEC(0, 0));
+  TEST_POLICY_ALLOWS_SYSCALL(SYSCALL_SPEC3(__NR_read, 1, 0, 0),
+                             SYSCALL_EXECUTED_SPEC(0, 0));
   TEST_POLICY_BLOCKS_SYSCALL(SYSCALL_SPEC3(__NR_read, 2, 0, 0));
   TEST_POLICY(
       "ALLOW { exit }\n"
