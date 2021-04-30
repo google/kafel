@@ -185,3 +185,12 @@ TEST_CASE(32bit_args) {
   TEST_POLICY_BLOCKS_SYSCALL(
       SYSCALL_SPEC3(__NR_fcntl, 0x100001235, F_GETFD, 0));
 }
+
+TEST_CASE(duplicate_action_after_conditional) {
+  TEST_POLICY(
+      "ALLOW { read { fd == 1 }, exit }\n"
+      "ALLOW { read }\n"
+      "ALLOW { read }");
+  TEST_POLICY_ALLOWS_SYSCALL(SYSCALL_SPEC3(__NR_read, 0, 0, 0),
+                             SYSCALL_EXECUTED_SPEC(0, 0));
+}

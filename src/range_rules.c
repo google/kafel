@@ -58,14 +58,32 @@ void range_rules_destroy(struct syscall_range_rules **rules) {
   *rules = NULL;
 }
 
+static bool rule_has_catch_all_expr(struct syscall_range_rule *rule) {
+  ASSERT(rule != NULL);
+  ASSERT(rule->action == ACTION_CONDITIONAL);
+
+  if (TAILQ_EMPTY(&rule->expr_list)) {
+    return false;
+  }
+  struct expr_tree *last_expr =
+      TAILQ_LAST(&rule->expr_list, expression_to_action_list)->expr;
+  return last_expr == NULL || last_expr->type == EXPR_TRUE;
+}
+
 static void rule_add_expr(struct syscall_range_rule *rule,
                           struct expr_tree *expr, int action) {
   ASSERT(rule != NULL);
+  ASSERT(rule->action == ACTION_CONDITIONAL);
 
+  if (rule_has_catch_all_expr(rule)) {
+    if (expr) {
+      expr_destroy(&expr);
+    }
+    return;
+  }
   struct expression_to_action *mapping = calloc(1, sizeof(*mapping));
   mapping->expr = expr;
   mapping->action = action;
-  rule->action = ACTION_CONDITIONAL;
   TAILQ_INSERT_TAIL(&rule->expr_list, mapping, list);
 }
 
@@ -142,6 +160,7 @@ void add_policy_rules(struct syscall_range_rules *rules, struct policy *policy,
             if (filter->expr->type == EXPR_FALSE) {
               continue;
             }
+            rule.action = ACTION_CONDITIONAL;
             struct expr_tree *expr = expr_copy(filter->expr);
             struct syscall_arg args[SYSCALL_MAX_ARGS];
             syscall_spec_get_args(filter->syscall, syscall_list, args);
@@ -175,17 +194,6 @@ static void sort_range_rules(struct syscall_range_rules *rules) {
   fix_tailq_moving(rules);
 }
 
-static void normalize_expr_list(struct syscall_range_rule *rule,
-                                int default_action) {
-  struct expr_tree *last_expr = NULL;
-  if (!TAILQ_EMPTY(&rule->expr_list)) {
-    last_expr = TAILQ_LAST(&rule->expr_list, expression_to_action_list)->expr;
-  }
-  if (last_expr != NULL) {
-    rule_add_expr(rule, NULL, default_action);
-  }
-}
-
 static size_t normalize_rules_count_missing(struct syscall_range_rules *rules,
                                             int default_action) {
   ASSERT(rules != NULL);
@@ -200,14 +208,12 @@ static size_t normalize_rules_count_missing(struct syscall_range_rules *rules,
     struct syscall_range_rule *cur = &rules->data[i];
     struct syscall_range_rule *prev = &rules->data[j - 1];
     ASSERT(cur->first == cur->last);
+    ASSERT(prev->action != ACTION_CONDITIONAL || prev->first == prev->last);
     if (cur->first == prev->last) {
-      if (prev->action == ACTION_CONDITIONAL) {
+      if (prev->action == ACTION_CONDITIONAL &&
+          !rule_has_catch_all_expr(prev)) {
         if (cur->action == ACTION_CONDITIONAL) {
-          struct expr_tree *last_expr =
-              TAILQ_LAST(&prev->expr_list, expression_to_action_list)->expr;
-          if (last_expr != NULL && last_expr->type != EXPR_TRUE) {
-            TAILQ_CONCAT(&prev->expr_list, &cur->expr_list, list);
-          }
+          TAILQ_CONCAT(&prev->expr_list, &cur->expr_list, list);
         } else {
           rule_add_expr(prev, NULL, cur->action);
         }
@@ -287,7 +293,9 @@ static void add_missing_rules(struct syscall_range_rules *rules, size_t to_add,
   for (size_t i = oldlen; i > 0; --i) {
     struct syscall_range_rule *cur = &rules->data[(i - 1)];
     struct syscall_range_rule *dst = &rules->data[(i - 1) + to_add];
-    normalize_expr_list(cur, default_action);
+    if (cur->action == ACTION_CONDITIONAL) {
+      rule_add_expr(cur, NULL, default_action);
+    }
     if (prev != NULL && prev->first != cur->last + 1) {
       ASSERT(to_add > 0);
       dst->first = cur->last + 1;
@@ -302,7 +310,7 @@ static void add_missing_rules(struct syscall_range_rules *rules, size_t to_add,
       TAILQ_INIT(&dst->expr_list);
       TAILQ_CONCAT(&dst->expr_list, &cur->expr_list, list);
     }
-    prev = cur;
+    prev = dst;
   }
 
   if (to_add == 1) {
