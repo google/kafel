@@ -298,42 +298,73 @@ static uint32_t value_of(struct expr_tree *expr, int word) {
   return word == HIGH_WORD ? expr->high.value : expr->low.value;
 }
 
+static uint32_t evaluate_expression(int type, uint32_t left, uint32_t right) {
+  switch (type) {
+    case EXPR_BIT_OR:
+      return left | right;
+    case EXPR_BIT_AND:
+      return left & right;
+    default:
+      ASSERT(0);  // should not happen
+  }
+}
+
 static void cache_constants_by_word(struct expr_tree *expr, int word) {
   ASSERT(expr != NULL);
 
   struct cached_value *cached = (word == HIGH_WORD) ? &expr->high : &expr->low;
-  uint32_t clobber_value = 0;
+  cached->is_const = false;
+
   switch (expr->type) {
     case EXPR_NUMBER:
       cached->is_const = true;
       cached->value = NUM_WORD(expr->number, word);
       return;
     case EXPR_VAR:
-      cached->is_const = false;
       return;
+  }
+
+  ASSERT(expr->type >= EXPR_BINARY_MIN && expr->type <= EXPR_BINARY_MAX);
+
+  cache_constants_by_word(expr->right, word);
+  cache_constants_by_word(expr->left, word);
+
+  if (expr->type != EXPR_BIT_OR && expr->type != EXPR_BIT_AND) {
+    return;
+  }
+
+  struct expr_tree *left = expr->left;
+  struct expr_tree *right = expr->right;
+
+  if (is_const_value(left, word)) {
+    if (is_const_value(right, word)) {
+      cached->is_const = true;
+      cached->value = evaluate_expression(expr->type, value_of(left, word),
+                                          value_of(right, word));
+      return;
+    }
+    SWAP(left, right);
+  }
+  // Only right may be a const value at this point
+  ASSERT(!is_const_value(left, word));
+
+  if (!is_const_value(right, word)) {
+    return;
+  }
+
+  uint32_t val = value_of(right, word);
+  uint32_t clobber = 0;
+
+  switch (expr->type) {
     case EXPR_BIT_OR:
-      clobber_value = UINT32_MAX;
+      clobber = UINT32_MAX;
       /* fall-through */
     case EXPR_BIT_AND:
-      cache_constants_by_word(expr->right, word);
-      cache_constants_by_word(expr->left, word);
-      if (is_const_value(expr->right, word) &&
-          value_of(expr->right, word) == clobber_value) {
+      if (val == clobber) {
         cached->is_const = true;
-        cached->value = clobber_value;
-      } else if (is_const_value(expr->left, word) &&
-                 value_of(expr->left, word) == clobber_value) {
-        cached->is_const = true;
-        cached->value = clobber_value;
-      } else {
-        cached->is_const = false;
+        cached->value = clobber;
       }
-      return;
-    default:
-      ASSERT(expr->type >= EXPR_BINARY_MIN && expr->type <= EXPR_BINARY_MAX);
-      cache_constants_by_word(expr->right, word);
-      cache_constants_by_word(expr->left, word);
-      return;
+      break;
   }
 }
 
