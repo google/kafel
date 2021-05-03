@@ -387,43 +387,56 @@ static int generate_load(struct codegen_ctxt *ctxt, struct expr_tree *expr,
   ASSERT(ctxt != NULL);
   ASSERT(expr != NULL);
 
-  if (stack_ptr > ctxt->max_stack_ptr) {
-    ctxt->max_stack_ptr = stack_ptr;
+  if (expr->type == EXPR_VAR) {
+    return ADD_INSTR(BPF_LOAD_ARG_WORD(expr->var, word));
   }
+
   if (is_const_value(expr, word)) {
     ASSERT(0); /* valid but should not happen */
     return ADD_INSTR(BPF_STMT(BPF_LD | BPF_IMM, value_of(expr, word)));
   }
 
+  ASSERT(expr->type >= EXPR_BINARY_MIN && expr->type <= EXPR_BINARY_MAX);
+
+  struct expr_tree *left = expr->left;
+  struct expr_tree *right = expr->right;
+
+  if (is_const_value(left, word)) {
+    SWAP(left, right);
+  }
+
+  // Only right may be a const value at this point
+  ASSERT(!is_const_value(left, word));
+
   int op = BPF_OR;
   uint32_t identity_element = 0;
 
   switch (expr->type) {
-    case EXPR_VAR:
-      return ADD_INSTR(BPF_LOAD_ARG_WORD(expr->var, word));
     case EXPR_BIT_AND:
       op = BPF_AND;
       identity_element = UINT32_MAX;
       // fall-through
     case EXPR_BIT_OR:
-      if (is_const_value(expr->right, word)) {
-        if (value_of(expr->right, word) != identity_element) {
-          ADD_INSTR(
-              BPF_STMT(BPF_ALU | op | BPF_K, value_of(expr->right, word)));
+      if (is_const_value(right, word)) {
+        if (value_of(right, word) != identity_element) {
+          ADD_INSTR(BPF_STMT(BPF_ALU | op | BPF_K, value_of(right, word)));
         }
-        return generate_load(ctxt, expr->left, word, stack_ptr);
+        return generate_load(ctxt, left, word, stack_ptr);
       }
-      bool use_stack = should_use_stack(expr->left);
+      bool use_stack = should_use_stack(left);
       ADD_INSTR(BPF_STMT(BPF_ALU | op | BPF_X, 0));
       if (use_stack) {
         ADD_INSTR(BPF_STMT(BPF_LDX | BPF_MEM, stack_ptr));
-        generate_load(ctxt, expr->left, word, stack_ptr + 1);
+        generate_load(ctxt, left, word, stack_ptr + 1);
+        if (stack_ptr > ctxt->max_stack_ptr) {
+          ctxt->max_stack_ptr = stack_ptr;
+        }
         ADD_INSTR(BPF_STMT(BPF_ST, stack_ptr));
       } else {
-        generate_load(ctxt, expr->left, word, stack_ptr);
+        generate_load(ctxt, left, word, stack_ptr);
         ADD_INSTR(BPF_STMT(BPF_MISC | BPF_TAX, 0));
       }
-      return generate_load(ctxt, expr->right, word, stack_ptr);
+      return generate_load(ctxt, right, word, stack_ptr);
     default:
       ASSERT(0);  // should not happen
   }
@@ -506,6 +519,8 @@ static int generate_cmp32(struct codegen_ctxt *ctxt, __u32 type,
     }
     type = BPF_JSET;
   }
+
+  ASSERT(!is_const_value(left, word));
 
   if (is_const_value(right, word)) {
     next = ADD_JUMP_K(type, value_of(right, word), tloc, floc);

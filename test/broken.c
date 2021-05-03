@@ -132,6 +132,7 @@ TEST_CASE(broken_stack_overflow) {
       "      flags & mode & 0x1337 & \n"
       "      flags & mode & 0x1337 & \n"
       "      flags & mode & 0x1337 & \n"
+      "      flags & mode & 0x1337 & \n"
       "      flags & mode & 0x1337 == 0x1\n"
       "    }\n"
       "  }\n"
