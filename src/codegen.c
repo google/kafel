@@ -632,18 +632,46 @@ static int generate_action(struct codegen_ctxt *ctxt,
 }
 
 static int generate_rules(struct codegen_ctxt *ctxt,
-                          struct syscall_range_rule *rules, size_t len) {
+                          struct syscall_range_rules *rules) {
   ASSERT(ctxt != NULL);
-  ASSERT(len > 0);
+  ASSERT(rules != NULL);
+  ASSERT(rules->len != 0);
 
-  if (len == 1) {
-    return generate_action(ctxt, rules);
+  struct {
+    int level;
+    int action;
+    uint32_t nr;
+  } buf[33];
+  int num = 0;
+  for (size_t i = rules->len; i > 0; --i) {
+    struct syscall_range_rule *rule = &rules->data[i - 1];
+    int action = generate_action(ctxt, rule);
+    ASSERT(num == 0 || rule->last + 1 == buf[num - 1].nr);
+    if (num > 0 && buf[num - 1].action == action) {
+      buf[num - 1].nr = rule->first;
+      continue;
+    }
+    while (num >= 2 && buf[num - 2].level == buf[num - 1].level) {
+      --num;
+      buf[num - 1].action = add_jump(ctxt, BPF_JGE, buf[num - 1].nr,
+                                     buf[num - 1].action, buf[num].action);
+      buf[num - 1].nr = buf[num].nr;
+      ++buf[num - 1].level;
+    }
+    buf[num].level = 0;
+    buf[num].nr = rule->first;
+    buf[num].action = action;
+    ++num;
   }
-
-  struct syscall_range_rule *mid = &rules[len / 2];
-  int lower = generate_rules(ctxt, rules, len / 2);
-  int upper = generate_rules(ctxt, mid, (len + 1) / 2);
-  return add_jump(ctxt, BPF_JGE, mid->first, upper, lower);
+  ASSERT(num > 0);
+  ASSERT(buf[num - 1].nr == 0);
+  while (num >= 2) {
+    --num;
+    buf[num - 1].action = add_jump(ctxt, BPF_JGE, buf[num - 1].nr,
+                                   buf[num - 1].action, buf[num].action);
+    buf[num - 1].nr = buf[num].nr;
+  }
+  return buf[0].action;
 }
 
 static void reverse_instruction_buffer(struct codegen_ctxt *ctxt) {
@@ -675,7 +703,7 @@ int compile_policy(struct kafel_ctxt *kafel_ctxt, struct sock_fprog *prog) {
   add_policy_rules(rules, kafel_ctxt->main_policy, syscall_list);
   normalize_rules(rules, kafel_ctxt->default_action);
   int begin = CURRENT_LOC;
-  int next = generate_rules(ctxt, rules->data, rules->len);
+  int next = generate_rules(ctxt, rules);
   range_rules_destroy(&rules);
   if (next > begin) {
     begin = next = ADD_INSTR(BPF_LOAD_SYSCALL);
