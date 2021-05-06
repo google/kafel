@@ -204,9 +204,6 @@ struct syscall_filter* syscall_filter_create(struct syscall_spec* syscall,
                                              struct expr_tree* expr) {
   struct syscall_filter* rv = calloc(1, sizeof(*rv));
   rv->syscall = syscall;
-  if (expr != NULL) {
-    expr_simplify(&expr);
-  }
   rv->expr = expr;
   return rv;
 }
