@@ -186,6 +186,11 @@ TEST_CASE(32bit_args) {
       SYSCALL_SPEC3(__NR_fcntl, 0x100001235, F_GETFD, 0));
 }
 
+TEST_CASE(long_constants_eq) {
+  TEST_POLICY("ALLOW { fcntl { 0x100001234 == 0x1234 }, exit } DEFAULT KILL");
+  TEST_POLICY_BLOCKS_SYSCALL(SYSCALL_SPEC3(__NR_fcntl, 0, F_GETFD, 0));
+}
+
 TEST_CASE(duplicate_action_after_conditional) {
   TEST_POLICY(
       "ALLOW { read { fd == 1 }, exit }\n"
@@ -193,4 +198,16 @@ TEST_CASE(duplicate_action_after_conditional) {
       "ALLOW { read }");
   TEST_POLICY_ALLOWS_SYSCALL(SYSCALL_SPEC3(__NR_read, 0, 0, 0),
                              SYSCALL_EXECUTED_SPEC(0, 0));
+}
+
+TEST_CASE(logic_negation) {
+  TEST_POLICY(
+      "ALLOW { exit },\n"
+      "ERRNO(1) { read { !(fd == 5 && count == 0) } }\n"
+      "DEFAULT KILL");
+  TEST_POLICY_ALLOWS_SYSCALL(SYSCALL_SPEC3(__NR_read, 0, 0, 0),
+                             SYSCALL_ERRNO_SPEC(1));
+  TEST_POLICY_ALLOWS_SYSCALL(SYSCALL_SPEC3(__NR_read, 4, 0, 0),
+                             SYSCALL_ERRNO_SPEC(1));
+  TEST_POLICY_BLOCKS_SYSCALL(SYSCALL_SPEC3(__NR_read, 5, 0, 0));
 }

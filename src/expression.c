@@ -62,140 +62,102 @@ struct expr_tree *expr_create_binary(int op, struct expr_tree *left,
   return rv;
 }
 
-void expr_negate(struct expr_tree **expr) { expr_eliminate_negation(expr, 1); }
-
-void expr_eliminate_negation(struct expr_tree **expr, bool neg) {
-  ASSERT(expr != NULL);
-  ASSERT((*expr) != NULL);
-
-  int negations[EXPR_MAX + 1] = {
-      [EXPR_AND] = EXPR_OR,    [EXPR_OR] = EXPR_AND, [EXPR_GE] = EXPR_LT,
-      [EXPR_GT] = EXPR_LE,     [EXPR_LE] = EXPR_GT,  [EXPR_LT] = EXPR_GE,
-      [EXPR_EQ] = EXPR_NEQ,    [EXPR_NEQ] = EXPR_EQ, [EXPR_TRUE] = EXPR_FALSE,
-      [EXPR_FALSE] = EXPR_TRUE};
-  switch ((*expr)->type) {
-    case EXPR_NOT: {
-      struct expr_tree *tmp = *expr;
-      *expr = (*expr)->child;
-      free(tmp);
-      expr_eliminate_negation(expr, !neg);
-      return;
-    }
-    case EXPR_AND:
-    case EXPR_OR:
-      expr_eliminate_negation(&(*expr)->left, neg);
-      expr_eliminate_negation(&(*expr)->right, neg);
-      break;
-  }
-
-  if (neg && negations[(*expr)->type] != 0) {
-    (*expr)->type = negations[(*expr)->type];
-  }
-}
-
-static void expr_sort_operands(struct expr_tree *expr) {
-  ASSERT(expr != NULL);
-
-  if (expr->type >= EXPR_BINARY_MIN && expr->type <= EXPR_BINARY_MAX) {
-    ASSERT(expr->left != NULL);
-    ASSERT(expr->right != NULL);
-
-    if (expr->type != EXPR_AND && expr->type != EXPR_OR &&
-        expr->left->type < expr->right->type) {
-      int swapped[EXPR_MAX + 1] = {
-          [EXPR_GE] = EXPR_LE,         [EXPR_GT] = EXPR_LT,
-          [EXPR_LE] = EXPR_GE,         [EXPR_LT] = EXPR_GT,
-          [EXPR_EQ] = EXPR_EQ,         [EXPR_NEQ] = EXPR_NEQ,
-          [EXPR_BIT_OR] = EXPR_BIT_OR, [EXPR_BIT_AND] = EXPR_BIT_AND};
-      expr->type = swapped[expr->type];
-      SWAP(expr->left, expr->right);
-    }
-    expr_sort_operands(expr->left);
-    expr_sort_operands(expr->right);
-  }
-}
-
-static int expr_boolean(bool boolean) {
-  return boolean ? EXPR_TRUE : EXPR_FALSE;
-}
-
-#define EVAL_EXPR(type, op) \
-  case type:                \
-    return expr_boolean(left op right)
-
-static int expr_eval(int type, uint32_t left, uint32_t right) {
+static bool expr_eval(int type, uint64_t left, uint64_t right) {
   switch (type) {
-    EVAL_EXPR(EXPR_EQ, ==);
-    EVAL_EXPR(EXPR_NEQ, !=);
-    EVAL_EXPR(EXPR_GE, >=);
-    EVAL_EXPR(EXPR_LE, <=);
-    EVAL_EXPR(EXPR_GT, >);
-    EVAL_EXPR(EXPR_LT, <);
+    case EXPR_EQ:
+      return left == right;
+    case EXPR_NEQ:
+      return left != right;
+    case EXPR_GE:
+      return left >= right;
+    case EXPR_LE:
+      return left <= right;
+    case EXPR_GT:
+      return left > right;
+    case EXPR_LT:
+      return left < right;
     default:
       ASSERT(0);  // should not happen
   }
 }
 
-static void expr_precompute_eliminate(struct expr_tree **expr) {
+void expr_simplify(struct expr_tree **pexpr) {
+  ASSERT(pexpr != NULL);
+
+  struct expr_tree *expr = *pexpr;
   ASSERT(expr != NULL);
-  ASSERT((*expr) != NULL);
 
-  if ((*expr)->type >= EXPR_LEAF_MIN && (*expr)->type <= EXPR_LEAF_MAX) {
+  int type = expr->type;
+
+  if (type >= EXPR_LEAF_MIN && type <= EXPR_LEAF_MAX) {
     return;
   }
 
-  if ((*expr)->type >= EXPR_UNARY_MIN && (*expr)->type <= EXPR_UNARY_MAX) {
-    expr_precompute_eliminate(&(*expr)->child);
-    return;
-  }
-
-  if ((*expr)->type >= EXPR_BINARY_MIN && (*expr)->type <= EXPR_BINARY_MAX) {
-    expr_precompute_eliminate(&(*expr)->left);
-    expr_precompute_eliminate(&(*expr)->right);
-  }
-
-  struct expr_tree *original_expr = *expr;
-
-  if ((*expr)->left->type == EXPR_NUMBER &&
-      (*expr)->right->type == EXPR_NUMBER) {
-    if ((*expr)->type == EXPR_BIT_AND) {
-      (*expr)->left->number &= (*expr)->right->number;
-      expr_destroy(&(*expr)->right);
-      *expr = (*expr)->left;
-      free(original_expr);
-    } else if ((*expr)->type == EXPR_BIT_OR) {
-      (*expr)->left->number |= (*expr)->right->number;
-      expr_destroy(&(*expr)->right);
-      *expr = (*expr)->left;
-      free(original_expr);
-    } else {
-      (*expr)->type = expr_eval((*expr)->type, (*expr)->left->number,
-                                (*expr)->right->number);
-      expr_destroy(&(*expr)->left);
-      expr_destroy(&(*expr)->right);
+  if (type >= EXPR_UNARY_MIN && type <= EXPR_UNARY_MAX) {
+    ASSERT(type == EXPR_NOT);
+    expr_simplify(&expr->child);
+    if (expr->child->type == EXPR_TRUE) {
+      expr_destroy(&expr->child);
+      expr->type = EXPR_FALSE;
+    } else if (expr->child->type == EXPR_FALSE) {
+      expr_destroy(&expr->child);
+      expr->type = EXPR_TRUE;
     }
+    return;
+  }
+
+  ASSERT(type >= EXPR_BINARY_MIN && type <= EXPR_BINARY_MAX);
+
+  expr_simplify(&expr->left);
+  expr_simplify(&expr->right);
+
+  struct expr_tree *left = expr->left;
+  struct expr_tree *right = expr->right;
+
+  if (left->type == EXPR_NUMBER && right->type == EXPR_NUMBER) {
+    if (type == EXPR_BIT_AND) {
+      expr->type = EXPR_NUMBER;
+      expr->number = left->number & right->number;
+    } else if (type == EXPR_BIT_OR) {
+      expr->type = EXPR_NUMBER;
+      expr->number = left->number | right->number;
+    } else {
+      expr->type =
+          expr_eval(type, left->number, right->number) ? EXPR_TRUE : EXPR_FALSE;
+    }
+    expr_destroy(&left);
+    expr_destroy(&right);
+    return;
+  }
+
+  if (left->type < right->type) {
+    const int swapped[EXPR_MAX + 1] = {
+        [EXPR_AND] = EXPR_AND,       [EXPR_OR] = EXPR_OR,
+        [EXPR_GE] = EXPR_LE,         [EXPR_GT] = EXPR_LT,
+        [EXPR_LE] = EXPR_GE,         [EXPR_LT] = EXPR_GT,
+        [EXPR_EQ] = EXPR_EQ,         [EXPR_NEQ] = EXPR_NEQ,
+        [EXPR_BIT_OR] = EXPR_BIT_OR, [EXPR_BIT_AND] = EXPR_BIT_AND};
+    type = swapped[type];
+    SWAP(left, right);
   }
 
   int eq_vars_result = EXPR_TRUE;
   int dominant = EXPR_TRUE, recessive = EXPR_FALSE;
+  uint64_t clobber = 0, identity = UINT64_MAX;
 
-  switch ((*expr)->type) {
+  switch (type) {
     case EXPR_AND:
-      dominant = EXPR_FALSE, recessive = EXPR_TRUE;
+      SWAP(dominant, recessive);
     // fall-through
     case EXPR_OR:
-      if ((*expr)->left->type == dominant || (*expr)->right->type == dominant) {
-        expr_destroy(&(*expr)->left);
-        expr_destroy(&(*expr)->right);
-        (*expr)->type = dominant;
-      } else if ((*expr)->left->type == recessive) {
-        expr_destroy(&(*expr)->left);
-        *expr = (*expr)->right;
-        free(original_expr);
-      } else if ((*expr)->right->type == recessive) {
-        expr_destroy(&(*expr)->right);
-        *expr = (*expr)->left;
-        free(original_expr);
+      if (left->type == dominant || right->type == dominant) {
+        expr_destroy(&expr->left);
+        expr_destroy(&expr->right);
+        expr->type = dominant;
+      } else if (right->type == recessive) {
+        expr_destroy(&right);
+        *pexpr = left;
+        free(expr);
       }
       break;
     case EXPR_GT:
@@ -206,48 +168,31 @@ static void expr_precompute_eliminate(struct expr_tree **expr) {
     case EXPR_GE:
     case EXPR_LE:
     case EXPR_EQ:
-      if ((*expr)->left->type == EXPR_VAR && (*expr)->right->type == EXPR_VAR &&
-          (*expr)->left->var == (*expr)->right->var) {
-        (*expr)->type = eq_vars_result;
-        expr_destroy(&(*expr)->left);
-        expr_destroy(&(*expr)->right);
+      if (left->type == EXPR_VAR && right->type == EXPR_VAR &&
+          left->var == right->var) {
+        expr->type = eq_vars_result;
+        expr_destroy(&expr->left);
+        expr_destroy(&expr->right);
       }
       break;
     case EXPR_BIT_OR:
-      if ((*expr)->right->type == EXPR_NUMBER) {
-        if ((*expr)->right->number == UINT64_MAX) {
-          expr_destroy(&(*expr)->left);
-          expr_destroy(&(*expr)->right);
-          (*expr)->type = EXPR_NUMBER;
-          (*expr)->number = UINT64_MAX;
-        } else if ((*expr)->right->number == 0) {
-          expr_destroy(&(*expr)->right);
-          *expr = (*expr)->left;
-          free(original_expr);
-        }
-      }
-      break;
+      SWAP(clobber, identity);
+    // fall-through
     case EXPR_BIT_AND:
-      if ((*expr)->right->type == EXPR_NUMBER) {
-        if ((*expr)->right->number == 0) {
-          expr_destroy(&(*expr)->left);
-          expr_destroy(&(*expr)->right);
-          (*expr)->type = EXPR_NUMBER;
-          (*expr)->number = 0;
-        } else if ((*expr)->right->number == UINT64_MAX) {
-          expr_destroy(&(*expr)->right);
-          *expr = (*expr)->left;
-          free(original_expr);
+      if (right->type == EXPR_NUMBER) {
+        if (right->number == clobber) {
+          expr_destroy(&expr->left);
+          expr_destroy(&expr->right);
+          expr->type = EXPR_NUMBER;
+          expr->number = clobber;
+        } else if (right->number == identity) {
+          expr_destroy(&right);
+          *pexpr = left;
+          free(expr);
         }
       }
       break;
   }
-}
-
-void expr_simplify(struct expr_tree **expr) {
-  expr_eliminate_negation(expr, false);
-  expr_sort_operands(*expr);
-  expr_precompute_eliminate(expr);
 }
 
 struct expr_tree *expr_copy(const struct expr_tree *expr) {

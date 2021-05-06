@@ -85,8 +85,6 @@ struct expr_tree *expr_create_unary(int op, struct expr_tree *child);
 struct expr_tree *expr_create_binary(int op, struct expr_tree *left,
                                      struct expr_tree *right);
 struct expr_tree *expr_copy(const struct expr_tree *expr);
-void expr_negate(struct expr_tree **expr);
-void expr_eliminate_negation(struct expr_tree **expr, bool neg);
 void expr_simplify(struct expr_tree **expr);
 void expr_destroy(struct expr_tree **expr);
 void expr_resolve_identifiers(struct expr_tree *expr,

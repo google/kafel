@@ -316,6 +316,9 @@ static void cache_constants_by_word(struct expr_tree *expr, int word) {
   cached->is_const = false;
 
   switch (expr->type) {
+    case EXPR_NOT:
+      cache_constants_by_word(expr->child, word);
+      return;
     case EXPR_NUMBER:
       cached->is_const = true;
       cached->value = NUM_WORD(expr->number, word);
@@ -595,6 +598,8 @@ static int generate_expr(struct codegen_ctxt *ctxt, struct expr_tree *expr,
     // fall-through
     case EXPR_EQ:
       return generate_equality(ctxt, expr, tloc, floc);
+    case EXPR_NOT:
+      return generate_expr(ctxt, expr->child, floc, tloc);
     default:
       ASSERT(0);  // should not happen
   }
