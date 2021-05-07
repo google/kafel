@@ -18,6 +18,8 @@
 
 */
 
+#include <inttypes.h>
+#include <limits.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -158,6 +160,19 @@ TEST_CASE(broken_max_expr_depth) {
     *p++ = '1';
   }
   *p++ = '}';
+  *p++ = '}';
+  *p++ = '\0';
+  TEST_COMPILE_ERROR(policy_buf);
+}
+
+TEST_CASE(broken_max_instructions) {
+  char policy_buf[256 + USHRT_MAX * 32] = "ALLOW { exit";
+  char* p = &policy_buf[strlen(policy_buf)];
+  for (uint32_t i = 0; i < USHRT_MAX; ++i) {
+    // Allow every second syscall
+    // Consecutive syscalls would get merged in 1 block
+    p += sprintf(p, ", SYSCALL[%" PRId32 "]", i * 2);
+  }
   *p++ = '}';
   *p++ = '\0';
   TEST_COMPILE_ERROR(policy_buf);

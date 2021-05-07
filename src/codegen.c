@@ -725,6 +725,13 @@ static int compile_policy_impl(struct codegen_ctxt *ctxt,
                  "Required stack size exceeds available BPF memory\n");
     return -1;
   }
+  if (ctxt->buffer.len > USHRT_MAX) {
+    append_error(
+        kafel_ctxt,
+        "Filter length exceeds maximum seccomp filter length: %zu > %d\n",
+        ctxt->buffer.len, USHRT_MAX);
+    return -1;
+  }
   reverse_instruction_buffer(ctxt);
   *prog = ((struct sock_fprog){.filter = ctxt->buffer.data,
                                .len = ctxt->buffer.len});
