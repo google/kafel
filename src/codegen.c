@@ -683,10 +683,13 @@ static void reverse_instruction_buffer(struct codegen_ctxt *ctxt) {
   }
 }
 
-int compile_policy(struct kafel_ctxt *kafel_ctxt, struct sock_fprog *prog) {
+static int compile_policy_impl(struct codegen_ctxt *ctxt,
+                               struct kafel_ctxt *kafel_ctxt,
+                               struct sock_fprog *prog) {
+  ASSERT(ctxt != NULL);
   ASSERT(kafel_ctxt != NULL);
   ASSERT(prog != NULL);
-  int rv = 0;
+
   if (kafel_ctxt->main_policy == NULL) {
     kafel_ctxt->main_policy = policy_create("@main", NULL);
     register_policy(kafel_ctxt, kafel_ctxt->main_policy);
@@ -695,7 +698,6 @@ int compile_policy(struct kafel_ctxt *kafel_ctxt, struct sock_fprog *prog) {
     kafel_ctxt->default_action = ACTION_KILL;
   }
 
-  struct codegen_ctxt *ctxt = context_create();
   struct syscall_range_rules *rules = range_rules_create();
   const struct syscall_list *syscall_list =
       syscalls_lookup(kafel_ctxt->target_arch);
@@ -718,15 +720,21 @@ int compile_policy(struct kafel_ctxt *kafel_ctxt, struct sock_fprog *prog) {
   if (next < 0) {
     resolve_location(ctxt, next);
   }
+  if (ctxt->max_stack_ptr >= BPF_MEMWORDS) {
+    append_error(kafel_ctxt,
+                 "Required stack size exceeds available BPF memory\n");
+    return -1;
+  }
   reverse_instruction_buffer(ctxt);
   *prog = ((struct sock_fprog){.filter = ctxt->buffer.data,
                                .len = ctxt->buffer.len});
   ctxt->buffer.data = NULL;
-  if (ctxt->max_stack_ptr >= BPF_MEMWORDS) {
-    append_error(kafel_ctxt,
-                 "Required stack size exceeds available BPF memory\n");
-    rv = 1;
-  }
+  return 0;
+}
+
+int compile_policy(struct kafel_ctxt *kafel_ctxt, struct sock_fprog *prog) {
+  struct codegen_ctxt *ctxt = context_create();
+  int rv = compile_policy_impl(ctxt, kafel_ctxt, prog);
   context_destroy(&ctxt);
   return rv;
 }
