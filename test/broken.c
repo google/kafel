@@ -19,6 +19,7 @@
 */
 
 #include <stdio.h>
+#include <string.h>
 
 #include "runner/harness.h"
 #include "runner/runner.h"
@@ -145,4 +146,19 @@ TEST_CASE(broken_const_redefintion) {
       "#define myconst 2\n"
       "POLICY empty {}\n"
       "USE empty DEFAULT KILL");
+}
+
+#define MAX_EXPR_DEPTH 200
+
+TEST_CASE(broken_max_expr_depth) {
+  char policy_buf[256 + MAX_EXPR_DEPTH * 2] = "ALLOW { read { fd == 1";
+  char* p = &policy_buf[strlen(policy_buf)];
+  for (int i = 1; i <= MAX_EXPR_DEPTH; ++i) {
+    *p++ = '&';
+    *p++ = '1';
+  }
+  *p++ = '}';
+  *p++ = '}';
+  *p++ = '\0';
+  TEST_COMPILE_ERROR(policy_buf);
 }

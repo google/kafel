@@ -48,7 +48,31 @@ void custom_syscall_args_destroy(struct custom_syscall_args** args);
     do {                                                   \
         append_error(ctxt, "%d:%d: "fmt, (loc).first_line, \
                     (loc).first_column, ##__VA_ARGS__);    \
-    } while(0)                                             \
+    } while(0)
+
+#define checked_expr_binary(result, loc, type, left, right)     \
+    do {                                                        \
+      if ((left)->depth >= MAX_EXPRESSION_DEPTH ||              \
+        (right)->depth >= MAX_EXPRESSION_DEPTH) {               \
+        emit_error((loc), "Max expression depth (%d) exceeded", \
+                   MAX_EXPRESSION_DEPTH);                       \
+        expr_destroy(&(left));                                  \
+        expr_destroy(&(right));                                 \
+        YYERROR;                                                \
+      }                                                         \
+      result = expr_create_binary((type), (left), (right));     \
+    } while(0)
+
+#define checked_expr_unary(result, loc, type, child)            \
+    do {                                                        \
+      if ((child)->depth >= MAX_EXPRESSION_DEPTH) {             \
+        emit_error((loc), "Max expression depth (%d) exceeded", \
+                   MAX_EXPRESSION_DEPTH);                       \
+        expr_destroy(&(child));                                 \
+        YYERROR;                                                \
+      }                                                         \
+      result = expr_create_unary((type), (child));              \
+    } while(0)
 
 #define YYLLOC_DEFAULT(Cur, Rhs, N )                    \
 do {                                                    \
@@ -347,40 +371,40 @@ syscall_args
     ;
 
 bool_expr
-    : bool_expr ',' or_bool_expr { $$ = expr_create_binary(EXPR_OR, $1, $3); }
+    : bool_expr ',' or_bool_expr { checked_expr_binary($$, @1, EXPR_OR, $1, $3); }
     | or_bool_expr { $$ = $1; }
     ;
 
 or_bool_expr
     : or_bool_expr LOGIC_OR and_bool_expr
-        { $$ = expr_create_binary(EXPR_OR, $1, $3); }
+        { checked_expr_binary($$, @1, EXPR_OR, $1, $3); }
     | and_bool_expr { $$ = $1; }
     ;
 
 and_bool_expr
     : and_bool_expr LOGIC_AND primary_bool_expr
-        { $$ = expr_create_binary(EXPR_AND, $1, $3); }
+        { checked_expr_binary($$, @1, EXPR_AND, $1, $3); }
     | primary_bool_expr { $$ = $1; }
     ;
 
 primary_bool_expr
     : '(' bool_expr ')' { $$ = $2; }
-    | '!' primary_bool_expr { $$ = expr_create_unary(EXPR_NOT, $2); }
-    | bit_or_expr GT bit_or_expr { $$ = expr_create_binary(EXPR_GT, $1, $3); }
-    | bit_or_expr LT bit_or_expr { $$ = expr_create_binary(EXPR_LT, $1, $3); }
-    | bit_or_expr GE bit_or_expr { $$ = expr_create_binary(EXPR_GE, $1, $3); }
-    | bit_or_expr LE bit_or_expr { $$ = expr_create_binary(EXPR_LE, $1, $3); }
-    | bit_or_expr EQ bit_or_expr { $$ = expr_create_binary(EXPR_EQ, $1, $3); }
-    | bit_or_expr NEQ bit_or_expr { $$ = expr_create_binary(EXPR_NEQ, $1, $3); }
+    | '!' primary_bool_expr { checked_expr_unary($$, @1, EXPR_NOT, $2); }
+    | bit_or_expr GT bit_or_expr { checked_expr_binary($$, @1, EXPR_GT, $1, $3); }
+    | bit_or_expr LT bit_or_expr { checked_expr_binary($$, @1, EXPR_LT, $1, $3); }
+    | bit_or_expr GE bit_or_expr { checked_expr_binary($$, @1, EXPR_GE, $1, $3); }
+    | bit_or_expr LE bit_or_expr { checked_expr_binary($$, @1, EXPR_LE, $1, $3); }
+    | bit_or_expr EQ bit_or_expr { checked_expr_binary($$, @1, EXPR_EQ, $1, $3); }
+    | bit_or_expr NEQ bit_or_expr { checked_expr_binary($$, @1, EXPR_NEQ, $1, $3); }
     ;
 
 bit_or_expr
-    : bit_or_expr BIT_OR bit_and_expr { $$ = expr_create_binary(EXPR_BIT_OR, $1, $3); }
+    : bit_or_expr BIT_OR bit_and_expr { checked_expr_binary($$, @1, EXPR_BIT_OR, $1, $3); }
     | bit_and_expr { $$ = $1; }
     ;
 
 bit_and_expr
-    : bit_and_expr BIT_AND operand { $$ = expr_create_binary(EXPR_BIT_AND, $1, $3); }
+    : bit_and_expr BIT_AND operand { checked_expr_binary($$, @1, EXPR_BIT_AND, $1, $3); }
     | operand { $$ = $1; }
     ;
 

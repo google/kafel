@@ -62,6 +62,7 @@ struct cached_value {
 
 struct expr_tree {
   int type;
+  int depth;
   union {
     struct {
       int var;

@@ -29,6 +29,7 @@ struct expr_tree *expr_create_number(uint64_t value) {
   struct expr_tree *rv = calloc(1, sizeof(*rv));
   rv->type = EXPR_NUMBER;
   rv->number = value;
+  rv->depth = 0;
   return rv;
 }
 
@@ -36,6 +37,7 @@ struct expr_tree *expr_create_identifier(struct kafel_identifier *identifier) {
   struct expr_tree *rv = calloc(1, sizeof(*rv));
   rv->type = EXPR_IDENTIFIER;
   rv->identifier = identifier;
+  rv->depth = 0;
   return rv;
 }
 
@@ -46,6 +48,7 @@ struct expr_tree *expr_create_unary(int op, struct expr_tree *child) {
   struct expr_tree *rv = calloc(1, sizeof(*rv));
   rv->type = op;
   rv->child = child;
+  rv->depth = child->depth + 1;
   return rv;
 }
 
@@ -59,6 +62,10 @@ struct expr_tree *expr_create_binary(int op, struct expr_tree *left,
   rv->type = op;
   rv->left = left;
   rv->right = right;
+  rv->depth = left->depth + 1;
+  if (rv->depth < right->depth + 1) {
+    rv->depth = right->depth + 1;
+  }
   return rv;
 }
 
