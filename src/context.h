@@ -64,6 +64,7 @@ void register_policy(struct kafel_ctxt* ctxt, struct policy* policy);
 void register_const(struct kafel_ctxt* ctxt, const char* name, uint64_t value);
 int lookup_const(struct kafel_ctxt* ctxt, const char* name, uint64_t* value);
 struct policy* lookup_policy(struct kafel_ctxt* ctxt, const char* name);
+void mark_all_policies_unused(struct kafel_ctxt* ctxt);
 
 int append_error(struct kafel_ctxt* ctxt, const char* fmt, ...);
 

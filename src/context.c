@@ -106,6 +106,11 @@ struct policy* lookup_policy(struct kafel_ctxt* ctxt, const char* name) {
   return NULL;
 }
 
+void mark_all_policies_unused(struct kafel_ctxt* ctxt) {
+  struct policy* policy;
+  TAILQ_FOREACH(policy, &ctxt->policies, policies) { policy->used = false; }
+}
+
 static int grow_errors_buffer(struct kafel_ctxt* ctxt, size_t min_growth) {
   size_t oldcapacity = ctxt->errors.capacity;
   if (min_growth > 0 && ctxt->errors.len <= SIZE_MAX - min_growth) {

@@ -87,6 +87,7 @@ struct policy {
   char* name;
   struct entrieslist entries;
   TAILQ_ENTRY(policy) policies;
+  bool used;
 };
 
 TAILQ_HEAD(policieslist, policy);

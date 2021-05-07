@@ -700,6 +700,7 @@ int compile_policy(struct kafel_ctxt *kafel_ctxt, struct sock_fprog *prog) {
   const struct syscall_list *syscall_list =
       syscalls_lookup(kafel_ctxt->target_arch);
   ASSERT(syscall_list != NULL);
+  mark_all_policies_unused(kafel_ctxt);
   add_policy_rules(rules, kafel_ctxt->main_policy, syscall_list);
   normalize_rules(rules, kafel_ctxt->default_action);
   int begin = CURRENT_LOC;

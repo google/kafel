@@ -134,57 +134,92 @@ static void add_range_rule(struct syscall_range_rules *rules,
   TAILQ_CONCAT(&added->expr_list, &rule->expr_list, list);
 }
 
+static void add_filters(struct syscall_range_rules *rules,
+                        struct policy_entry *entry,
+                        const struct syscall_list *syscall_list) {
+  ASSERT(rules != NULL);
+  ASSERT(entry != NULL);
+
+  struct syscall_filter *filter;
+  TAILQ_FOREACH(filter, &entry->filters, filters) {
+    uint32_t syscall_nr =
+        syscall_spec_get_syscall_nr(filter->syscall, syscall_list);
+    struct syscall_range_rule rule = {
+        .first = syscall_nr,
+        .last = syscall_nr,
+    };
+    TAILQ_INIT(&rule.expr_list);
+    struct expr_tree *expr = NULL;
+    if (filter->expr != NULL) {
+      expr = expr_copy(filter->expr);
+      struct syscall_arg args[SYSCALL_MAX_ARGS];
+      syscall_spec_get_args(filter->syscall, syscall_list, args);
+      expr_resolve_identifiers(expr, args);
+      expr_simplify(&expr);
+      if (expr->type == EXPR_TRUE) {
+        expr_destroy(&expr);
+        expr = NULL;
+      }
+    }
+    if (expr != NULL) {
+      if (expr->type == EXPR_FALSE) {
+        expr_destroy(&expr);
+        continue;
+      }
+      rule.action = ACTION_CONDITIONAL;
+      rule_add_expr(&rule, expr, entry->action);
+    } else {
+      rule.action = entry->action;
+    }
+    add_range_rule(rules, &rule);
+  }
+}
+
 void add_policy_rules(struct syscall_range_rules *rules, struct policy *policy,
                       const struct syscall_list *syscall_list) {
   ASSERT(rules != NULL);
   ASSERT(policy != NULL);
 
   struct policy_entry *entry;
-  struct syscall_filter *filter;
 
-  TAILQ_FOREACH(entry, &policy->entries, entries) {
-    switch (entry->type) {
-      case POLICY_USE:
-        add_policy_rules(rules, entry->used, syscall_list);
-        break;
-      case POLICY_ACTION:
-        TAILQ_FOREACH(filter, &entry->filters, filters) {
-          uint32_t syscall_nr =
-              syscall_spec_get_syscall_nr(filter->syscall, syscall_list);
-          struct syscall_range_rule rule = {
-              .first = syscall_nr,
-              .last = syscall_nr,
-          };
-          TAILQ_INIT(&rule.expr_list);
-          struct expr_tree *expr = NULL;
-          if (filter->expr != NULL) {
-            expr = expr_copy(filter->expr);
-            struct syscall_arg args[SYSCALL_MAX_ARGS];
-            syscall_spec_get_args(filter->syscall, syscall_list, args);
-            expr_resolve_identifiers(expr, args);
-            expr_simplify(&expr);
-            if (expr->type == EXPR_TRUE) {
-              expr_destroy(&expr);
-              expr = NULL;
-            }
-          }
-          if (expr != NULL) {
-            if (expr->type == EXPR_FALSE) {
-              expr_destroy(&expr);
-              continue;
-            }
-            rule.action = ACTION_CONDITIONAL;
-            rule_add_expr(&rule, expr, entry->action);
-          } else {
-            rule.action = entry->action;
-          }
-          add_range_rule(rules, &rule);
+  struct {
+    size_t size;
+    size_t capacity;
+    struct policy_entry **data;
+  } stack;
+  stack.size = 1;
+  stack.capacity = 16;
+  stack.data = calloc(stack.capacity, sizeof(stack.data[0]));
+  stack.data[0] = TAILQ_FIRST(&policy->entries);
+
+  while (stack.size > 0) {
+    entry = stack.data[--stack.size];
+    while (entry != NULL) {
+      if (entry->type == POLICY_USE) {
+        struct policy *used_policy = entry->used;
+        entry = TAILQ_NEXT(entry, entries);
+        if (used_policy->used) {
+          continue;
         }
-        break;
-      default:
-        ASSERT(0);  // should not happen
+        used_policy->used = true;
+        if (entry != NULL) {
+          if (stack.size == stack.capacity) {
+            ASSERT(stack.capacity <=
+                   SIZE_MAX / (2 * sizeof(stack.data[0])));  // overflow
+            stack.capacity *= 2;
+            stack.data =
+                realloc(stack.data, stack.capacity * sizeof(stack.data[0]));
+          }
+          stack.data[stack.size++] = entry;
+        }
+        entry = TAILQ_FIRST(&used_policy->entries);
+      } else {
+        add_filters(rules, entry, syscall_list);
+        entry = TAILQ_NEXT(entry, entries);
+      }
     }
   }
+  free(stack.data);
 }
 
 static int by_syscall_and_priority(const void *av, const void *bv) {
