@@ -162,6 +162,7 @@ TEST_CASE(bitwise_operations) {
   TEST_POLICY_BLOCKS_SYSCALL(SYSCALL_SPEC3(__NR_read, 0, 0, 1));
 }
 
+#ifndef __i386__
 TEST_CASE(32bit_args) {
   // fcntl should be defined for all archs
   // and fd should be 32-bit argument
@@ -185,6 +186,7 @@ TEST_CASE(32bit_args) {
   TEST_POLICY_BLOCKS_SYSCALL(
       SYSCALL_SPEC3(__NR_fcntl, 0x100001235, F_GETFD, 0));
 }
+#endif
 
 TEST_CASE(long_constants_eq) {
   TEST_POLICY("ALLOW { fcntl { 0x100001234 == 0x1234 }, exit } DEFAULT KILL");
