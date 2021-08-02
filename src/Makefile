@@ -18,6 +18,7 @@
 #
 
 OBJCOPY?=objcopy
+OBJDUMP?=objdump
 
 CFLAGS+=-fPIC -fvisibility=hidden
 GENERATED_SRCS:=lexer.c parser.c
@@ -51,11 +52,14 @@ include ${PROJECT_ROOT}build/Makefile.mk
 ${GENERATED_OBJECTS}: CFLAGS+=-Wno-error
 
 ${DYNAMIC_TARGET}: ${OBJECTS}
-	$(CC) -Wl,-soname,$@.${VERSION} -shared $^ -o $@
+	$(CC) $(CFLAGS) -Wl,-soname,$@.${VERSION} -shared $^ -o $@
 
 ${STATIC_TARGET}: ${OBJECTS}
-	$(LD) -r ${OBJECTS} -o libkafel_r.o
-	$(OBJCOPY) --localize-hidden libkafel_r.o libkafel.o
+	$(LD) $(LDFLAGS) -r ${OBJECTS} -o libkafel_r.o
+	# Fix x86 PIC symbols
+	$(OBJDUMP) -t libkafel_r.o | grep '.hidden' | grep -v 'get_pc_thunk' | sed -e 's/^.*\.hidden //' > libkafel.localize_symbols
+	$(OBJCOPY) -w --localize-symbols=libkafel.localize_symbols libkafel_r.o libkafel.o
+	$(RM) libkafel.localize_symbols
 	$(RM) libkafel_r.o
 	$(AR) rcs $@ libkafel.o
 	$(RM) libkafel.o
