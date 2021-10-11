@@ -34,7 +34,6 @@
 const struct syscall_descriptor riscv64_syscall_list[] = {
     {"accept",
      202,
-
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"upeer_sockaddr", 8},
@@ -42,7 +41,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"accept4",
      242,
-
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"upeer_sockaddr", 8},
@@ -51,13 +49,11 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"acct",
      89,
-
      {
          [ARG_0] = {"name", 8},
      }},
     {"add_key",
      217,
-
      {
          [ARG_0] = {"_type", 8},
          [ARG_1] = {"_description", 8},
@@ -67,13 +63,11 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"adjtimex",
      171,
-
      {
          [ARG_0] = {"txc_p", 8},
      }},
     {"bind",
      200,
-
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"umyaddr", 8},
@@ -81,7 +75,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"bpf",
      280,
-
      {
          [ARG_0] = {"cmd", 4},
          [ARG_1] = {"uattr", 8},
@@ -89,60 +82,51 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"brk",
      214,
-
      {
          [ARG_0] = {"brk", 8},
      }},
     {"capget",
      90,
-
      {
          [ARG_0] = {"header", 8},
          [ARG_1] = {"dataptr", 8},
      }},
     {"capset",
      91,
-
      {
          [ARG_0] = {"header", 8},
          [ARG_1] = {"data", 8},
      }},
     {"chdir",
      49,
-
      {
          [ARG_0] = {"filename", 8},
      }},
     {"chroot",
      51,
-
      {
          [ARG_0] = {"filename", 8},
      }},
     {"clock_adjtime",
      266,
-
      {
          [ARG_0] = {"which_clock", 4},
          [ARG_1] = {"utx", 8},
      }},
     {"clock_getres",
      114,
-
      {
          [ARG_0] = {"which_clock", 4},
          [ARG_1] = {"tp", 8},
      }},
     {"clock_gettime",
      113,
-
      {
          [ARG_0] = {"which_clock", 4},
          [ARG_1] = {"tp", 8},
      }},
     {"clock_nanosleep",
      115,
-
      {
          [ARG_0] = {"which_clock", 4},
          [ARG_1] = {"flags", 4},
@@ -151,14 +135,12 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"clock_settime",
      112,
-
      {
          [ARG_0] = {"which_clock", 4},
          [ARG_1] = {"tp", 8},
      }},
     {"clone",
      220,
-
      {
          [ARG_0] = {"clone_flags", 8},
          [ARG_1] = {"newsp", 8},
@@ -168,13 +150,11 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"close",
      57,
-
      {
          [ARG_0] = {"fd", 4},
      }},
     {"connect",
      203,
-
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"uservaddr", 8},
@@ -182,7 +162,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"copy_file_range",
      285,
-
      {
          [ARG_0] = {"fd_in", 4},
          [ARG_1] = {"off_in", 8},
@@ -193,20 +172,17 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"delete_module",
      106,
-
      {
          [ARG_0] = {"name_user", 8},
          [ARG_1] = {"flags", 4},
      }},
     {"dup",
      23,
-
      {
          [ARG_0] = {"fildes", 4},
      }},
     {"dup3",
      24,
-
      {
          [ARG_0] = {"oldfd", 4},
          [ARG_1] = {"newfd", 4},
@@ -214,13 +190,11 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"epoll_create1",
      20,
-
      {
          [ARG_0] = {"flags", 4},
      }},
     {"epoll_ctl",
      21,
-
      {
          [ARG_0] = {"epfd", 4},
          [ARG_1] = {"op", 4},
@@ -229,7 +203,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"epoll_pwait",
      22,
-
      {
          [ARG_0] = {"epfd", 4},
          [ARG_1] = {"events", 8},
@@ -240,14 +213,12 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"eventfd2",
      19,
-
      {
          [ARG_0] = {"count", 4},
          [ARG_1] = {"flags", 4},
      }},
     {"execve",
      221,
-
      {
          [ARG_0] = {"filename", 8},
          [ARG_1] = {"argv", 8},
@@ -255,7 +226,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"execveat",
      281,
-
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"filename", 8},
@@ -265,19 +235,16 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"exit",
      93,
-
      {
          [ARG_0] = {"error_code", 4},
      }},
     {"exit_group",
      94,
-
      {
          [ARG_0] = {"error_code", 4},
      }},
     {"faccessat",
      48,
-
      {
          [ARG_0] = {"dfd", 4},
          [ARG_1] = {"filename", 8},
@@ -285,7 +252,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"fadvise64",
      223,
-
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"offset", 8},
@@ -294,7 +260,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"fallocate",
      47,
-
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"mode", 4},
@@ -303,14 +268,12 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"fanotify_init",
      262,
-
      {
          [ARG_0] = {"flags", 4},
          [ARG_1] = {"event_f_flags", 4},
      }},
     {"fanotify_mark",
      263,
-
      {
          [ARG_0] = {"fanotify_fd", 4},
          [ARG_1] = {"flags", 4},
@@ -320,20 +283,17 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"fchdir",
      50,
-
      {
          [ARG_0] = {"fd", 4},
      }},
     {"fchmod",
      52,
-
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"mode", 2},
      }},
     {"fchmodat",
      53,
-
      {
          [ARG_0] = {"dfd", 4},
          [ARG_1] = {"filename", 8},
@@ -341,7 +301,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"fchown",
      55,
-
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"user", 4},
@@ -349,7 +308,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"fchownat",
      54,
-
      {
          [ARG_0] = {"dfd", 4},
          [ARG_1] = {"filename", 8},
@@ -359,7 +317,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"fcntl",
      25,
-
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"cmd", 4},
@@ -367,13 +324,11 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"fdatasync",
      83,
-
      {
          [ARG_0] = {"fd", 4},
      }},
     {"fgetxattr",
      10,
-
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"name", 8},
@@ -382,7 +337,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"finit_module",
      273,
-
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"uargs", 8},
@@ -390,7 +344,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"flistxattr",
      13,
-
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"list", 8},
@@ -398,21 +351,18 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"flock",
      32,
-
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"cmd", 4},
      }},
     {"fremovexattr",
      16,
-
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"name", 8},
      }},
     {"fsetxattr",
      7,
-
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"name", 8},
@@ -422,27 +372,23 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"fstatfs",
      44,
-
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"buf", 8},
      }},
     {"fsync",
      82,
-
      {
          [ARG_0] = {"fd", 4},
      }},
     {"ftruncate",
      46,
-
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"length", 8},
      }},
     {"futex",
      98,
-
      {
          [ARG_0] = {"uaddr", 8},
          [ARG_1] = {"op", 4},
@@ -453,7 +399,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"getcpu",
      168,
-
      {
          [ARG_0] = {"cpup", 8},
          [ARG_1] = {"nodep", 8},
@@ -461,14 +406,12 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"getcwd",
      17,
-
      {
          [ARG_0] = {"buf", 8},
          [ARG_1] = {"size", 8},
      }},
     {"getdents64",
      61,
-
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"dirent", 8},
@@ -479,21 +422,18 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
     {"getgid", 176, {}},
     {"getgroups",
      158,
-
      {
          [ARG_0] = {"gidsetsize", 4},
          [ARG_1] = {"grouplist", 8},
      }},
     {"getitimer",
      102,
-
      {
          [ARG_0] = {"which", 4},
          [ARG_1] = {"value", 8},
      }},
     {"get_mempolicy",
      236,
-
      {
          [ARG_0] = {"policy", 8},
          [ARG_1] = {"nmask", 8},
@@ -503,7 +443,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"getpeername",
      205,
-
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"usockaddr", 8},
@@ -511,7 +450,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"getpgid",
      155,
-
      {
          [ARG_0] = {"pid", 4},
      }},
@@ -519,14 +457,12 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
     {"getppid", 173, {}},
     {"getpriority",
      141,
-
      {
          [ARG_0] = {"which", 4},
          [ARG_1] = {"who", 4},
      }},
     {"getrandom",
      278,
-
      {
          [ARG_0] = {"buf", 8},
          [ARG_1] = {"count", 8},
@@ -534,7 +470,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"getresgid",
      150,
-
      {
          [ARG_0] = {"rgidp", 8},
          [ARG_1] = {"egidp", 8},
@@ -542,7 +477,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"getresuid",
      148,
-
      {
          [ARG_0] = {"ruidp", 8},
          [ARG_1] = {"euidp", 8},
@@ -550,14 +484,12 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"getrlimit",
      163,
-
      {
          [ARG_0] = {"resource", 4},
          [ARG_1] = {"rlim", 8},
      }},
     {"get_robust_list",
      100,
-
      {
          [ARG_0] = {"pid", 4},
          [ARG_1] = {"head_ptr", 8},
@@ -565,20 +497,17 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"getrusage",
      165,
-
      {
          [ARG_0] = {"who", 4},
          [ARG_1] = {"ru", 8},
      }},
     {"getsid",
      156,
-
      {
          [ARG_0] = {"pid", 4},
      }},
     {"getsockname",
      204,
-
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"usockaddr", 8},
@@ -586,7 +515,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"getsockopt",
      209,
-
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"level", 4},
@@ -597,7 +525,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
     {"gettid", 178, {}},
     {"gettimeofday",
      169,
-
      {
          [ARG_0] = {"tv", 8},
          [ARG_1] = {"tz", 8},
@@ -605,7 +532,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
     {"getuid", 174, {}},
     {"getxattr",
      8,
-
      {
          [ARG_0] = {"pathname", 8},
          [ARG_1] = {"name", 8},
@@ -614,7 +540,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"init_module",
      105,
-
      {
          [ARG_0] = {"umod", 8},
          [ARG_1] = {"len", 8},
@@ -622,7 +547,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"inotify_add_watch",
      27,
-
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"pathname", 8},
@@ -630,20 +554,17 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"inotify_init1",
      26,
-
      {
          [ARG_0] = {"flags", 4},
      }},
     {"inotify_rm_watch",
      28,
-
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"wd", 4},
      }},
     {"io_cancel",
      3,
-
      {
          [ARG_0] = {"ctx_id", 8},
          [ARG_1] = {"iocb", 8},
@@ -651,7 +572,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"ioctl",
      29,
-
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"cmd", 4},
@@ -659,13 +579,11 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"io_destroy",
      1,
-
      {
          [ARG_0] = {"ctx", 8},
      }},
     {"io_getevents",
      4,
-
      {
          [ARG_0] = {"ctx_id", 8},
          [ARG_1] = {"min_nr", 8},
@@ -675,14 +593,12 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"ioprio_get",
      31,
-
      {
          [ARG_0] = {"which", 4},
          [ARG_1] = {"who", 4},
      }},
     {"ioprio_set",
      30,
-
      {
          [ARG_0] = {"which", 4},
          [ARG_1] = {"who", 4},
@@ -690,14 +606,12 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"io_setup",
      0,
-
      {
          [ARG_0] = {"nr_events", 4},
          [ARG_1] = {"ctxp", 8},
      }},
     {"io_submit",
      2,
-
      {
          [ARG_0] = {"ctx_id", 8},
          [ARG_1] = {"nr", 8},
@@ -705,7 +619,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"kcmp",
      272,
-
      {
          [ARG_0] = {"pid1", 4},
          [ARG_1] = {"pid2", 4},
@@ -715,7 +628,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"kexec_load",
      104,
-
      {
          [ARG_0] = {"entry", 8},
          [ARG_1] = {"nr_segments", 8},
@@ -724,7 +636,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"keyctl",
      219,
-
      {
          [ARG_0] = {"option", 4},
          [ARG_1] = {"arg2", 8},
@@ -734,14 +645,12 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"kill",
      129,
-
      {
          [ARG_0] = {"pid", 4},
          [ARG_1] = {"sig", 4},
      }},
     {"lgetxattr",
      9,
-
      {
          [ARG_0] = {"pathname", 8},
          [ARG_1] = {"name", 8},
@@ -750,7 +659,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"linkat",
      37,
-
      {
          [ARG_0] = {"olddfd", 4},
          [ARG_1] = {"oldname", 8},
@@ -760,14 +668,12 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"listen",
      201,
-
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"backlog", 4},
      }},
     {"listxattr",
      11,
-
      {
          [ARG_0] = {"pathname", 8},
          [ARG_1] = {"list", 8},
@@ -775,7 +681,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"llistxattr",
      12,
-
      {
          [ARG_0] = {"pathname", 8},
          [ARG_1] = {"list", 8},
@@ -783,7 +688,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"lookup_dcookie",
      18,
-
      {
          [ARG_0] = {"cookie64", 8},
          [ARG_1] = {"buf", 8},
@@ -791,14 +695,12 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"lremovexattr",
      15,
-
      {
          [ARG_0] = {"pathname", 8},
          [ARG_1] = {"name", 8},
      }},
     {"lseek",
      62,
-
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"offset", 8},
@@ -806,7 +708,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"lsetxattr",
      6,
-
      {
          [ARG_0] = {"pathname", 8},
          [ARG_1] = {"name", 8},
@@ -816,7 +717,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"madvise",
      233,
-
      {
          [ARG_0] = {"start", 8},
          [ARG_1] = {"len_in", 8},
@@ -824,7 +724,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"mbind",
      235,
-
      {
          [ARG_0] = {"start", 8},
          [ARG_1] = {"len", 8},
@@ -835,21 +734,18 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"membarrier",
      283,
-
      {
          [ARG_0] = {"cmd", 4},
          [ARG_1] = {"flags", 4},
      }},
     {"memfd_create",
      279,
-
      {
          [ARG_0] = {"uname", 8},
          [ARG_1] = {"flags", 4},
      }},
     {"migrate_pages",
      238,
-
      {
          [ARG_0] = {"pid", 4},
          [ARG_1] = {"maxnode", 8},
@@ -858,7 +754,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"mincore",
      232,
-
      {
          [ARG_0] = {"start", 8},
          [ARG_1] = {"len", 8},
@@ -866,7 +761,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"mkdirat",
      34,
-
      {
          [ARG_0] = {"dfd", 4},
          [ARG_1] = {"pathname", 8},
@@ -874,7 +768,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"mknodat",
      33,
-
      {
          [ARG_0] = {"dfd", 4},
          [ARG_1] = {"filename", 8},
@@ -883,14 +776,12 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"mlock",
      228,
-
      {
          [ARG_0] = {"start", 8},
          [ARG_1] = {"len", 8},
      }},
     {"mlock2",
      284,
-
      {
          [ARG_0] = {"start", 8},
          [ARG_1] = {"len", 8},
@@ -898,13 +789,11 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"mlockall",
      230,
-
      {
          [ARG_0] = {"flags", 4},
      }},
     {"mmap",
      222,
-
      {
          [ARG_0] = {"addr", 8},
          [ARG_1] = {"len", 8},
@@ -915,7 +804,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"mount",
      40,
-
      {
          [ARG_0] = {"dev_name", 8},
          [ARG_1] = {"dir_name", 8},
@@ -925,7 +813,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"move_pages",
      239,
-
      {
          [ARG_0] = {"pid", 4},
          [ARG_1] = {"nr_pages", 8},
@@ -936,7 +823,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"mprotect",
      226,
-
      {
          [ARG_0] = {"start", 8},
          [ARG_1] = {"len", 8},
@@ -944,7 +830,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"mq_getsetattr",
      185,
-
      {
          [ARG_0] = {"mqdes", 4},
          [ARG_1] = {"u_mqstat", 8},
@@ -952,14 +837,12 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"mq_notify",
      184,
-
      {
          [ARG_0] = {"mqdes", 4},
          [ARG_1] = {"u_notification", 8},
      }},
     {"mq_open",
      180,
-
      {
          [ARG_0] = {"u_name", 8},
          [ARG_1] = {"oflag", 4},
@@ -968,7 +851,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"mq_timedreceive",
      183,
-
      {
          [ARG_0] = {"mqdes", 4},
          [ARG_1] = {"u_msg_ptr", 8},
@@ -978,7 +860,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"mq_timedsend",
      182,
-
      {
          [ARG_0] = {"mqdes", 4},
          [ARG_1] = {"u_msg_ptr", 8},
@@ -988,13 +869,11 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"mq_unlink",
      181,
-
      {
          [ARG_0] = {"u_name", 8},
      }},
     {"mremap",
      216,
-
      {
          [ARG_0] = {"addr", 8},
          [ARG_1] = {"old_len", 8},
@@ -1004,7 +883,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"msgctl",
      187,
-
      {
          [ARG_0] = {"msqid", 4},
          [ARG_1] = {"cmd", 4},
@@ -1012,14 +890,12 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"msgget",
      186,
-
      {
          [ARG_0] = {"key", 4},
          [ARG_1] = {"msgflg", 4},
      }},
     {"msgrcv",
      188,
-
      {
          [ARG_0] = {"msqid", 4},
          [ARG_1] = {"msgp", 8},
@@ -1029,7 +905,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"msgsnd",
      189,
-
      {
          [ARG_0] = {"msqid", 4},
          [ARG_1] = {"msgp", 8},
@@ -1038,7 +913,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"msync",
      227,
-
      {
          [ARG_0] = {"start", 8},
          [ARG_1] = {"len", 8},
@@ -1046,7 +920,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"munlock",
      229,
-
      {
          [ARG_0] = {"start", 8},
          [ARG_1] = {"len", 8},
@@ -1054,14 +927,12 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
     {"munlockall", 231, {}},
     {"munmap",
      215,
-
      {
          [ARG_0] = {"addr", 8},
          [ARG_1] = {"len", 8},
      }},
     {"name_to_handle_at",
      264,
-
      {
          [ARG_0] = {"dfd", 4},
          [ARG_1] = {"name", 8},
@@ -1071,21 +942,18 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"nanosleep",
      101,
-
      {
          [ARG_0] = {"rqtp", 8},
          [ARG_1] = {"rmtp", 8},
      }},
     {"newfstat",
      80,
-
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"statbuf", 8},
      }},
     {"newfstatat",
      79,
-
      {
          [ARG_0] = {"dfd", 4},
          [ARG_1] = {"filename", 8},
@@ -1094,13 +962,11 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"newuname",
      160,
-
      {
          [ARG_0] = {"name", 8},
      }},
     {"nfsservctl",
      42,
-
      {
          [ARG_0] = {"cmd", 4},
          [ARG_1] = {"argp", 8},
@@ -1108,7 +974,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"openat",
      56,
-
      {
          [ARG_0] = {"dfd", 4},
          [ARG_1] = {"filename", 8},
@@ -1117,7 +982,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"open_by_handle_at",
      265,
-
      {
          [ARG_0] = {"mountdirfd", 4},
          [ARG_1] = {"handle", 8},
@@ -1125,7 +989,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"perf_event_open",
      241,
-
      {
          [ARG_0] = {"attr_uptr", 8},
          [ARG_1] = {"pid", 4},
@@ -1135,27 +998,23 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"personality",
      92,
-
      {
          [ARG_0] = {"personality", 4},
      }},
     {"pipe2",
      59,
-
      {
          [ARG_0] = {"fildes", 8},
          [ARG_1] = {"flags", 4},
      }},
     {"pivot_root",
      41,
-
      {
          [ARG_0] = {"new_root", 8},
          [ARG_1] = {"put_old", 8},
      }},
     {"ppoll",
      73,
-
      {
          [ARG_0] = {"ufds", 8},
          [ARG_1] = {"nfds", 4},
@@ -1165,7 +1024,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"prctl",
      167,
-
      {
          [ARG_0] = {"option", 4},
          [ARG_1] = {"arg2", 8},
@@ -1175,7 +1033,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"pread64",
      67,
-
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"buf", 8},
@@ -1184,7 +1041,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"preadv",
      69,
-
      {
          [ARG_0] = {"fd", 8},
          [ARG_1] = {"vec", 8},
@@ -1194,7 +1050,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"preadv2",
      286,
-
      {
          [ARG_0] = {"fd", 8},
          [ARG_1] = {"vec", 8},
@@ -1205,7 +1060,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"prlimit64",
      261,
-
      {
          [ARG_0] = {"pid", 4},
          [ARG_1] = {"resource", 4},
@@ -1214,7 +1068,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"process_vm_readv",
      270,
-
      {
          [ARG_0] = {"pid", 4},
          [ARG_1] = {"lvec", 8},
@@ -1225,7 +1078,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"process_vm_writev",
      271,
-
      {
          [ARG_0] = {"pid", 4},
          [ARG_1] = {"lvec", 8},
@@ -1236,7 +1088,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"pselect6",
      72,
-
      {
          [ARG_0] = {"n", 4},
          [ARG_1] = {"inp", 8},
@@ -1247,7 +1098,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"ptrace",
      117,
-
      {
          [ARG_0] = {"request", 8},
          [ARG_1] = {"pid", 8},
@@ -1256,7 +1106,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"pwrite64",
      68,
-
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"buf", 8},
@@ -1265,7 +1114,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"pwritev",
      70,
-
      {
          [ARG_0] = {"fd", 8},
          [ARG_1] = {"vec", 8},
@@ -1275,7 +1123,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"pwritev2",
      287,
-
      {
          [ARG_0] = {"fd", 8},
          [ARG_1] = {"vec", 8},
@@ -1286,7 +1133,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"quotactl",
      60,
-
      {
          [ARG_0] = {"cmd", 4},
          [ARG_1] = {"special", 8},
@@ -1295,7 +1141,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"read",
      63,
-
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"buf", 8},
@@ -1303,7 +1148,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"readahead",
      213,
-
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"offset", 8},
@@ -1311,7 +1155,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"readlinkat",
      78,
-
      {
          [ARG_0] = {"dfd", 4},
          [ARG_1] = {"pathname", 8},
@@ -1320,7 +1163,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"readv",
      65,
-
      {
          [ARG_0] = {"fd", 8},
          [ARG_1] = {"vec", 8},
@@ -1328,7 +1170,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"reboot",
      142,
-
      {
          [ARG_0] = {"magic1", 4},
          [ARG_1] = {"magic2", 4},
@@ -1337,7 +1178,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"recvfrom",
      207,
-
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"ubuf", 8},
@@ -1348,7 +1188,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"recvmmsg",
      243,
-
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"mmsg", 8},
@@ -1358,7 +1197,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"recvmsg",
      212,
-
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"msg", 8},
@@ -1366,7 +1204,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"remap_file_pages",
      234,
-
      {
          [ARG_0] = {"start", 8},
          [ARG_1] = {"size", 8},
@@ -1376,14 +1213,12 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"removexattr",
      14,
-
      {
          [ARG_0] = {"pathname", 8},
          [ARG_1] = {"name", 8},
      }},
     {"renameat2",
      276,
-
      {
          [ARG_0] = {"olddfd", 4},
          [ARG_1] = {"oldname", 8},
@@ -1393,7 +1228,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"request_key",
      218,
-
      {
          [ARG_0] = {"_type", 8},
          [ARG_1] = {"_description", 8},
@@ -1403,7 +1237,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
     {"restart_syscall", 128, {}},
     {"rt_sigaction",
      134,
-
      {
          [ARG_0] = {"sig", 4},
          [ARG_1] = {"act", 8},
@@ -1412,14 +1245,12 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"rt_sigpending",
      136,
-
      {
          [ARG_0] = {"uset", 8},
          [ARG_1] = {"sigsetsize", 8},
      }},
     {"rt_sigprocmask",
      135,
-
      {
          [ARG_0] = {"how", 4},
          [ARG_1] = {"nset", 8},
@@ -1428,7 +1259,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"rt_sigqueueinfo",
      138,
-
      {
          [ARG_0] = {"pid", 4},
          [ARG_1] = {"sig", 4},
@@ -1437,14 +1267,12 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
     {"rt_sigreturn", 139, {}},
     {"rt_sigsuspend",
      133,
-
      {
          [ARG_0] = {"unewset", 8},
          [ARG_1] = {"sigsetsize", 8},
      }},
     {"rt_sigtimedwait",
      137,
-
      {
          [ARG_0] = {"uthese", 8},
          [ARG_1] = {"uinfo", 8},
@@ -1453,7 +1281,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"rt_tgsigqueueinfo",
      240,
-
      {
          [ARG_0] = {"tgid", 4},
          [ARG_1] = {"pid", 4},
@@ -1462,7 +1289,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"sched_getaffinity",
      123,
-
      {
          [ARG_0] = {"pid", 4},
          [ARG_1] = {"len", 4},
@@ -1470,7 +1296,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"sched_getattr",
      275,
-
      {
          [ARG_0] = {"pid", 4},
          [ARG_1] = {"uattr", 8},
@@ -1479,39 +1304,33 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"sched_getparam",
      121,
-
      {
          [ARG_0] = {"pid", 4},
          [ARG_1] = {"param", 8},
      }},
     {"sched_get_priority_max",
      125,
-
      {
          [ARG_0] = {"policy", 4},
      }},
     {"sched_get_priority_min",
      126,
-
      {
          [ARG_0] = {"policy", 4},
      }},
     {"sched_getscheduler",
      120,
-
      {
          [ARG_0] = {"pid", 4},
      }},
     {"sched_rr_get_interval",
      127,
-
      {
          [ARG_0] = {"pid", 4},
          [ARG_1] = {"interval", 8},
      }},
     {"sched_setaffinity",
      122,
-
      {
          [ARG_0] = {"pid", 4},
          [ARG_1] = {"len", 4},
@@ -1519,7 +1338,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"sched_setattr",
      274,
-
      {
          [ARG_0] = {"pid", 4},
          [ARG_1] = {"uattr", 8},
@@ -1527,14 +1345,12 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"sched_setparam",
      118,
-
      {
          [ARG_0] = {"pid", 4},
          [ARG_1] = {"param", 8},
      }},
     {"sched_setscheduler",
      119,
-
      {
          [ARG_0] = {"pid", 4},
          [ARG_1] = {"policy", 4},
@@ -1543,7 +1359,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
     {"sched_yield", 124, {}},
     {"seccomp",
      277,
-
      {
          [ARG_0] = {"op", 4},
          [ARG_1] = {"flags", 4},
@@ -1551,7 +1366,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"semctl",
      191,
-
      {
          [ARG_0] = {"semid", 4},
          [ARG_1] = {"semnum", 4},
@@ -1560,7 +1374,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"semget",
      190,
-
      {
          [ARG_0] = {"key", 4},
          [ARG_1] = {"nsems", 4},
@@ -1568,7 +1381,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"semop",
      193,
-
      {
          [ARG_0] = {"semid", 4},
          [ARG_1] = {"tsops", 8},
@@ -1576,7 +1388,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"semtimedop",
      192,
-
      {
          [ARG_0] = {"semid", 4},
          [ARG_1] = {"tsops", 8},
@@ -1585,7 +1396,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"sendfile",
      71,
-
      {
          [ARG_0] = {"out_fd", 4},
          [ARG_1] = {"in_fd", 4},
@@ -1594,7 +1404,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"sendmmsg",
      269,
-
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"mmsg", 8},
@@ -1603,7 +1412,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"sendmsg",
      211,
-
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"msg", 8},
@@ -1611,7 +1419,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"sendto",
      206,
-
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"buff", 8},
@@ -1622,46 +1429,39 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"setdomainname",
      162,
-
      {
          [ARG_0] = {"name", 8},
          [ARG_1] = {"len", 4},
      }},
     {"setfsgid",
      152,
-
      {
          [ARG_0] = {"gid", 4},
      }},
     {"setfsuid",
      151,
-
      {
          [ARG_0] = {"uid", 4},
      }},
     {"setgid",
      144,
-
      {
          [ARG_0] = {"gid", 4},
      }},
     {"setgroups",
      159,
-
      {
          [ARG_0] = {"gidsetsize", 4},
          [ARG_1] = {"grouplist", 8},
      }},
     {"sethostname",
      161,
-
      {
          [ARG_0] = {"name", 8},
          [ARG_1] = {"len", 4},
      }},
     {"setitimer",
      103,
-
      {
          [ARG_0] = {"which", 4},
          [ARG_1] = {"value", 8},
@@ -1669,7 +1469,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"set_mempolicy",
      237,
-
      {
          [ARG_0] = {"mode", 4},
          [ARG_1] = {"nmask", 8},
@@ -1677,21 +1476,18 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"setns",
      268,
-
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"nstype", 4},
      }},
     {"setpgid",
      154,
-
      {
          [ARG_0] = {"pid", 4},
          [ARG_1] = {"pgid", 4},
      }},
     {"setpriority",
      140,
-
      {
          [ARG_0] = {"which", 4},
          [ARG_1] = {"who", 4},
@@ -1699,14 +1495,12 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"setregid",
      143,
-
      {
          [ARG_0] = {"rgid", 4},
          [ARG_1] = {"egid", 4},
      }},
     {"setresgid",
      149,
-
      {
          [ARG_0] = {"rgid", 4},
          [ARG_1] = {"egid", 4},
@@ -1714,7 +1508,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"setresuid",
      147,
-
      {
          [ARG_0] = {"ruid", 4},
          [ARG_1] = {"euid", 4},
@@ -1722,21 +1515,18 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"setreuid",
      145,
-
      {
          [ARG_0] = {"ruid", 4},
          [ARG_1] = {"euid", 4},
      }},
     {"setrlimit",
      164,
-
      {
          [ARG_0] = {"resource", 4},
          [ARG_1] = {"rlim", 8},
      }},
     {"set_robust_list",
      99,
-
      {
          [ARG_0] = {"head", 8},
          [ARG_1] = {"len", 8},
@@ -1744,7 +1534,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
     {"setsid", 157, {}},
     {"setsockopt",
      208,
-
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"level", 4},
@@ -1754,26 +1543,22 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"set_tid_address",
      96,
-
      {
          [ARG_0] = {"tidptr", 8},
      }},
     {"settimeofday",
      170,
-
      {
          [ARG_0] = {"tv", 8},
          [ARG_1] = {"tz", 8},
      }},
     {"setuid",
      146,
-
      {
          [ARG_0] = {"uid", 4},
      }},
     {"setxattr",
      5,
-
      {
          [ARG_0] = {"pathname", 8},
          [ARG_1] = {"name", 8},
@@ -1783,7 +1568,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"shmat",
      196,
-
      {
          [ARG_0] = {"shmid", 4},
          [ARG_1] = {"shmaddr", 8},
@@ -1791,7 +1575,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"shmctl",
      195,
-
      {
          [ARG_0] = {"shmid", 4},
          [ARG_1] = {"cmd", 4},
@@ -1799,13 +1582,11 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"shmdt",
      197,
-
      {
          [ARG_0] = {"shmaddr", 8},
      }},
     {"shmget",
      194,
-
      {
          [ARG_0] = {"key", 4},
          [ARG_1] = {"size", 8},
@@ -1813,21 +1594,18 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"shutdown",
      210,
-
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"how", 4},
      }},
     {"sigaltstack",
      132,
-
      {
          [ARG_0] = {"uss", 8},
          [ARG_1] = {"uoss", 8},
      }},
     {"signalfd4",
      74,
-
      {
          [ARG_0] = {"ufd", 4},
          [ARG_1] = {"user_mask", 8},
@@ -1836,7 +1614,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"socket",
      198,
-
      {
          [ARG_0] = {"family", 4},
          [ARG_1] = {"type", 4},
@@ -1844,7 +1621,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"socketpair",
      199,
-
      {
          [ARG_0] = {"family", 4},
          [ARG_1] = {"type", 4},
@@ -1853,7 +1629,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"splice",
      76,
-
      {
          [ARG_0] = {"fd_in", 4},
          [ARG_1] = {"off_in", 8},
@@ -1864,27 +1639,23 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"statfs",
      43,
-
      {
          [ARG_0] = {"pathname", 8},
          [ARG_1] = {"buf", 8},
      }},
     {"swapoff",
      225,
-
      {
          [ARG_0] = {"specialfile", 8},
      }},
     {"swapon",
      224,
-
      {
          [ARG_0] = {"specialfile", 8},
          [ARG_1] = {"swap_flags", 4},
      }},
     {"symlinkat",
      36,
-
      {
          [ARG_0] = {"oldname", 8},
          [ARG_1] = {"newdfd", 4},
@@ -1893,7 +1664,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
     {"sync", 81, {}},
     {"sync_file_range2",
      84,
-
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"offset", 8},
@@ -1902,19 +1672,16 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"syncfs",
      267,
-
      {
          [ARG_0] = {"fd", 4},
      }},
     {"sysinfo",
      179,
-
      {
          [ARG_0] = {"info", 8},
      }},
     {"syslog",
      116,
-
      {
          [ARG_0] = {"type", 4},
          [ARG_1] = {"buf", 8},
@@ -1922,7 +1689,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"tee",
      77,
-
      {
          [ARG_0] = {"fdin", 4},
          [ARG_1] = {"fdout", 4},
@@ -1931,7 +1697,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"tgkill",
      131,
-
      {
          [ARG_0] = {"tgid", 4},
          [ARG_1] = {"pid", 4},
@@ -1939,7 +1704,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"timer_create",
      107,
-
      {
          [ARG_0] = {"which_clock", 4},
          [ARG_1] = {"timer_event_spec", 8},
@@ -1947,27 +1711,23 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"timer_delete",
      111,
-
      {
          [ARG_0] = {"timer_id", 4},
      }},
     {"timerfd_create",
      85,
-
      {
          [ARG_0] = {"clockid", 4},
          [ARG_1] = {"flags", 4},
      }},
     {"timerfd_gettime",
      87,
-
      {
          [ARG_0] = {"ufd", 4},
          [ARG_1] = {"otmr", 8},
      }},
     {"timerfd_settime",
      86,
-
      {
          [ARG_0] = {"ufd", 4},
          [ARG_1] = {"flags", 4},
@@ -1976,20 +1736,17 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"timer_getoverrun",
      109,
-
      {
          [ARG_0] = {"timer_id", 4},
      }},
     {"timer_gettime",
      108,
-
      {
          [ARG_0] = {"timer_id", 4},
          [ARG_1] = {"setting", 8},
      }},
     {"timer_settime",
      110,
-
      {
          [ARG_0] = {"timer_id", 4},
          [ARG_1] = {"flags", 4},
@@ -1998,33 +1755,28 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"times",
      153,
-
      {
          [ARG_0] = {"tbuf", 8},
      }},
     {"tkill",
      130,
-
      {
          [ARG_0] = {"pid", 4},
          [ARG_1] = {"sig", 4},
      }},
     {"truncate",
      45,
-
      {
          [ARG_0] = {"path", 8},
          [ARG_1] = {"length", 8},
      }},
     {"umask",
      166,
-
      {
          [ARG_0] = {"mask", 4},
      }},
     {"unlinkat",
      35,
-
      {
          [ARG_0] = {"dfd", 4},
          [ARG_1] = {"pathname", 8},
@@ -2032,19 +1784,16 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"unshare",
      97,
-
      {
          [ARG_0] = {"unshare_flags", 8},
      }},
     {"userfaultfd",
      282,
-
      {
          [ARG_0] = {"flags", 4},
      }},
     {"utimensat",
      88,
-
      {
          [ARG_0] = {"dfd", 4},
          [ARG_1] = {"filename", 8},
@@ -2054,7 +1803,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
     {"vhangup", 58, {}},
     {"vmsplice",
      75,
-
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"iov", 8},
@@ -2063,7 +1811,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"wait4",
      260,
-
      {
          [ARG_0] = {"upid", 4},
          [ARG_1] = {"stat_addr", 8},
@@ -2072,7 +1819,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"waitid",
      95,
-
      {
          [ARG_0] = {"which", 4},
          [ARG_1] = {"upid", 4},
@@ -2082,7 +1828,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"write",
      64,
-
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"buf", 8},
@@ -2090,7 +1835,6 @@ const struct syscall_descriptor riscv64_syscall_list[] = {
      }},
     {"writev",
      66,
-
      {
          [ARG_0] = {"fd", 8},
          [ARG_1] = {"vec", 8},
