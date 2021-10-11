@@ -66,8 +66,6 @@ cat > "$outname" <<HEADER
 #define ARG_4 4
 #define ARG_5 5
 
-#define NORMAL false
-
 const struct syscall_descriptor ${arch,,}_syscall_list[] = {
 HEADER
 
