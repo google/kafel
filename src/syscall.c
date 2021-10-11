@@ -44,6 +44,7 @@ SYSCALL_LIST_DECL(amd64)
 SYSCALL_LIST_DECL(mipso32)
 SYSCALL_LIST_DECL(mips64)
 SYSCALL_LIST_DECL(i386)
+SYSCALL_LIST_DECL(riscv64)
 
 const struct syscall_list syscall_lists[] = {
 #ifdef AUDIT_ARCH_ARM
@@ -63,6 +64,9 @@ const struct syscall_list syscall_lists[] = {
 #endif
 #ifdef AUDIT_ARCH_I386
     SYSCALL_LIST(AUDIT_ARCH_I386, i386),
+#endif
+#ifdef AUDIT_ARCH_RISCV64
+    SYSCALL_LIST(AUDIT_ARCH_RISCV64, riscv64),
 #endif
 };
 

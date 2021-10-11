@@ -29,6 +29,7 @@ SYSCALL_LISTS:=amd64_syscalls.c \
                aarch64_syscalls.c \
                mipso32_syscalls.c \
                mips64_syscalls.c \
+               riscv64_syscalls.c \
                arm_syscalls.c
 SRCS:=kafel.c \
       context.c \
@@ -95,3 +96,4 @@ syscalls/aarch64_syscalls.o: syscall.h
 syscalls/mipso32_syscalls.o: syscall.h
 syscalls/mips64_syscalls.o: syscall.h
 syscalls/arm_syscalls.o: syscall.h
+syscalls/riscv64_syscalls.o: syscall.h
