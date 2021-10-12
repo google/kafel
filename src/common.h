@@ -51,7 +51,7 @@
 #define KAFEL_DEFAULT_TARGET_ARCH AUDIT_ARCH_MIPS
 #elif defined(__i386__)
 #define KAFEL_DEFAULT_TARGET_ARCH AUDIT_ARCH_I386
-#elif defined(__riscv)
+#elif defined(__riscv) &&  __riscv_len == 64
 #define KAFEL_DEFAULT_TARGET_ARCH AUDIT_ARCH_RISCV64
 #else
 #error "Unsupported architecture"
