@@ -105,11 +105,33 @@ static int validate_references_in_expr(
   return -1;
 }
 
-static int validate_references(kafel_ctxt_t ctxt) {
-  const struct syscall_list* syscall_list = syscalls_lookup(ctxt->target_arch);
+static const char* kafel_arch_to_string(uint32_t arch) {
+  switch (arch) {
+    case KAFEL_TARGET_ARCH_X86_64:
+      return "x86-64";
+    case KAFEL_TARGET_ARCH_AARCH64:
+      return "AArch64";
+    case KAFEL_TARGET_ARCH_ARM:
+      return "ARM";
+    case KAFEL_TARGET_ARCH_X86:
+      return "X86";
+    case KAFEL_TARGET_ARCH_MIPS:
+      return "mips";
+    case KAFEL_TARGET_ARCH_MIPS64:
+      return "mips64";
+    case KAFEL_TARGET_ARCH_RISCV64:
+      return "riscv64";
+    default:
+      return "Unknown";
+  }
+}
+
+static int validate_references_for_arch(kafel_ctxt_t ctxt,
+                                        uint32_t target_arch) {
+  const struct syscall_list* syscall_list = syscalls_lookup(target_arch);
   if (syscall_list == NULL) {
-    append_error(ctxt, "Cannot resolve syscall list for architecture %#x\n",
-                 ctxt->target_arch);
+    append_error(ctxt, "Cannot resolve syscall list for architecture %s\n",
+                 kafel_arch_to_string(target_arch));
     return -1;
   }
   struct policy* policy;
@@ -145,6 +167,22 @@ static int validate_references(kafel_ctxt_t ctxt) {
   return 0;
 }
 
+static int validate_references(kafel_ctxt_t ctxt) {
+  uint32_t target_archs = ctxt->target_archs;
+  if (target_archs == 0) {
+    target_archs = KAFEL_DEFAULT_TARGET_ARCH;
+  }
+  while (target_archs) {
+    uint32_t target_arch = target_archs & ~(target_archs-1);
+    target_archs &= ~target_arch;
+    int rv = validate_references_for_arch(ctxt, target_arch);
+    if (rv) {
+      return rv;
+    }
+  }
+  return 0;
+}
+
 KAFEL_API void kafel_set_input_file(kafel_ctxt_t ctxt, FILE* file) {
   ASSERT(ctxt != NULL);
   ASSERT(file != NULL);
@@ -162,9 +200,16 @@ KAFEL_API void kafel_set_input_string(kafel_ctxt_t ctxt, const char* string) {
 }
 
 KAFEL_API void kafel_set_target_arch(kafel_ctxt_t ctxt, uint32_t target_arch) {
-  ASSERT(ctxt != NULL);
+  uint32_t kafel_arch = kafel_arch_lookup_by_audit_arch(target_arch);
+  ASSERT(kafel_arch != 0);
+  kafel_set_target_archs(ctxt, kafel_arch);
+}
 
-  ctxt->target_arch = target_arch;
+KAFEL_API void kafel_set_target_archs(kafel_ctxt_t ctxt,
+                                      uint32_t target_archs) {
+  ASSERT(ctxt != NULL);
+  ASSERT(target_archs <= KAFEL_TARGET_ARCHS_ALL);
+  ctxt->target_archs = target_archs;
 }
 
 KAFEL_API void kafel_add_include_search_path(kafel_ctxt_t ctxt,

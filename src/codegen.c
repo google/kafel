@@ -29,6 +29,7 @@
 #include <sys/queue.h>
 
 #include "common.h"
+#include "kafel.h"
 #include "range_rules.h"
 #include "syscall.h"
 
@@ -683,6 +684,33 @@ static void reverse_instruction_buffer(struct codegen_ctxt *ctxt) {
   }
 }
 
+static int compile_policy_for_archs(struct codegen_ctxt *ctxt,
+                                   struct kafel_ctxt *kafel_ctxt,
+                                   uint32_t target_archs) {
+  ASSERT(ctxt != NULL);
+  ASSERT(kafel_ctxt != NULL);
+
+  struct syscall_range_rules *rules = range_rules_create();
+  while (target_archs) {
+    uint32_t target_arch = target_archs & ~(target_archs-1);
+    target_archs &= ~(target_arch);
+    const struct syscall_list *syscall_list = syscalls_lookup(target_arch);
+    ASSERT(syscall_list != NULL);
+    mark_all_policies_unused(kafel_ctxt);
+    add_policy_rules(rules, kafel_ctxt->main_policy, syscall_list);
+  }
+  normalize_rules(rules, kafel_ctxt->default_action);
+  int begin = CURRENT_LOC;
+  int next = generate_rules(ctxt, rules);
+  range_rules_destroy(&rules);
+  if (next > begin) {
+    begin = next = ADD_INSTR(BPF_LOAD_SYSCALL);
+  } else {
+    next = -kafel_ctxt->default_action;
+  }
+  return next;
+}
+
 static int compile_policy_impl(struct codegen_ctxt *ctxt,
                                struct kafel_ctxt *kafel_ctxt,
                                struct sock_fprog *prog) {
@@ -698,33 +726,58 @@ static int compile_policy_impl(struct codegen_ctxt *ctxt,
     kafel_ctxt->default_action = ACTION_KILL;
   }
 
-  struct syscall_range_rules *rules = range_rules_create();
-  const struct syscall_list *syscall_list =
-      syscalls_lookup(kafel_ctxt->target_arch);
-  ASSERT(syscall_list != NULL);
-  mark_all_policies_unused(kafel_ctxt);
-  add_policy_rules(rules, kafel_ctxt->main_policy, syscall_list);
-  normalize_rules(rules, kafel_ctxt->default_action);
-  int begin = CURRENT_LOC;
-  int next = generate_rules(ctxt, rules);
-  range_rules_destroy(&rules);
-  if (next > begin) {
-    begin = next = ADD_INSTR(BPF_LOAD_SYSCALL);
-  } else {
-    next = -kafel_ctxt->default_action;
+  struct {
+    uint32_t audit_arch;
+    uint32_t target_archs;
+  } archs[32];
+  int archs_len = 0;
+
+  uint32_t target_archs = kafel_ctxt->target_archs;
+  if (target_archs == 0) {
+    target_archs = KAFEL_DEFAULT_TARGET_ARCH;
   }
-  next = add_jump(ctxt, BPF_JEQ, kafel_ctxt->target_arch, next, -ACTION_KILL);
+  while (target_archs) {
+    uint32_t target_arch = target_archs & ~(target_archs-1);
+    target_archs &= ~(target_arch);
+    const struct syscall_list *syscall_list = syscalls_lookup(target_arch);
+    bool found = false;
+    for (int i = 0; i < archs_len; ++i) {
+      if (archs[i].audit_arch == syscall_list->audit_arch) {
+        archs[i].target_archs |= target_arch;
+        found = true;
+        break;
+      }
+    }
+    if (!found) {
+      archs[archs_len].audit_arch = syscall_list->audit_arch;
+      archs[archs_len].target_archs = target_arch;
+      ++archs_len;
+    }
+  }
+
+  int begin = CURRENT_LOC;
+  int next = -ACTION_KILL;
+
+  for (int i = 0; i < archs_len; ++i) {
+    int policy = compile_policy_for_archs(ctxt, kafel_ctxt, archs[i].target_archs);
+    if (policy != -ACTION_KILL) {
+      next = add_jump(ctxt, BPF_JEQ, archs[i].audit_arch, policy, next);
+    }
+  }
+
   if (next > begin) {
     begin = next = ADD_INSTR(BPF_LOAD_ARCH);
   }
   if (next < 0) {
     resolve_location(ctxt, next);
   }
+
   if (ctxt->max_stack_ptr >= BPF_MEMWORDS) {
     append_error(kafel_ctxt,
                  "Required stack size exceeds available BPF memory\n");
     return -1;
   }
+
   if (ctxt->buffer.len > USHRT_MAX) {
     append_error(
         kafel_ctxt,

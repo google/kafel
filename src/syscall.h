@@ -40,11 +40,13 @@ struct syscall_descriptor {
 };
 
 struct syscall_list {
-  uint32_t arch;
+  uint32_t kafel_arch;
+  uint32_t audit_arch;
   const struct syscall_descriptor* const syscalls;
   const size_t* const size;
 };
 
+uint32_t kafel_arch_lookup_by_audit_arch(uint32_t audit_arch);
 const struct syscall_list* syscalls_lookup(uint32_t arch);
 const struct syscall_descriptor* syscall_lookup(const struct syscall_list* list,
                                                 const char* name);

@@ -31,6 +31,17 @@ extern "C" {
 
 typedef struct kafel_ctxt* kafel_ctxt_t;
 
+enum kafel_target_arch {
+  KAFEL_TARGET_ARCH_ARM = 1 << 1,
+  KAFEL_TARGET_ARCH_AARCH64 = 1 << 2,
+  KAFEL_TARGET_ARCH_X86 = 1 << 3,
+  KAFEL_TARGET_ARCH_X86_64 = 1 << 4,
+  KAFEL_TARGET_ARCH_MIPS = 1 << 5,
+  KAFEL_TARGET_ARCH_MIPS64 = 1 << 6,
+  KAFEL_TARGET_ARCH_RISCV64 = 1 << 7,
+  KAFEL_TARGET_ARCHS_ALL = (1 << 8)-1,
+};
+
 /*
  * Creates and initializes a kafel context
  */
@@ -55,8 +66,15 @@ void kafel_set_input_string(kafel_ctxt_t ctxt, const char* string);
 /*
  * Sets compilation target architecture for ctxt to target_arch
  * target_arch must be a supported AUDIT_ARCH_* value (see <linux/audit.h>)
+ * Deprecated: use kafel_set_target_archs instead.
  */
 void kafel_set_target_arch(kafel_ctxt_t ctxt, uint32_t target_arch);
+
+/*
+ * Sets compilation target architectures for ctxt to target_archs.
+ * target_archs is a bitwise-or of desired KAFEL_ARCH_* values.
+ */
+void kafel_set_target_archs(kafel_ctxt_t ctxt, uint32_t target_archs);
 
 /*
  * Adds path to list of include search paths for ctxt

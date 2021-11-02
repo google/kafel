@@ -25,6 +25,7 @@
 #include <string.h>
 
 #include "common.h"
+#include "kafel.h"
 
 // Fix for Linux <3.12
 #ifndef EM_ARM
@@ -35,8 +36,8 @@
   extern const struct syscall_descriptor arch##_syscall_list[]; \
   extern const size_t arch##_syscall_list_size;
 
-#define SYSCALL_LIST(audit_arch, arch) \
-  { audit_arch, arch##_syscall_list, &arch##_syscall_list_size }
+#define SYSCALL_LIST(kafel_arch, audit_arch, arch) \
+  { kafel_arch, audit_arch, arch##_syscall_list, &arch##_syscall_list_size }
 
 SYSCALL_LIST_DECL(arm)
 SYSCALL_LIST_DECL(aarch64)
@@ -48,32 +49,42 @@ SYSCALL_LIST_DECL(riscv64)
 
 const struct syscall_list syscall_lists[] = {
 #ifdef AUDIT_ARCH_ARM
-    SYSCALL_LIST(AUDIT_ARCH_ARM, arm),
+    SYSCALL_LIST(KAFEL_TARGET_ARCH_ARM, AUDIT_ARCH_ARM, arm),
 #endif
 #ifdef AUDIT_ARCH_AARCH64
-    SYSCALL_LIST(AUDIT_ARCH_AARCH64, aarch64),
+    SYSCALL_LIST(KAFEL_TARGET_ARCH_AARCH64, AUDIT_ARCH_AARCH64, aarch64),
 #endif
 #ifdef AUDIT_ARCH_X86_64
-    SYSCALL_LIST(AUDIT_ARCH_X86_64, amd64),
+    SYSCALL_LIST(KAFEL_TARGET_ARCH_X86_64, AUDIT_ARCH_X86_64, amd64),
 #endif
 #ifdef AUDIT_ARCH_MIPS
-    SYSCALL_LIST(AUDIT_ARCH_MIPS, mipso32),
+    SYSCALL_LIST(KAFEL_TARGET_ARCH_MIPS, AUDIT_ARCH_MIPS, mipso32),
 #endif
 #ifdef AUDIT_ARCH_MIPS64
-    SYSCALL_LIST(AUDIT_ARCH_MIPS64, mips64),
+    SYSCALL_LIST(KAFEL_TARGET_ARCH_MIPS64, AUDIT_ARCH_MIPS64, mips64),
 #endif
 #ifdef AUDIT_ARCH_I386
-    SYSCALL_LIST(AUDIT_ARCH_I386, i386),
+    SYSCALL_LIST(KAFEL_TARGET_ARCH_X86, AUDIT_ARCH_I386, i386),
 #endif
 #ifdef AUDIT_ARCH_RISCV64
-    SYSCALL_LIST(AUDIT_ARCH_RISCV64, riscv64),
+    SYSCALL_LIST(KAFEL_TARGET_ARCH_RISCV64, AUDIT_ARCH_RISCV64, riscv64),
 #endif
 };
 
-const struct syscall_list* syscalls_lookup(uint32_t arch) {
+uint32_t kafel_arch_lookup_by_audit_arch(uint32_t audit_arch) {
   for (size_t i = 0; i < sizeof(syscall_lists) / sizeof(syscall_lists[0]);
        ++i) {
-    if (syscall_lists[i].arch == arch) {
+    if (syscall_lists[i].audit_arch == audit_arch) {
+      return syscall_lists[i].kafel_arch;
+    }
+  }
+  return 0;
+}
+
+const struct syscall_list* syscalls_lookup(uint32_t kafel_arch) {
+  for (size_t i = 0; i < sizeof(syscall_lists) / sizeof(syscall_lists[0]);
+       ++i) {
+    if (syscall_lists[i].kafel_arch == kafel_arch) {
       return &syscall_lists[i];
     }
   }

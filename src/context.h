@@ -36,7 +36,7 @@ struct kafel_ctxt {
   struct policieslist policies;
   struct policy* main_policy;
   int default_action;
-  uint32_t target_arch;
+  uint32_t target_archs;
   struct {
     enum {
       INPUT_NONE,

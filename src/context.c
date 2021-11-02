@@ -35,7 +35,6 @@ KAFEL_API kafel_ctxt_t kafel_ctxt_create(void) {
   includes_ctxt_init(&ctxt->includes_ctxt);
   TAILQ_INIT(&ctxt->policies);
   TAILQ_INIT(&ctxt->constants);
-  ctxt->target_arch = KAFEL_DEFAULT_TARGET_ARCH;
   return ctxt;
 }
 
@@ -75,6 +74,7 @@ void kafel_ctxt_clean(kafel_ctxt_t ctxt) {
 
   kafel_ctxt_reset(ctxt);
   includes_ctxt_clean(&ctxt->includes_ctxt);
+  ctxt->target_archs = 0;
 }
 
 KAFEL_API void kafel_ctxt_destroy(kafel_ctxt_t* ctxt) {
