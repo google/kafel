@@ -40,7 +40,7 @@ TEST_CASE(broken_errno_out_of_range) {
       "  %s(65536) { write }\n"
       "} USE broken DEFAULT KILL";
   const char* actions[] = {"ERRNO", "TRAP", "TRACE"};
-  for (size_t i = 0; i < sizeof(actions) / sizeof(actions); ++i) {
+  for (size_t i = 0; i < sizeof(actions) / sizeof(actions[0]); ++i) {
     sprintf(policy, policy_template, actions[i]);
     TEST_COMPILE_ERROR(policy);
   }
