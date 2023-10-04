@@ -23,6 +23,7 @@
 #include <stdarg.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #define TEST_ERROR_MSG_BUF_SIZE 1024
@@ -69,4 +70,5 @@ int main(void) {
     --tests_left;
   }
   fprintf(stderr, "[+%4d|-%4d]      \n", tests_passed, tests_failed);
+  return tests_failed == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
 }
