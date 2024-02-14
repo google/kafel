@@ -236,6 +236,7 @@ static int syscall_caller_helper(void* data) {
     }
     long expected = syscall_spec->result.rv;
     long expected_errno = syscall_spec->result.expected_errno;
+    errno = 0;
     long ret = syscall(nr, arg[0], arg[1], arg[2], arg[3], arg[4], arg[5]);
     if (ret != expected || errno != expected_errno) {
       return syscall_no;
