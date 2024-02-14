@@ -43,7 +43,7 @@
 #error "Unsupported architecture"
 #endif
 
-typedef int (*test_func_t)(void*);
+typedef int (*test_func_t)(void*, char*);
 
 typedef struct {
   uint32_t seccomp_ret;

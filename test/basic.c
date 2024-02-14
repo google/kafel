@@ -26,8 +26,9 @@
 #include "runner/harness.h"
 #include "runner/runner.h"
 
-static int empty(void* ctx) {
+static int empty(void* ctx, char* err) {
   ((void)ctx);
+  ((void)err);
   return 0;
 }
 
