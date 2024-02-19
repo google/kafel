@@ -65,11 +65,19 @@ ${STATIC_TARGET}: ${OBJECTS}
 	$(AR) rcs $@ libkafel.o
 	$(RM) libkafel.o
 
-lexer.h lexer.c: lexer.l
+lexer.c: lexer.l
 	flex $<
 
-parser.h parser.c: parser.y
+lexer.h: lexer.c
+	@if test ! -f lexer.h; then rm -f lexer.c; fi
+	@if test ! -f lexer.h; then $(MAKE) lexer.c; fi
+
+parser.c: parser.y
 	bison $<
+
+parser.h: parser.c
+	@if test ! -f parser.h; then rm -f parser.c; fi
+	@if test ! -f parser.h; then $(MAKE) parser.c; fi
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.
 
