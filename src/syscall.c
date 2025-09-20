@@ -46,6 +46,7 @@ SYSCALL_LIST_DECL(mipso32)
 SYSCALL_LIST_DECL(mips64)
 SYSCALL_LIST_DECL(i386)
 SYSCALL_LIST_DECL(riscv64)
+SYSCALL_LIST_DECL(m68k)
 
 const struct syscall_list syscall_lists[] = {
 #ifdef AUDIT_ARCH_ARM
@@ -68,6 +69,9 @@ const struct syscall_list syscall_lists[] = {
 #endif
 #ifdef AUDIT_ARCH_RISCV64
     SYSCALL_LIST(KAFEL_TARGET_ARCH_RISCV64, AUDIT_ARCH_RISCV64, riscv64),
+#endif
+#ifdef AUDIT_ARCH_M68K
+    SYSCALL_LIST(KAFEL_TARGET_ARCH_M68K, AUDIT_ARCH_M68K, m68k),
 #endif
 };
 

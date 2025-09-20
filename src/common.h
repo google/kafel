@@ -53,6 +53,8 @@
 #define KAFEL_DEFAULT_TARGET_ARCH KAFEL_TARGET_ARCH_X86
 #elif defined(__riscv) && __riscv_xlen == 64
 #define KAFEL_DEFAULT_TARGET_ARCH KAFEL_TARGET_ARCH_RISCV64
+#elif defined(__m68k__)
+#define KAFEL_DEFAULT_TARGET_ARCH KAFEL_TARGET_ARCH_M68K
 #else
 #error "Unsupported architecture"
 #endif
