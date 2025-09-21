@@ -1611,7 +1611,7 @@ const struct syscall_descriptor m68k_syscall_list[] = {
          [ARG_1] = {"filename", 4},
          [ARG_2] = {"user", 4},
          [ARG_3] = {"group", 4},
-         [ARG_4] = {"flag", 4},
+         [ARG_4] = {"flags", 4},
      }},
     {"futimesat",
      292,
@@ -1633,7 +1633,7 @@ const struct syscall_descriptor m68k_syscall_list[] = {
      {
          [ARG_0] = {"dfd", 4},
          [ARG_1] = {"pathname", 4},
-         [ARG_2] = {"flag", 4},
+         [ARG_2] = {"flags", 4},
      }},
     {"renameat",
      295,

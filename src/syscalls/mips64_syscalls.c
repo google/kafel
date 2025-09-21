@@ -311,7 +311,7 @@ const struct syscall_descriptor mips64_syscall_list[] = {
          [ARG_1] = {"filename", 8},
          [ARG_2] = {"user", 4},
          [ARG_3] = {"group", 4},
-         [ARG_4] = {"flag", 4},
+         [ARG_4] = {"flags", 4},
      }},
     {"fcntl",
      5070,
@@ -1786,7 +1786,7 @@ const struct syscall_descriptor mips64_syscall_list[] = {
      {
          [ARG_0] = {"dfd", 4},
          [ARG_1] = {"pathname", 8},
-         [ARG_2] = {"flag", 4},
+         [ARG_2] = {"flags", 4},
      }},
     {"unshare",
      5262,
