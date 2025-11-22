@@ -105,27 +105,6 @@ static int validate_references_in_expr(
   return -1;
 }
 
-static const char* kafel_arch_to_string(uint32_t arch) {
-  switch (arch) {
-    case KAFEL_TARGET_ARCH_X86_64:
-      return "x86-64";
-    case KAFEL_TARGET_ARCH_AARCH64:
-      return "AArch64";
-    case KAFEL_TARGET_ARCH_ARM:
-      return "ARM";
-    case KAFEL_TARGET_ARCH_X86:
-      return "X86";
-    case KAFEL_TARGET_ARCH_MIPS:
-      return "mips";
-    case KAFEL_TARGET_ARCH_MIPS64:
-      return "mips64";
-    case KAFEL_TARGET_ARCH_RISCV64:
-      return "riscv64";
-    default:
-      return "Unknown";
-  }
-}
-
 static int validate_references_for_arch(kafel_ctxt_t ctxt,
                                         uint32_t target_arch) {
   const struct syscall_list* syscall_list = syscalls_lookup(target_arch);
@@ -143,6 +122,9 @@ static int validate_references_for_arch(kafel_ctxt_t ctxt,
       }
       struct syscall_filter* filter;
       TAILQ_FOREACH(filter, &entry->filters, filters) {
+        if ((filter->arch_mask & syscall_list->kafel_arch) == 0) {
+          continue;
+        }
         if (filter->syscall->type == SYSCALL_SPEC_ID) {
           const struct kafel_identifier* identifier =
               filter->syscall->identifier;

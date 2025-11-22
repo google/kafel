@@ -144,6 +144,7 @@ bool whitespace = false;
 "USE"           { return USE; }
 "POLICY"        { return POLICY; }
 "DEFAULT"       { return DEFAULT; }
+"ON"            { return ON; }
 "define"        { return DEFINE; }
 
 {IDENTIFIER} {

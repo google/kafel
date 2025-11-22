@@ -142,6 +142,9 @@ static void add_filters(struct syscall_range_rules *rules,
 
   struct syscall_filter *filter;
   TAILQ_FOREACH(filter, &entry->filters, filters) {
+    if ((filter->arch_mask & syscall_list->kafel_arch) == 0) {
+      continue;
+    }
     uint32_t syscall_nr =
         syscall_spec_get_syscall_nr(filter->syscall, syscall_list);
     struct syscall_range_rule rule = {

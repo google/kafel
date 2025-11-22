@@ -47,6 +47,8 @@ struct syscall_list {
 };
 
 uint32_t kafel_arch_lookup_by_audit_arch(uint32_t audit_arch);
+uint32_t kafel_arch_lookup_by_name(const char* name);
+const char* kafel_arch_to_string(uint32_t arch);
 const struct syscall_list* syscalls_lookup(uint32_t arch);
 const struct syscall_descriptor* syscall_lookup(const struct syscall_list* list,
                                                 const char* name);

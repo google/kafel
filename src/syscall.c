@@ -23,6 +23,7 @@
 #include <linux/audit.h>
 #include <stdlib.h>
 #include <string.h>
+#include <strings.h>
 
 #include "common.h"
 #include "kafel.h"
@@ -74,6 +75,63 @@ const struct syscall_list syscall_lists[] = {
     SYSCALL_LIST(KAFEL_TARGET_ARCH_M68K, AUDIT_ARCH_M68K, m68k),
 #endif
 };
+
+const char* kafel_arch_to_string(uint32_t arch) {
+  switch (arch) {
+    case KAFEL_TARGET_ARCH_X86_64:
+      return "x86_64";
+    case KAFEL_TARGET_ARCH_AARCH64:
+      return "aarch64";
+    case KAFEL_TARGET_ARCH_ARM:
+      return "arm";
+    case KAFEL_TARGET_ARCH_X86:
+      return "x86";
+    case KAFEL_TARGET_ARCH_MIPS:
+      return "mips";
+    case KAFEL_TARGET_ARCH_MIPS64:
+      return "mips64";
+    case KAFEL_TARGET_ARCH_RISCV64:
+      return "riscv64";
+    case KAFEL_TARGET_ARCH_M68K:
+      return "m68k";
+    default:
+      return "unknown";
+  }
+}
+
+struct arch_name_entry {
+  const char* name;
+  uint32_t arch;
+};
+
+static const struct arch_name_entry arch_name_map[] = {
+    {"arm", KAFEL_TARGET_ARCH_ARM},
+    {"aarch64", KAFEL_TARGET_ARCH_AARCH64},
+    {"arm64", KAFEL_TARGET_ARCH_AARCH64},
+    {"x86_64", KAFEL_TARGET_ARCH_X86_64},
+    {"amd64", KAFEL_TARGET_ARCH_X86_64},
+    {"x86", KAFEL_TARGET_ARCH_X86},
+    {"i386", KAFEL_TARGET_ARCH_X86},
+    {"mips", KAFEL_TARGET_ARCH_MIPS},
+    {"mipso32", KAFEL_TARGET_ARCH_MIPS},
+    {"mips64", KAFEL_TARGET_ARCH_MIPS64},
+    {"riscv64", KAFEL_TARGET_ARCH_RISCV64},
+    {"rv64", KAFEL_TARGET_ARCH_RISCV64},
+    {"m68k", KAFEL_TARGET_ARCH_M68K},
+};
+
+uint32_t kafel_arch_lookup_by_name(const char* name) {
+  if (name == NULL) {
+    return 0;
+  }
+  for (size_t i = 0; i < sizeof(arch_name_map) / sizeof(arch_name_map[0]);
+       ++i) {
+    if (strcasecmp(name, arch_name_map[i].name) == 0) {
+      return arch_name_map[i].arch;
+    }
+  }
+  return 0;
+}
 
 uint32_t kafel_arch_lookup_by_audit_arch(uint32_t audit_arch) {
   for (size_t i = 0; i < sizeof(syscall_lists) / sizeof(syscall_lists[0]);

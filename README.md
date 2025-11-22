@@ -148,6 +148,25 @@ POLICY my_literal {
 }
 ```
 
+#### Architecture-specific filters
+
+You can restrict a syscall rule to a subset of architectures using the `ON`
+guard. The guard accepts either a single architecture name or a comma separated
+list wrapped in braces. The names correspond to the targets recognised by
+`kafel_set_target_archs` (for example `x86_64`, `x86`, `arm`, `aarch64`,
+`mips64`, `riscv64`, `m68k`).
+
+```
+ALLOW {
+  io_uring_setup ON x86_64,
+  arm_fadvise64_64 ON arm
+}
+```
+
+When compiling for an architecture outside of the guard, the syscall rule is
+ignored, so cross-architecture policies no longer need to duplicate whole
+policies just to account for syscall availability differences.
+
 #### Argument filtering
 
 Boolean expressions are used to filter syscalls based on their arguments.

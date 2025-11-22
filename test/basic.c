@@ -20,8 +20,12 @@
 
 #include <errno.h>
 #include <fcntl.h>
+#include <linux/audit.h>
 #include <linux/unistd.h>
+#include <stdlib.h>
 #include <unistd.h>
+
+#include <kafel.h>
 
 #include "runner/harness.h"
 #include "runner/runner.h"
@@ -97,6 +101,47 @@ TEST_CASE(custom_args) {
   TEST_POLICY_ALLOWS_SYSCALL(SYSCALL_SPEC3(-1, 1, 2, 3), SYSCALL_ERRNO_SPEC(1));
   TEST_POLICY_ALLOWS_SYSCALL(SYSCALL_SPEC3(-1, 2, 3, 4), SYSCALL_ERRNO_SPEC(2));
 }
+
+TEST_CASE(arch_guard_basic) {
+  TEST_POLICY(
+      "DEFAULT KILL\n"
+      "ALLOW { exit, read ON x86_64 }\n");
+}
+
+TEST_CASE(arch_guard_unknown_arch) {
+  TEST_COMPILE_ERROR(
+      "DEFAULT KILL\n"
+      "ALLOW { exit, read ON madeup }\n");
+}
+
+TEST_CASE(arch_guard_duplicate_arch) {
+  TEST_COMPILE_ERROR(
+      "DEFAULT KILL\n"
+      "ALLOW { exit, read ON { x86_64, x86_64 } }\n");
+}
+
+#if defined(AUDIT_ARCH_ARM) && defined(AUDIT_ARCH_X86_64)
+TEST_CASE(arch_guard_multi_arch_compile) {
+  const char* policy =
+      "DEFAULT KILL\n"
+      "ALLOW { exit, arm_fadvise64_64 ON arm, io_uring_setup ON x86_64 }\n";
+  kafel_ctxt_t ctxt = kafel_ctxt_create();
+  kafel_set_input_string(ctxt, policy);
+  kafel_set_target_archs(ctxt,
+                         KAFEL_TARGET_ARCH_ARM | KAFEL_TARGET_ARCH_X86_64);
+  struct sock_fprog prog;
+  int rv = kafel_compile(ctxt, &prog);
+  if (rv != 0) {
+    test_fail_with_message("Arch-guarded policy failed: %s",
+                           kafel_error_msg(ctxt));
+    test_failed(__LINE__, __FILE__);
+    kafel_ctxt_destroy(&ctxt);
+    return;
+  }
+  free(prog.filter);
+  kafel_ctxt_destroy(&ctxt);
+}
+#endif
 
 TEST_CASE(rules_order) {
   TEST_POLICY(

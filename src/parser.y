@@ -122,6 +122,7 @@ typedef void* yyscan_t;
     char *id;
     uint32_t action;
     uint64_t number;
+    uint32_t archs;
     struct custom_syscall_args *syscall_args;
     struct expr_tree *expr;
     struct syscall_filter *filter;
@@ -135,7 +136,7 @@ typedef void* yyscan_t;
 %token BIT_AND BIT_OR LOGIC_OR LOGIC_AND
 %token IDENTIFIER NUMBER
 
-%token POLICY USE DEFAULT SYSCALL DEFINE
+%token POLICY USE DEFAULT SYSCALL DEFINE ON
 %token ALLOW LOG KILL KILL_PROCESS DENY ERRNO TRAP TRACE USER_NOTIF
 
 %token GT LT GE LE EQ NEQ
@@ -152,6 +153,7 @@ typedef void* yyscan_t;
 %type <syscall_args> syscall_args
 %type <syscall_spec> syscall
 %type <syscall_spec> syscall_id
+%type <archs> arch_guard_opt arch_list
 
 %type <expr> bool_expr or_bool_expr and_bool_expr primary_bool_expr bit_or_expr bit_and_expr
 %type <expr> operand
@@ -299,9 +301,60 @@ syscall_filters
     ;
 
 syscall_filter
-    : syscall { $$ = syscall_filter_create($1, NULL); }
-    | syscall '{' '}' { $$ = syscall_filter_create($1, NULL); }
-    | syscall '{' bool_expr '}' { $$ = syscall_filter_create($1, $3); }
+    : syscall arch_guard_opt
+        { $$ = syscall_filter_create($1, NULL, $2); }
+    | syscall arch_guard_opt '{' '}'
+        { $$ = syscall_filter_create($1, NULL, $2); }
+    | syscall arch_guard_opt '{' bool_expr '}'
+        { $$ = syscall_filter_create($1, $4, $2); }
+    ;
+
+arch_guard_opt
+    : /* empty */
+        { $$ = 0; }
+    | ON IDENTIFIER
+        {
+          uint32_t arch = kafel_arch_lookup_by_name($2);
+          if (arch == 0) {
+            emit_error(@2, "Unknown architecture `%s'", $2);
+            free($2); $2 = NULL;
+            YYERROR;
+          }
+          $$ = arch;
+          free($2);
+        }
+    | ON '{' arch_list '}'
+        { $$ = $3; }
+    ;
+
+arch_list
+    : IDENTIFIER
+        {
+          uint32_t arch = kafel_arch_lookup_by_name($1);
+          if (arch == 0) {
+            emit_error(@1, "Unknown architecture `%s'", $1);
+            free($1); $1 = NULL;
+            YYERROR;
+          }
+          $$ = arch;
+          free($1);
+        }
+    | arch_list ',' IDENTIFIER
+        {
+          uint32_t arch = kafel_arch_lookup_by_name($3);
+          if (arch == 0) {
+            emit_error(@3, "Unknown architecture `%s'", $3);
+            free($3); $3 = NULL;
+            YYERROR;
+          }
+          if ($1 & arch) {
+            emit_error(@3, "Duplicate architecture `%s'", $3);
+            free($3); $3 = NULL;
+            YYERROR;
+          }
+          $$ = $1 | arch;
+          free($3);
+        }
     ;
 
 syscall_id

@@ -20,6 +20,7 @@
 
 #include "policy.h"
 
+#include <kafel.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -201,10 +202,12 @@ void syscall_spec_destroy(struct syscall_spec** spec) {
 }
 
 struct syscall_filter* syscall_filter_create(struct syscall_spec* syscall,
-                                             struct expr_tree* expr) {
+                                             struct expr_tree* expr,
+                                             uint32_t arch_mask) {
   struct syscall_filter* rv = calloc(1, sizeof(*rv));
   rv->syscall = syscall;
   rv->expr = expr;
+  rv->arch_mask = arch_mask ? arch_mask : KAFEL_TARGET_ARCHS_ALL;
   return rv;
 }
 
