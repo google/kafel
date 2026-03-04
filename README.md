@@ -204,7 +204,7 @@ Kafel looks for included files only under directories explicitly added to the
 search paths.
 
 ```c
-kafel_include_add_search_path(ctxt, "includes/path");
+kafel_add_include_search_path(ctxt, "includes/path");
 ```
 
 Adds `includes/path` to search paths - the example include directive will refer
