@@ -112,6 +112,7 @@ struct codegen_ctxt {
     size_t cache_size;
   } locations;
   size_t max_stack_ptr;
+  bool is_big_endian;
 };
 
 static struct codegen_ctxt *context_create(void) {
@@ -275,10 +276,16 @@ static int add_jump_set(struct codegen_ctxt *ctxt, __u32 what, int tloc,
 #define HIGH_WORD 0
 #define LOW_WORD 1
 
-// TODO handle big-endian
-#define ARG_LOW(arg) offsetof(struct seccomp_data, args[(arg)])
+/*
+ * On little-endian, the low 32 bits of a 64-bit arg are at the base offset
+ * and the high 32 bits are at base + 4.  On big-endian the order is reversed.
+ */
+#define ARG_LOW(arg) \
+  (offsetof(struct seccomp_data, args[(arg)]) + \
+   (ctxt->is_big_endian ? sizeof(uint32_t) : 0))
 #define ARG_HIGH(arg) \
-  offsetof(struct seccomp_data, args[(arg)]) + sizeof(uint32_t)
+  (offsetof(struct seccomp_data, args[(arg)]) + \
+   (ctxt->is_big_endian ? 0 : sizeof(uint32_t)))
 #define NUM_LOW(num) ((num)&UINT32_MAX)
 #define NUM_HIGH(num) (((num) >> 32) & UINT32_MAX)
 
@@ -759,6 +766,11 @@ static int compile_policy_impl(struct codegen_ctxt *ctxt,
   int next = -ACTION_KILL;
 
   for (int i = 0; i < archs_len; ++i) {
+    /* __AUDIT_ARCH_LE (0x40000000) is set for little-endian architectures.
+     * When absent, the target is big-endian and 64-bit argument word order
+     * in seccomp_data must be swapped.
+     */
+    ctxt->is_big_endian = (archs[i].audit_arch & 0x40000000) == 0;
     int policy = compile_policy_for_archs(ctxt, kafel_ctxt, archs[i].target_archs);
     if (policy != -ACTION_KILL) {
       next = add_jump(ctxt, BPF_JEQ, archs[i].audit_arch, policy, next);
