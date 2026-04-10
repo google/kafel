@@ -110,17 +110,47 @@ struct included_file* includes_resolve(struct includes_ctxt* ctxt,
   struct path_list* search_path;
   TAILQ_FOREACH(search_path, &ctxt->search_paths, list) {
     char* path = path_join(search_path->path, filename);
-    FILE* fp = fopen(path, "r");
+
+    /* Canonicalize to resolve any ../ sequences before opening. */
+    char* canonical = realpath(path, NULL);
+    free(path);
+    if (canonical == NULL) {
+      /* File does not exist in this search path or realpath failed. */
+      continue;
+    }
+
+    /* Canonicalize the search path for a safe prefix comparison. */
+    char* canonical_search = realpath(search_path->path, NULL);
+    if (canonical_search == NULL) {
+      free(canonical);
+      continue;
+    }
+
+    /* Verify the resolved path stays within the search directory.
+     * The next character after the prefix must be '/' or '\0' to
+     * prevent /foo/bar from matching /foo/barbaz. */
+    size_t search_len = strlen(canonical_search);
+    bool within = (strncmp(canonical, canonical_search, search_len) == 0 &&
+                   (canonical[search_len] == '/' ||
+                    canonical[search_len] == '\0'));
+    free(canonical_search);
+
+    if (!within) {
+      free(canonical);
+      continue;
+    }
+
+    FILE* fp = fopen(canonical, "r");
     if (fp != NULL) {
       struct path_list* used_path = calloc(1, sizeof(*used_path));
-      used_path->path = path;
+      used_path->path = canonical;  /* ownership transferred to used_paths list */
       TAILQ_INSERT_TAIL(&ctxt->used_paths, used_path, list);
       struct included_file* file = calloc(1, sizeof(*file));
       file->fp = fp;
       file->path = used_path->path;
       return file;
     }
-    free(path);
+    free(canonical);
   }
   return NULL;
 }
