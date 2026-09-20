@@ -2826,7 +2826,7 @@ const struct syscall_descriptor m68k_syscall_list[] = {
      {
          [ARG_0] = {"start", 4},
          [ARG_1] = {"size", 4},
-         [ARG_2] = {"size", 4},
+         [ARG_2] = {"flags", 4},
      }},
     {"setxattrat",
      463,
