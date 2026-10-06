@@ -48,6 +48,7 @@ SYSCALL_LIST_DECL(mips64)
 SYSCALL_LIST_DECL(i386)
 SYSCALL_LIST_DECL(riscv64)
 SYSCALL_LIST_DECL(m68k)
+SYSCALL_LIST_DECL(s390x)
 
 const struct syscall_list syscall_lists[] = {
 #ifdef AUDIT_ARCH_ARM
@@ -74,6 +75,9 @@ const struct syscall_list syscall_lists[] = {
 #ifdef AUDIT_ARCH_M68K
     SYSCALL_LIST(KAFEL_TARGET_ARCH_M68K, AUDIT_ARCH_M68K, m68k),
 #endif
+#ifdef AUDIT_ARCH_S390X
+    SYSCALL_LIST(KAFEL_TARGET_ARCH_S390X, AUDIT_ARCH_S390X, s390x),
+#endif
 };
 
 const char* kafel_arch_to_string(uint32_t arch) {
@@ -94,6 +98,8 @@ const char* kafel_arch_to_string(uint32_t arch) {
       return "riscv64";
     case KAFEL_TARGET_ARCH_M68K:
       return "m68k";
+    case KAFEL_TARGET_ARCH_S390X:
+      return "s390x";
     default:
       return "unknown";
   }
@@ -118,6 +124,8 @@ static const struct arch_name_entry arch_name_map[] = {
     {"riscv64", KAFEL_TARGET_ARCH_RISCV64},
     {"rv64", KAFEL_TARGET_ARCH_RISCV64},
     {"m68k", KAFEL_TARGET_ARCH_M68K},
+    {"s390x", KAFEL_TARGET_ARCH_S390X},
+    {"s390", KAFEL_TARGET_ARCH_S390X},
 };
 
 uint32_t kafel_arch_lookup_by_name(const char* name) {
