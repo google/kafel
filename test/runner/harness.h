@@ -41,6 +41,8 @@
 #define KAFEL_DEFAULT_SYSCALL_ARCH AUDIT_ARCH_I386
 #elif defined(__m68k__)
 #define KAFEL_DEFAULT_SYSCALL_ARCH AUDIT_ARCH_M68K
+#elif defined(__s390x__)
+#define KAFEL_DEFAULT_SYSCALL_ARCH AUDIT_ARCH_S390X
 #else
 #error "Unsupported architecture"
 #endif
