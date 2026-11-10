@@ -235,7 +235,7 @@ static int add_jump(struct codegen_ctxt *ctxt, __u16 type, __u32 k, int tloc,
   int tpos = resolve_location(ctxt, tloc);
   int fpos = resolve_location(ctxt, floc);
   // do tloc one more time as instruction added by floc may make it unreachable
-  tpos = resolve_location(ctxt, tloc);
+  tpos = resolve_location(ctxt, tpos);
   return ADD_INSTR(
       BPF_JUMP(BPF_JMP | type, k, LOC_TO_JUMP(tpos), LOC_TO_JUMP(fpos)));
 }
