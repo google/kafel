@@ -54,6 +54,9 @@
 #define SECCOMP_RET_USER_NOTIF 0x7fc00000U
 #endif
 
+/* __X32_SYSCALL_BIT from arch/x86/include/uapi/asm/unistd.h */
+#define X32_SYSCALL_BIT 0x40000000U
+
 #define CURRENT_LOC (ctxt->buffer.len - 1)
 #define LOC_TO_JUMP(loc) (CURRENT_LOC - (loc))
 
@@ -693,6 +696,7 @@ static void reverse_instruction_buffer(struct codegen_ctxt *ctxt) {
 
 static int compile_policy_for_archs(struct codegen_ctxt *ctxt,
                                    struct kafel_ctxt *kafel_ctxt,
+                                   uint32_t audit_arch,
                                    uint32_t target_archs) {
   ASSERT(ctxt != NULL);
   ASSERT(kafel_ctxt != NULL);
@@ -711,6 +715,17 @@ static int compile_policy_for_archs(struct codegen_ctxt *ctxt,
   int next = generate_rules(ctxt, rules);
   range_rules_destroy(&rules);
   if (next > begin) {
+    if (audit_arch == AUDIT_ARCH_X86_64) {
+      /*
+        x32 syscalls also report AUDIT_ARCH_X86_64 and are only told apart by
+        X32_SYSCALL_BIT in nr, so they would otherwise slip past the x86_64
+        rules (e.g. a DENY list with DEFAULT ALLOW). Treat them like any other
+        untargeted architecture, but let nr == -1 through: tracers use it to
+        skip a syscall and filters are re-run after tracing (see seccomp(2)).
+      */
+      int x32 = add_jump(ctxt, BPF_JEQ, UINT32_MAX, next, -ACTION_KILL);
+      next = add_jump_ge(ctxt, X32_SYSCALL_BIT, x32, next);
+    }
     begin = next = ADD_INSTR(BPF_LOAD_SYSCALL);
   } else {
     next = -kafel_ctxt->default_action;
@@ -771,7 +786,8 @@ static int compile_policy_impl(struct codegen_ctxt *ctxt,
      * in seccomp_data must be swapped.
      */
     ctxt->is_big_endian = (archs[i].audit_arch & 0x40000000) == 0;
-    int policy = compile_policy_for_archs(ctxt, kafel_ctxt, archs[i].target_archs);
+    int policy = compile_policy_for_archs(ctxt, kafel_ctxt, archs[i].audit_arch,
+                                          archs[i].target_archs);
     if (policy != -ACTION_KILL) {
       next = add_jump(ctxt, BPF_JEQ, archs[i].audit_arch, policy, next);
     }

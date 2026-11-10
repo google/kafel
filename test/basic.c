@@ -259,3 +259,20 @@ TEST_CASE(logic_negation) {
                              SYSCALL_ERRNO_SPEC(1));
   TEST_POLICY_BLOCKS_SYSCALL(SYSCALL_SPEC3(__NR_read, 5, 0, 0));
 }
+
+#if defined(__x86_64__)
+#define X32_SYSCALL_BIT 0x40000000
+
+TEST_CASE(x32_abi_rejected) {
+  TEST_POLICY(
+      "POLICY a {\n"
+      "  ERRNO(1) { getpid }\n"
+      "} USE a DEFAULT ALLOW");
+  TEST_POLICY_ALLOWS_SYSCALL(SYSCALL_SPEC0(__NR_getpid),
+                             SYSCALL_ERRNO_SPEC(1));
+  TEST_POLICY_BLOCKS_SYSCALL(SYSCALL_SPEC0(X32_SYSCALL_BIT | __NR_getpid));
+  TEST_POLICY_BLOCKS_SYSCALL(SYSCALL_SPEC0(X32_SYSCALL_BIT | __NR_read));
+  TEST_POLICY_ALLOWS_SYSCALL(SYSCALL_SPEC0(-1),
+                             SYSCALL_EXECUTED_SPEC(-1, ENOSYS));
+}
+#endif
