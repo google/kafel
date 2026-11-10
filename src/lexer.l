@@ -185,7 +185,7 @@ bool whitespace = false;
 <comment>{
 [^\n*]+   {}
 
-"*"[^/]   {}
+"*"   {}
 
 [\n]+     { yycolumn = 1; }
 
