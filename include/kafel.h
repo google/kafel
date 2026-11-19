@@ -40,7 +40,8 @@ enum kafel_target_arch {
   KAFEL_TARGET_ARCH_MIPS64 = 1 << 6,
   KAFEL_TARGET_ARCH_RISCV64 = 1 << 7,
   KAFEL_TARGET_ARCH_M68K = 1 << 8,
-  KAFEL_TARGET_ARCHS_ALL = (1 << 9)-1,
+  KAFEL_TARGET_ARCH_S390X = 1 << 9,
+  KAFEL_TARGET_ARCHS_ALL = (1 << 10)-1,
 };
 
 /*

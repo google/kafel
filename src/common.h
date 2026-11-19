@@ -55,6 +55,8 @@
 #define KAFEL_DEFAULT_TARGET_ARCH KAFEL_TARGET_ARCH_RISCV64
 #elif defined(__m68k__)
 #define KAFEL_DEFAULT_TARGET_ARCH KAFEL_TARGET_ARCH_M68K
+#elif defined(__s390x__)
+#define KAFEL_DEFAULT_TARGET_ARCH KAFEL_TARGET_ARCH_S390X
 #else
 #error "Unsupported architecture"
 #endif
