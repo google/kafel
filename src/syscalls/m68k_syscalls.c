@@ -2585,7 +2585,7 @@ const struct syscall_descriptor m68k_syscall_list[] = {
     {"fsopen",
      430,
      {
-         [ARG_0] = {"_fs_name", 4},
+         [ARG_0] = {"fs_name", 4},
          [ARG_1] = {"flags", 4},
      }},
     {"fsconfig",
@@ -2593,8 +2593,8 @@ const struct syscall_descriptor m68k_syscall_list[] = {
      {
          [ARG_0] = {"fd", 4},
          [ARG_1] = {"cmd", 4},
-         [ARG_2] = {"_key", 4},
-         [ARG_3] = {"_value", 4},
+         [ARG_2] = {"key", 4},
+         [ARG_3] = {"value", 4},
          [ARG_4] = {"aux", 4},
      }},
     {"fsmount",
@@ -2831,7 +2831,7 @@ const struct syscall_descriptor m68k_syscall_list[] = {
     {"setxattrat",
      463,
      {
-         [ARG_0] = {"dirfd", 4},
+         [ARG_0] = {"dfd", 4},
          [ARG_1] = {"pathname", 4},
          [ARG_2] = {"name", 4},
          [ARG_3] = {"value", 4},
@@ -2841,7 +2841,7 @@ const struct syscall_descriptor m68k_syscall_list[] = {
     {"getxattrat",
      464,
      {
-         [ARG_0] = {"dirfd", 4},
+         [ARG_0] = {"dfd", 4},
          [ARG_1] = {"pathname", 4},
          [ARG_2] = {"name", 4},
          [ARG_3] = {"value", 4},
@@ -2850,7 +2850,7 @@ const struct syscall_descriptor m68k_syscall_list[] = {
     {"listxattrat",
      465,
      {
-         [ARG_0] = {"dirfd", 4},
+         [ARG_0] = {"dfd", 4},
          [ARG_1] = {"pathname", 4},
          [ARG_2] = {"list", 4},
          [ARG_3] = {"size", 4},
@@ -2858,14 +2858,14 @@ const struct syscall_descriptor m68k_syscall_list[] = {
     {"removexattrat",
      466,
      {
-         [ARG_0] = {"dirfd", 4},
+         [ARG_0] = {"dfd", 4},
          [ARG_1] = {"pathname", 4},
          [ARG_2] = {"name", 4},
      }},
     {"open_tree_attr",
      467,
      {
-         [ARG_0] = {"dirfd", 4},
+         [ARG_0] = {"dfd", 4},
          [ARG_1] = {"pathname", 4},
          [ARG_2] = {"flags", 4},
          [ARG_3] = {"attr", 4},
@@ -2874,7 +2874,7 @@ const struct syscall_descriptor m68k_syscall_list[] = {
     {"file_getattr",
      468,
      {
-         [ARG_0] = {"dirfd", 4},
+         [ARG_0] = {"dfd", 4},
          [ARG_1] = {"pathname", 4},
          [ARG_2] = {"fileattr", 4},
          [ARG_3] = {"flags", 4},
@@ -2882,7 +2882,7 @@ const struct syscall_descriptor m68k_syscall_list[] = {
     {"file_setattr",
      469,
      {
-         [ARG_0] = {"dirfd", 4},
+         [ARG_0] = {"dfd", 4},
          [ARG_1] = {"pathname", 4},
          [ARG_2] = {"fileattr", 4},
          [ARG_3] = {"flags", 4},

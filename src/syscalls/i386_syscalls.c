@@ -1976,7 +1976,7 @@ const struct syscall_descriptor i386_syscall_list[] = {
          [ARG_1] = {"filename", 4},
          [ARG_2] = {"flags", 4},
          [ARG_3] = {"mask", 4},
-         [ARG_4] = {"buffer", 4},
+         [ARG_4] = {"statxbuf", 4},
      }},
     {"stime",
      25,
