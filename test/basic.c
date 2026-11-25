@@ -233,6 +233,48 @@ TEST_CASE(32bit_args) {
   TEST_POLICY_BLOCKS_SYSCALL(
       SYSCALL_SPEC3(__NR_fcntl, 0x100001235, F_GETFD, 0));
 }
+// A negative constant is read as a 64-bit number (`-1' is 0xffffffffffffffff).
+// The kernel only looks at the low half of the register for a 32-bit argument
+// and callers may zero-extend it, so the rule has to match either way.
+TEST_CASE(32bit_args_negative_const) {
+  TEST_POLICY(
+      "ERRNO(1) { fcntl { fd == -1 } }\n"
+      "ALLOW { fcntl, exit } DEFAULT KILL");
+  TEST_POLICY_ALLOWS_SYSCALL(
+      SYSCALL_SPEC3(__NR_fcntl, 0xffffffffffffffff, F_GETFD, 0),
+      SYSCALL_ERRNO_SPEC(1));
+  TEST_POLICY_ALLOWS_SYSCALL(
+      SYSCALL_SPEC3(__NR_fcntl, 0x00000000ffffffff, F_GETFD, 0),
+      SYSCALL_ERRNO_SPEC(1));
+  TEST_POLICY_ALLOWS_SYSCALL(
+      SYSCALL_SPEC3(__NR_fcntl, 0x12345678ffffffff, F_GETFD, 0),
+      SYSCALL_ERRNO_SPEC(1));
+  TEST_POLICY_ALLOWS_SYSCALL(
+      SYSCALL_SPEC3(__NR_fcntl, 0x00000000fffffffe, F_GETFD, 0),
+      SYSCALL_EXECUTED_SPEC(-1, EBADF));
+  TEST_POLICY(
+      "ERRNO(1) { fcntl { fd != -100 } }\n"
+      "ALLOW { fcntl, exit } DEFAULT KILL");
+  TEST_POLICY_ALLOWS_SYSCALL(
+      SYSCALL_SPEC3(__NR_fcntl, 0x00000000ffffff9c, F_GETFD, 0),
+      SYSCALL_EXECUTED_SPEC(-1, EBADF));
+  TEST_POLICY_ALLOWS_SYSCALL(
+      SYSCALL_SPEC3(__NR_fcntl, 0xffffffffffffff9c, F_GETFD, 0),
+      SYSCALL_EXECUTED_SPEC(-1, EBADF));
+  TEST_POLICY_ALLOWS_SYSCALL(SYSCALL_SPEC3(__NR_fcntl, 0x1234, F_GETFD, 0),
+                             SYSCALL_ERRNO_SPEC(1));
+  // A constant that is neither a 32-bit value nor a negative 32-bit value
+  // still makes the comparison look at the whole argument.
+  TEST_POLICY(
+      "ERRNO(1) { fcntl { fd == 0xffffffff7fffffff } }\n"
+      "ALLOW { fcntl, exit } DEFAULT KILL");
+  TEST_POLICY_ALLOWS_SYSCALL(
+      SYSCALL_SPEC3(__NR_fcntl, 0xffffffff7fffffff, F_GETFD, 0),
+      SYSCALL_ERRNO_SPEC(1));
+  TEST_POLICY_ALLOWS_SYSCALL(
+      SYSCALL_SPEC3(__NR_fcntl, 0x000000007fffffff, F_GETFD, 0),
+      SYSCALL_EXECUTED_SPEC(-1, EBADF));
+}
 #endif
 
 // A rule that can never match must not leave instructions behind. They used to

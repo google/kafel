@@ -478,6 +478,19 @@ static int generate_load(struct codegen_ctxt *ctxt, struct expr_tree *expr,
   }
 }
 
+// A constant fits a 32-bit argument if it is a 32-bit unsigned value or a
+// negative 32-bit value. The lexer reads `-1' as 0xffffffffffffffff, i.e.
+// sign-extended to 64 bits.
+static bool fits_32bit(uint64_t number) {
+  return number <= UINT32_MAX || number >= (uint64_t)INT32_MIN;
+}
+
+// A comparison is carried out on 64 bits if it involves a 64-bit argument or
+// a constant that cannot be represented in 32 bits. Otherwise only the low
+// words are compared. A negative constant compared against a 32-bit argument
+// must not make the comparison 64-bit: the kernel only reads the low half of
+// the register for such an argument and callers are free to zero-extend it
+// (`mov $-1, %edi'), so a full-register compare would never match them.
 static bool is_64bit(struct expr_tree *expr) {
   if (expr->type >= EXPR_BINARY_MIN && expr->type <= EXPR_BINARY_MAX) {
     return is_64bit(expr->left) || is_64bit(expr->right);
@@ -485,7 +498,7 @@ static bool is_64bit(struct expr_tree *expr) {
 
   switch (expr->type) {
     case EXPR_NUMBER:
-      return expr->number > UINT32_MAX;
+      return !fits_32bit(expr->number);
     case EXPR_VAR:
       return expr->size == 8;
     default:
