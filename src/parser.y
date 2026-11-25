@@ -91,6 +91,12 @@ do {                                                    \
       YYRHSLOC(Rhs, 0).last_column;                     \
   }                                                     \
 } while (0)
+// Syscall numbers are 32-bit. Negative ones are accepted the way the lexer
+// delivers them, sign-extended to 64 bits (`SYSCALL[-1]').
+static bool is_valid_syscall_nr(uint64_t nr) {
+  return nr <= UINT32_MAX || nr >= (uint64_t)INT32_MIN;
+}
+
 %}
 
 %code requires {
@@ -362,6 +368,12 @@ syscall_id
         {
             uint64_t value = 0;
             if (lookup_const(ctxt, $1, &value) == 0) {
+                if (!is_valid_syscall_nr(value)) {
+                    emit_error(@1, "Syscall number %"PRIu64" (`%s') out of range",
+                               value, $1);
+                    free($1); $1 = NULL;
+                    YYERROR;
+                }
                 $$ = syscall_spec_create_custom(value);
             } else {
                 $$ = syscall_spec_create_identifier(kafel_identifier_create($1, &@1));
@@ -370,6 +382,10 @@ syscall_id
         }
     | SYSCALL '[' NUMBER ']'
         {
+            if (!is_valid_syscall_nr($3)) {
+                emit_error(@3, "Syscall number %"PRIu64" out of range", $3);
+                YYERROR;
+            }
             $$ = syscall_spec_create_custom($3);
         }
     ;
