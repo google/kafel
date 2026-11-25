@@ -28,6 +28,7 @@
 #include <kafel.h>
 
 #include "runner/harness.h"
+#include "runner/interpreter.h"
 #include "runner/runner.h"
 
 static int empty(void* ctx, char* err) {
@@ -233,6 +234,80 @@ TEST_CASE(32bit_args) {
       SYSCALL_SPEC3(__NR_fcntl, 0x100001235, F_GETFD, 0));
 }
 #endif
+
+// A rule that can never match must not leave instructions behind. They used to
+// end up at the very beginning of the filter, in front of the architecture and
+// syscall number checks.
+TEST_CASE(never_matching_rules) {
+  // High words differ, known only after the low word compare was emitted.
+  TEST_POLICY(
+      "ALLOW { SYSCALL[-1](a) { (a & 1) == 0x100000001 } } DEFAULT KILL");
+  TEST_POLICY_BLOCKS_SYSCALL(SYSCALL_SPEC3(__NR_fcntl, 1, F_GETFD, 0));
+  TEST_POLICY_BLOCKS_SYSCALL(SYSCALL_SPEC1(-1, 1));
+  // Left side of && is false, known only after the right side was emitted.
+  TEST_POLICY(
+      "ALLOW { SYSCALL[-1](a, b) { (a & 0) > 0 && b == 1 } } DEFAULT KILL");
+  TEST_POLICY_BLOCKS_SYSCALL(SYSCALL_SPEC3(__NR_fcntl, 0, 1, 0));
+  TEST_POLICY_BLOCKS_SYSCALL(SYSCALL_SPEC2(-1, 0, 1));
+  // First rule always matches, known only after the second one was emitted.
+  TEST_POLICY(
+      "KILL { SYSCALL[-1](a) { (a & 1) != 0x100000001 } }\n"
+      "ALLOW { SYSCALL[-1](a) { a == 1 } } DEFAULT KILL");
+  TEST_POLICY_BLOCKS_SYSCALL(SYSCALL_SPEC3(__NR_fcntl, 1, F_GETFD, 0));
+  TEST_POLICY_BLOCKS_SYSCALL(SYSCALL_SPEC1(-1, 1));
+  // The rest of such a policy keeps working.
+  TEST_POLICY(
+      "ERRNO(1) { SYSCALL[-1](a) { (a & 1) == 0x100000001 } }\n"
+      "ERRNO(2) { SYSCALL[-1](a) { a == 1 } }\n"
+      "ALLOW { exit } DEFAULT KILL");
+  TEST_POLICY_ALLOWS_SYSCALL(SYSCALL_SPEC1(-1, 1), SYSCALL_ERRNO_SPEC(2));
+  TEST_POLICY_BLOCKS_SYSCALL(SYSCALL_SPEC1(-1, 3));
+}
+
+// Same as above for one of several architectures: the leftover used to sit
+// right after the architecture load, in place of the dispatch.
+TEST_CASE(never_matching_rules_multi_arch) {
+  const char* policy =
+      "ALLOW {\n"
+      "  getpid ON x86,\n"
+      "  write ON x86_64 { (fd & 0xff) == 0x100000001 }\n"
+      "} DEFAULT KILL";
+  kafel_ctxt_t ctxt = kafel_ctxt_create();
+  kafel_set_input_string(ctxt, policy);
+  kafel_set_target_archs(ctxt,
+                         KAFEL_TARGET_ARCH_X86 | KAFEL_TARGET_ARCH_X86_64);
+  struct sock_fprog prog;
+  if (kafel_compile(ctxt, &prog) != 0) {
+    test_fail_with_message("Compilation failure: %s", kafel_error_msg(ctxt));
+    test_failed(__LINE__, __FILE__);
+    kafel_ctxt_destroy(&ctxt);
+    return;
+  }
+  kafel_ctxt_destroy(&ctxt);
+  const struct {
+    struct seccomp_data data;
+    uint32_t expected;
+  } cases[] = {
+      // execve(1, ...) on x86_64
+      {{59, AUDIT_ARCH_X86_64, 0, {1}}, SECCOMP_RET_KILL},
+      // write(1, ...) on x86_64
+      {{1, AUDIT_ARCH_X86_64, 0, {1}}, SECCOMP_RET_KILL},
+      // getpid() on x86
+      {{20, AUDIT_ARCH_I386, 0, {0}}, SECCOMP_RET_ALLOW},
+      // exit(1) on x86
+      {{1, AUDIT_ARCH_I386, 0, {1}}, SECCOMP_RET_KILL},
+  };
+  for (size_t i = 0; i < sizeof(cases) / sizeof(cases[0]); ++i) {
+    interpreter_ctxt_t interpreter;
+    if (!interpreter_run(&interpreter, &prog, &cases[i].data) ||
+        interpreter.result != cases[i].expected) {
+      test_fail_with_message("case %zu: got 0x%x, expected 0x%x", i,
+                             interpreter.result, cases[i].expected);
+      test_failed(__LINE__, __FILE__);
+    }
+  }
+  free(prog.filter);
+}
 
 TEST_CASE(long_constants_eq) {
   TEST_POLICY("ALLOW { fcntl { 0x100001234 == 0x1234 }, exit } DEFAULT KILL");

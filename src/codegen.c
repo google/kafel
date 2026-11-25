@@ -168,6 +168,31 @@ static void purge_location_cache(struct codegen_ctxt *ctxt) {
   ctxt->locations.cache_size = j;
 }
 
+// Drops every instruction emitted at or after the given buffer length,
+// together with the cached return locations that pointed at them.
+static void discard_instructions(struct codegen_ctxt *ctxt, size_t len) {
+  ASSERT(ctxt != NULL);
+  ASSERT(len <= ctxt->buffer.len);
+
+  ctxt->buffer.len = len;
+  for (int i = 0; i <= ACTION_BASIC_MAX; ++i) {
+    if (ctxt->locations.basic_actions[i] != INVALID_LOCATION &&
+        ctxt->locations.basic_actions[i] >= (int)len) {
+      ctxt->locations.basic_actions[i] = INVALID_LOCATION;
+    }
+  }
+  size_t j = 0;
+  for (size_t i = 0; i < ctxt->locations.cache_size; ++i) {
+    if (ctxt->locations.cache[i].location < (int)len) {
+      if (j != i) {
+        ctxt->locations.cache[j] = ctxt->locations.cache[i];
+      }
+      ++j;
+    }
+  }
+  ctxt->locations.cache_size = j;
+}
+
 static int resolve_action(struct codegen_ctxt *ctxt, int action) {
   ASSERT(ctxt != NULL);
 
@@ -580,7 +605,10 @@ static int generate_equality(struct codegen_ctxt *ctxt, struct expr_tree *expr,
 }
 
 static int generate_expr(struct codegen_ctxt *ctxt, struct expr_tree *expr,
-                         int tloc, int floc) {
+                         int tloc, int floc);
+
+static int generate_expr_impl(struct codegen_ctxt *ctxt, struct expr_tree *expr,
+                              int tloc, int floc) {
   ASSERT(ctxt != NULL);
   ASSERT(expr != NULL);
 
@@ -613,6 +641,25 @@ static int generate_expr(struct codegen_ctxt *ctxt, struct expr_tree *expr,
   }
 }
 
+static int generate_expr(struct codegen_ctxt *ctxt, struct expr_tree *expr,
+                         int tloc, int floc) {
+  ASSERT(ctxt != NULL);
+
+  size_t mark = ctxt->buffer.len;
+  int loc = generate_expr_impl(ctxt, expr, tloc, floc);
+  // Part of an expression may turn out to be decided at compile time only
+  // after instructions were emitted for the rest of it (e.g. the high words of
+  // a 64-bit comparison, or the left side of `&&'). The result is then a
+  // location that existed before; nothing emitted since can be reached from
+  // it. The filter starts with the instruction emitted last, so leftovers must
+  // not stay in the buffer: they would run before, or instead of, the
+  // architecture and syscall number checks.
+  if (loc < (int)mark) {
+    discard_instructions(ctxt, mark);
+  }
+  return loc;
+}
+
 static int generate_action(struct codegen_ctxt *ctxt,
                            struct syscall_range_rule *rule) {
   ASSERT(ctxt != NULL);
@@ -624,6 +671,7 @@ static int generate_action(struct codegen_ctxt *ctxt,
 
   struct expression_to_action *mapping;
   int last_loc = INVALID_LOCATION;
+  size_t mark = ctxt->buffer.len;
   TAILQ_FOREACH_REVERSE(mapping, &rule->expr_list, expression_to_action_list,
                         list) {
     if (last_loc == INVALID_LOCATION) {
@@ -633,6 +681,10 @@ static int generate_action(struct codegen_ctxt *ctxt,
       ASSERT(mapping->expr != NULL);
       cache_constants(mapping->expr);
       last_loc = generate_expr(ctxt, mapping->expr, -mapping->action, last_loc);
+      // An expression that always holds makes the ones after it unreachable.
+      if (last_loc < (int)mark) {
+        discard_instructions(ctxt, mark);
+      }
     }
   }
   ASSERT(last_loc != INVALID_LOCATION);
@@ -708,11 +760,13 @@ static int compile_policy_for_archs(struct codegen_ctxt *ctxt,
   }
   normalize_rules(rules, kafel_ctxt->default_action);
   int begin = CURRENT_LOC;
+  size_t mark = ctxt->buffer.len;
   int next = generate_rules(ctxt, rules);
   range_rules_destroy(&rules);
   if (next > begin) {
     begin = next = ADD_INSTR(BPF_LOAD_SYSCALL);
   } else {
+    discard_instructions(ctxt, mark);
     next = -kafel_ctxt->default_action;
   }
   return next;
