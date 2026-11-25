@@ -33,6 +33,14 @@ TEST_CASE(broken_syscall_no_out_of_range) {
       "} USE broken DEFAULT KILL");
 }
 
+// A leading zero makes a number octal; `08' used to be read as 0 and `019'
+// as 1.
+TEST_CASE(broken_octal_number) {
+  TEST_COMPILE_ERROR("ALLOW { write { fd == 08 } } DEFAULT KILL");
+  TEST_COMPILE_ERROR("ALLOW { write { fd == 019 } } DEFAULT KILL");
+  TEST_COMPILE_ERROR("#define FD 0778\nALLOW { write { fd == FD } } DEFAULT KILL");
+}
+
 TEST_CASE(broken_errno_out_of_range) {
   char policy[256];
   const char* policy_template =

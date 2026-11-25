@@ -112,9 +112,13 @@ bool whitespace = false;
 
 [0][0-9]+ {
         errno = 0;
-        unsigned long long val = strtoull(yytext, NULL, 8);
+        char *end = NULL;
+        unsigned long long val = strtoull(yytext, &end, 8);
         if (errno == ERANGE) {
           emit_error("number `%s' out of range", yytext);
+        }
+        if (*end != '\0') {
+          emit_error("invalid digit `%c' in octal number `%s'", *end, yytext);
         }
         yylval->number = val;
         return NUMBER;
