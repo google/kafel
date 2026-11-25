@@ -191,6 +191,22 @@ their regular names as specified in Linux kernel and `man` pages.
 write { fd == 1 }
 ```
 
+Comparisons are unsigned. A negative number stands for its two's complement
+representation, so `-1` is the largest value and `fd < 0` never holds.
+
+Arguments of well-known syscalls have the size the kernel uses for them. A
+comparison that involves only 32-bit arguments and numbers that fit in 32 bits
+(negative ones down to `-2147483648` included) looks at the lower 32 bits of the
+arguments, which is all the kernel reads, so
+
+```
+kill { pid == -1 }
+```
+
+matches no matter how the caller extended `pid` to the full register. As soon
+as a 64-bit argument or a number that needs more than 32 bits takes part, whole
+64-bit values are compared.
+
 ## Include directive
 
 In order to simplify reuse and composition of policies, kafel provides include
