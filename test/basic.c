@@ -102,6 +102,25 @@ TEST_CASE(custom_args) {
   TEST_POLICY_ALLOWS_SYSCALL(SYSCALL_SPEC3(-1, 2, 3, 4), SYSCALL_ERRNO_SPEC(2));
 }
 
+// Some arguments (and, on m68k, the syscalls _llseek and _newselect) have
+// names that start with an underscore.
+TEST_CASE(underscore_identifiers) {
+  TEST_POLICY(
+      "ERRNO(1) { add_key { _payload == 5 } }\n"
+      "ERRNO(2) { add_key }\n"
+      "ALLOW { exit } DEFAULT KILL");
+  TEST_POLICY_ALLOWS_SYSCALL(SYSCALL_SPEC3(__NR_add_key, 0, 0, 5),
+                             SYSCALL_ERRNO_SPEC(1));
+  TEST_POLICY_ALLOWS_SYSCALL(SYSCALL_SPEC3(__NR_add_key, 0, 0, 6),
+                             SYSCALL_ERRNO_SPEC(2));
+  TEST_POLICY(
+      "#define _MY_CONST 5\n"
+      "ERRNO(1) { SYSCALL[-1](_a) { _a == _MY_CONST } }\n"
+      "ALLOW { exit } DEFAULT KILL");
+  TEST_POLICY_ALLOWS_SYSCALL(SYSCALL_SPEC1(-1, 5), SYSCALL_ERRNO_SPEC(1));
+  TEST_POLICY_BLOCKS_SYSCALL(SYSCALL_SPEC1(-1, 6));
+}
+
 TEST_CASE(arch_guard_basic) {
   TEST_POLICY(
       "DEFAULT KILL\n"

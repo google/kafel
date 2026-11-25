@@ -73,7 +73,7 @@ YY_DECL;
 %s comment
 %s include
 
-IDENTIFIER [A-Za-z][A-Za-z0-9_]*
+IDENTIFIER [A-Za-z_][A-Za-z0-9_]*
 
 %%
 
