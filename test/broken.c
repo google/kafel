@@ -33,6 +33,24 @@ TEST_CASE(broken_syscall_no_out_of_range) {
       "} USE broken DEFAULT KILL");
 }
 
+// The syscall number is 32-bit. Larger values used to be truncated, so that
+// SYSCALL[0x100000001] meant syscall 1.
+TEST_CASE(broken_syscall_nr_out_of_range) {
+  TEST_COMPILE_ERROR("ALLOW { SYSCALL[0x100000001] } DEFAULT KILL");
+  TEST_COMPILE_ERROR("ALLOW { SYSCALL[-2147483649] } DEFAULT KILL");
+  TEST_COMPILE_ERROR(
+      "#define MY_SYSCALL 0x100000001\n"
+      "ALLOW { MY_SYSCALL } DEFAULT KILL");
+}
+
+// A leading zero makes a number octal; `08' used to be read as 0 and `019'
+// as 1.
+TEST_CASE(broken_octal_number) {
+  TEST_COMPILE_ERROR("ALLOW { write { fd == 08 } } DEFAULT KILL");
+  TEST_COMPILE_ERROR("ALLOW { write { fd == 019 } } DEFAULT KILL");
+  TEST_COMPILE_ERROR("#define FD 0778\nALLOW { write { fd == FD } } DEFAULT KILL");
+}
+
 TEST_CASE(broken_errno_out_of_range) {
   char policy[256];
   const char* policy_template =
